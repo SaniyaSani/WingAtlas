@@ -4,7 +4,7 @@
 
 EntoWing is an early research prototype for exploring how wing venation changes across Diptera. It combines an editable phylogenetic flowchart, an interactive labelled wing plate, and a specimen-oriented SVG mapper in one browser application.
 
-**Live prototype:** [entowing-atlas.ssagutdinova.chatgpt.site](https://entowing-atlas.ssagutdinova.chatgpt.site)
+**Direct website:** [saniyasani.github.io/EntoWing](https://saniyasani.github.io/EntoWing/)
 
 Current public prototype: **v0.34** · August 2026
 
@@ -35,22 +35,37 @@ Please read [SCIENTIFIC-NOTES.md](SCIENTIFIC-NOTES.md) before interpreting or re
 - Node.js 22.13 or newer
 - npm
 
-### Start the development version
+### Start the GitHub Pages version
 
 ```bash
 npm install
-npm run dev
+npm run dev:github
 ```
 
 Open the local address shown in the terminal.
 
-### Build the production version
+### Build the GitHub Pages website
 
 ```bash
-npm run build
+npm run build:github
 ```
 
-The current configuration produces a Cloudflare-compatible Vinext worker build.
+The static website is written to `docs/`. It uses relative asset paths, so it works inside a GitHub project URL such as `https://saniyasani.github.io/EntoWing/`.
+
+## Publish directly with GitHub Pages
+
+1. Create a public repository named `EntoWing` under the `SaniyaSani` account.
+2. Upload the complete contents of this repository, including the prebuilt `docs/` folder.
+3. Open **Settings → Pages** in the GitHub repository.
+4. Under **Build and deployment**, choose **Deploy from a branch**.
+5. Select branch **main**, folder **/docs**, and press **Save**.
+6. After GitHub finishes publishing, the direct website address is:
+
+   `https://saniyasani.github.io/EntoWing/`
+
+Visitors should receive the GitHub Pages address above, not the GitHub repository URL. It opens EntoWing itself immediately.
+
+The existing `npm run build` command remains available for the Cloudflare-compatible Vinext worker build.
 
 ## Main project files
 
@@ -59,6 +74,8 @@ app/page.tsx                                  Main application and Wing Mapper
 app/PhyloAtlas.tsx                            Phylogeny board and family inspector
 app/globals.css                               Scientific and Nocturnal visual systems
 app/Eristalis-reference.entowing-template.json  Reviewed SVG wing topology
+github-pages/                                  Static GitHub Pages entry point
+docs/                                          Ready-to-publish website
 public/favicon.svg                            Project mark
 ```
 
@@ -84,4 +101,4 @@ No open-source licence has been selected for this prototype yet. The code, proje
 
 Until a formal software release or DOI exists, cite the project as:
 
-> Sagutdinova, S. (2026). *EntoWing: Interactive Diptera Wing Atlas* (prototype v0.34). https://entowing-atlas.ssagutdinova.chatgpt.site
+> Sagutdinova, S. (2026). *EntoWing: Interactive Diptera Wing Atlas* (prototype v0.34). https://saniyasani.github.io/EntoWing/
