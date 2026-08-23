@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns1="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:ns2="http://www.inkscape.org/namespaces/inkscape" xmlns:ns4="http://web.resource.org/cc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" id="svg2" ns1:version="0.32" ns2:version="0.45.1" version="1.0" ns1:docbase="/home/gian/insetti/Diptera" ns1:docname="Diadocidiidae_wing_veins.svg" ns2:output_extension="org.inkscape.output.svg.inkscape" viewBox="0 0 300 200" role="img" aria-label="Diadocidiidae wing venation reference" preserveAspectRatio="xMidYMid meet">
+  <title>Diadocidiidae wing venation reference</title><desc>Reference SVG imported from https://commons.wikimedia.org/wiki/File%3ADiadocidiidae_wing_veins.svg; attribution is recorded in the EntoWing source ledger.</desc><defs id="defs4" />
+  <ns1:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" ns2:pageopacity="0.0" ns2:pageshadow="2" ns2:zoom="1" ns2:cx="117.38003" ns2:cy="68.098106" ns2:document-units="px" ns2:current-layer="layer2" width="300px" height="200px" ns2:window-width="1274" ns2:window-height="971" ns2:window-x="0" ns2:window-y="0" />
+  <metadata id="metadata7">
+    <rdf:RDF>
+      <ns4:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <ns4:license rdf:resource="http://creativecommons.org/licenses/by-sa/2.5/" />
+        <dc:title>Diagram of wing veins in Diadocidiidae (Diptera: Sciaroidea)</dc:title>
+        <dc:date>1-12-2009</dc:date>
+        <dc:creator>
+          <ns4:Agent>
+            <dc:title>Giancarlo Dessì (http://commons.wikimedia.org/wiki/User:Giancarlodessi</dc:title>
+          </ns4:Agent>
+        </dc:creator>
+        <dc:source>http://commons.wikimedia.org/wiki/File:Diadocidiidae_wing_veins.svg</dc:source>
+        <dc:coverage>for any purpose</dc:coverage>
+      </ns4:Work>
+      <ns4:License rdf:about="http://creativecommons.org/licenses/by-sa/2.5/">
+        <ns4:permits rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <ns4:permits rdf:resource="http://web.resource.org/cc/Distribution" />
+        <ns4:requires rdf:resource="http://web.resource.org/cc/Notice" />
+        <ns4:requires rdf:resource="http://web.resource.org/cc/Attribution" />
+        <ns4:permits rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+        <ns4:requires rdf:resource="http://web.resource.org/cc/ShareAlike" />
+      </ns4:License>
+    </rdf:RDF>
+  </metadata>
+  <g ns2:groupmode="layer" id="layer2">
+    <g id="g4224" transform="translate(-10.5,3)">
+      <path transform="matrix(0.6697759,0,0,0.6697759,8.6745887,-19.158168)" ns1:nodetypes="csssccc" id="path2222" d="M 9.0913729,121.81975 C 52.194533,116.14984 94.037308,111.5985 138.91797,106.88177 C 216.25605,98.75393 292.12679,88.316642 352.12483,98.117021 C 409.65883,107.51491 411.28936,146.86804 409.79392,159.91464 C 404.14564,209.19161 227.33014,272.88457 146.99915,235.25101 C 82.980328,246.44243 47.660851,223.15354 42.5538,173.69983 C 29.167201,165.24543 23.957672,147.96533 11.639546,143.35204" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.49303675;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path transform="matrix(0.6697759,0,0,0.6697759,8.6799068,-18.534964)" ns1:nodetypes="csss" id="path2224" d="M 9.0913729,121.81975 C 52.194533,116.14984 94.037308,111.5985 138.91797,106.88177 C 216.25605,98.75393 292.12679,88.316642 352.12483,98.117021 C 409.65883,107.51491 410.93581,146.69126 409.44037,159.73786" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.23955512;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path transform="matrix(0.6697759,0,0,0.6697759,8.6745887,-19.158168)" ns1:nodetypes="cc" id="path3197" d="M 15.657364,129.90097 C 54.668107,127.09881 80.955956,129.21103 107.00041,121.66823" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.49303675;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path transform="matrix(0.6697759,0,0,0.6697759,47.027982,-26.262212)" ns1:nodetypes="cc" id="path4168" d="M 51.543033,131.69399 C 56.188285,130.65706 70.378287,122.47828 71.089482,118.7893" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.49303675;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1.4930367, 2.9860734;stroke-dashoffset:0;stroke-opacity:1" />
+      <path transform="matrix(0.6697759,0,0,0.6697759,8.6745887,-19.158168)" ns1:nodetypes="ccc" id="path4170" d="M 20.85965,134.49717 C 32.032074,134.38777 62.015531,137.04436 76.004295,137.62284 C 145.73277,119.72989 229.26151,123.90697 235.82011,98.081169" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.23955512;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path transform="matrix(0.6697759,0,0,0.6697759,8.6745887,-19.158168)" ns1:nodetypes="ccc" id="path4172" d="M 76.013979,137.50238 C 96.938639,139.05397 112.74422,139.30376 131.16733,142.03583 C 218.07597,137.34801 300.60523,111.47069 402.69731,127.77965" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.23955512;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path transform="matrix(0.6697759,0,0,0.6697759,8.6745887,-19.158168)" ns1:nodetypes="cccc" id="path4174" d="M 129.46422,150.25993 C 158.74018,151.61272 187.18406,155.85809 215.28476,159.9077 C 283.69913,139.76344 341.20637,167.92217 403.75797,173.74159" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.49303675;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path transform="matrix(0.6697759,0,0,0.6697759,8.6745887,-19.158168)" ns1:nodetypes="csc" id="path4176" d="M 215.66757,159.95301 C 233.79829,174.04571 267.6807,181.33211 289.05319,189.09796 C 314.19539,198.23356 325.1972,203.73641 349.31075,213.33957" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.49303675;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path transform="matrix(0.6697759,0,0,0.6697759,8.6745887,-19.158168)" ns1:nodetypes="ccc" id="path4178" d="M 22.98097,139.80047 C 47.369289,156.27912 84.229436,155.12215 118.792,171.6228 C 139.12082,194.18294 141.36101,214.482 147.43176,235.25988" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.49303675;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path transform="matrix(0.6697759,0,0,0.6697759,8.6745887,-19.158168)" ns1:nodetypes="cccc" id="path4180" d="M 118.44039,170.91317 C 119.66053,163.94443 124.49215,163.29575 129.40054,162.78144 C 197.80545,186.18411 237.2561,214.55235 289.20667,235.25988 L 289.20667,235.25988" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.49303675;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path transform="matrix(0.6697759,0,0,0.6697759,8.6745887,-19.158168)" id="path4182" d="M 128.69343,162.78144 L 130.81475,141.92179" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.49303675;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path transform="matrix(0.6697759,0,0,0.6697759,8.6745887,-19.158168)" ns1:nodetypes="cc" id="path4184" d="M 28.284271,147.57864 C 82.643097,170.3991 89.422397,202.43426 137.88582,235.61344" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.49303675;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path transform="matrix(0.6697759,0,0,0.6697759,8.6745887,-19.158168)" ns1:nodetypes="cc" id="path4186" d="M 409.5916,156.59426 L 408.35417,165.43309" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    </g>
+    <g id="g4243" style="fill:#ff2a2a" transform="translate(6.5,-8)">
+      <text transform="translate(136.5,15)" id="text4216" y="18" x="12" style="font-size:18px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="18" x="12" id="tspan4218" ns1:role="line">R</tspan></text>
+      <text transform="translate(-16,15.5)" id="text4239" y="22.5" x="177" style="font-size:14px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="22.5" x="177" id="tspan4241" ns1:role="line">1</tspan></text>
+    </g>
+    <g id="g4249" transform="translate(119.05908,10.561035)" style="fill:#ff0000">
+      <text transform="translate(136.5,15)" id="text4251" y="18" x="12" style="font-size:18px;font-style:normal;font-weight:normal;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="18" x="12" id="tspan4253" ns1:role="line">R</tspan></text>
+      <text transform="translate(-16,15.5)" id="text4255" y="22.5" x="177" style="font-size:14px;font-style:normal;font-weight:normal;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="22.5" x="177" id="tspan4257" ns1:role="line">5</tspan></text>
+    </g>
+    <g id="g4259" transform="translate(-42.975098,-6.038086)" style="fill:#ff0000">
+      <text transform="translate(136.5,15)" id="text4261" y="18" x="12" style="font-size:18px;font-style:normal;font-weight:normal;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="18" x="12" id="tspan4263" ns1:role="line">R</tspan></text>
+      <text transform="translate(-16,15.5)" id="text4265" y="22.5" x="177" style="font-size:14px;font-style:normal;font-weight:normal;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="22.5" x="177" id="tspan4267" ns1:role="line">s</tspan></text>
+    </g>
+    <g id="g4269" transform="translate(75.524902,-5.038086)" style="fill:#ff0000">
+      <text transform="translate(136.5,15)" id="text4271" y="18" x="12" style="font-size:18px;font-style:normal;font-weight:normal;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="18" x="12" id="tspan4273" ns1:role="line">C</tspan></text>
+    </g>
+    <text transform="translate(34.698242,13.552246)" id="text4279" y="18" x="12" style="font-size:18px;font-style:normal;font-weight:normal;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="18" x="12" id="tspan4281" ns1:role="line">Sc</tspan></text>
+    <g id="g4317" transform="translate(1,24)">
+      <text transform="translate(259.05908,92.061035)" id="text4295" y="18" x="12" style="font-size:18px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="18" x="12" id="tspan4297" ns1:role="line">M</tspan></text>
+      <text transform="translate(109.55908,92.561035)" id="text4299" y="22.5" x="177" style="font-size:14px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="22.5" x="177" id="tspan4301" ns1:role="line">1</tspan></text>
+    </g>
+    <g id="g4323" transform="translate(-27.499998,49.5)">
+      <text transform="translate(259.05908,92.061035)" id="text4325" y="18" x="12" style="font-size:18px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="18" x="12" id="tspan4327" ns1:role="line">M</tspan></text>
+      <text transform="translate(109.55908,92.561035)" id="text4329" y="22.5" x="177" style="font-size:14px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="22.5" x="177" id="tspan4331" ns1:role="line">2</tspan></text>
+    </g>
+    <g id="g4333" transform="translate(-77.44531,65)">
+      <text transform="translate(259.05908,92.061035)" id="text4335" y="18" x="12" style="font-size:18px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="18" x="12" id="tspan4337" ns1:role="line">CuA</tspan></text>
+      <text transform="translate(109.55908,92.561035)" id="text4339" y="22.5" x="177" style="font-size:14px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="22.5" x="177" id="tspan4341" ns1:role="line">     1</tspan></text>
+    </g>
+    <g id="g4353" transform="translate(-152.76465,70.118652)">
+      <text transform="translate(259.05908,92.061035)" id="text4355" y="18" x="12" style="font-size:18px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="18" x="12" id="tspan4357" ns1:role="line">CuA</tspan></text>
+      <text transform="translate(109.55908,92.561035)" id="text4359" y="22.5" x="177" style="font-size:14px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="22.5" x="177" id="tspan4361" ns1:role="line">     2</tspan></text>
+    </g>
+    <g id="g4377" transform="translate(59.5,5)">
+      <text transform="translate(14.29443,156.67969)" id="text4365" y="18" x="12" style="font-size:18px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="18" x="12" id="tspan4367" ns1:role="line">A</tspan></text>
+      <text transform="translate(-138.20557,156.67969)" id="text4369" y="22.5" x="177" style="font-size:14px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="22.5" x="177" id="tspan4371" ns1:role="line">1</tspan></text>
+    </g>
+    <g id="g4383" style="fill:#ff2a2a" transform="matrix(0.9802367,-0.1978282,0.1978282,0.9802367,26.402416,48.068026)">
+      <text transform="translate(-75.5,36.5)" id="text4389" y="22.5" x="177" style="font-size:14px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="22.5" x="177" id="tspan4391" ns1:role="line">r-m</tspan></text>
+    </g>
+    <text transform="matrix(0.9464852,0.3227472,-0.3227472,0.9464852,-40.877947,23.599344)" id="text4393" y="22.5" x="177" style="font-size:14px;font-style:normal;font-weight:normal;fill:#ff2a2a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan y="22.5" x="177" id="tspan4395" ns1:role="line">m-cu</tspan></text>
+    <path style="fill:none;fill-rule:evenodd;stroke:#0000e7;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 51,68.5 L 56,37" id="path4397" ns1:nodetypes="cc" />
+    <path style="fill:none;fill-rule:evenodd;stroke:#0000e7;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 11.5,90.5 L 50.5,46" id="path4399" ns1:nodetypes="cc" transform="translate(63.5,-13.25)" />
+    <path style="fill:none;fill-rule:evenodd;stroke:#0000e7;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 54.5,65.5 L 58,45.5" id="path4401" ns1:nodetypes="cc" transform="translate(102,-16.75)" />
+    <path style="fill:none;fill-rule:evenodd;stroke:#0000e7;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 66,59.5 L 71.5,43" id="path4403" ns1:nodetypes="cc" transform="translate(154,-12.25)" />
+    <path style="fill:none;fill-rule:evenodd;stroke:#0000e7;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 55,56 L 58.5,40" id="path4405" ns1:nodetypes="cc" transform="translate(213.5,12.75)" />
+    <path style="fill:none;fill-rule:evenodd;stroke:#0000e7;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 65.5,68 L 58.5,53.5" id="path4407" ns1:nodetypes="cc" transform="translate(210.5,46.75)" />
+    <path style="fill:none;fill-rule:evenodd;stroke:#0000e7;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 59.5,65.5 L 48,50.5" id="path4409" ns1:nodetypes="cc" transform="translate(184,76.75)" />
+    <path style="fill:none;fill-rule:evenodd;stroke:#0000e7;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 72.5,48.5 L 65,33.5" id="path4411" ns1:nodetypes="cc" transform="translate(126.5,108.75)" />
+    <path style="fill:none;fill-rule:evenodd;stroke:#0000e7;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 65,58 L 44.5,37.5" id="path4413" ns1:nodetypes="cc" transform="translate(52.5,104.25)" />
+    <path style="fill:none;fill-rule:evenodd;stroke:#0000e7;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 59.5,56 L 59.5,38.5" id="path4415" ns1:nodetypes="cc" transform="translate(31.5,105.25)" />
+    <path style="fill:none;fill-rule:evenodd;stroke:#0000e7;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 79.5,52 L 31,51" id="path4417" ns1:nodetypes="cc" transform="translate(54.5,30.25)" />
+    <path style="fill:none;fill-rule:evenodd;stroke:#0000e7;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 63.5,58.5 L 31,47.5" id="path4419" ns1:nodetypes="cc" transform="translate(54,40.25)" />
+    <path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:1.5,1.5;stroke-dashoffset:0" d="M 14.495689,75.725983 C 37.653436,80.042808 61.51829,82.996838 85.029591,84.388041" id="path3328" ns1:nodetypes="cc" />
+  </g>
+</svg>

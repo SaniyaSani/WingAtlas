@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns1="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:ns2="http://www.inkscape.org/namespaces/inkscape" xmlns:ns4="http://web.resource.org/cc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" id="svg2" ns1:version="0.32" ns2:version="0.45.1" version="1.0" ns1:docbase="/home/gian/insetti/Diptera/Venation" ns1:docname="Cecidomyiinae_wing_veins.svg" ns2:output_extension="org.inkscape.output.svg.inkscape" viewBox="0 0 300 200" role="img" aria-label="Cecidomyiidae wing venation reference" preserveAspectRatio="xMidYMid meet">
+  <title>Cecidomyiidae wing venation reference</title><desc>Reference SVG imported from https://commons.wikimedia.org/wiki/File%3ACecidomyiinae_wing_veins.svg; attribution is recorded in the EntoWing source ledger.</desc><defs id="defs4" />
+  <ns1:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" ns2:pageopacity="0.0" ns2:pageshadow="2" ns2:zoom="2.8284272" ns2:cx="139.51697" ns2:cy="102.37256" ns2:document-units="px" ns2:current-layer="layer1" width="300px" height="200px" ns2:window-width="1230" ns2:window-height="947" ns2:window-x="44" ns2:window-y="24" />
+  <metadata id="metadata7">
+    <rdf:RDF>
+      <ns4:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Venation of Cecidomyiinae wing (eccept for Lasiopterini)</dc:title>
+        <dc:date>1-10-2009</dc:date>
+        <dc:creator>
+          <ns4:Agent>
+            <dc:title>Giancarlo Dessì, http://commons.wikimedia.org/wiki/User:Giancarlodessi</dc:title>
+          </ns4:Agent>
+        </dc:creator>
+        <dc:source>http://commons.wikimedia.org/wiki/File:Cecidomyiinae_wing_veins.svg</dc:source>
+        <dc:coverage>for any purpose</dc:coverage>
+        <ns4:license rdf:resource="http://creativecommons.org/licenses/by-sa/2.5/" />
+      </ns4:Work>
+      <ns4:License rdf:about="http://creativecommons.org/licenses/by-sa/2.5/">
+        <ns4:permits rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <ns4:permits rdf:resource="http://web.resource.org/cc/Distribution" />
+        <ns4:requires rdf:resource="http://web.resource.org/cc/Notice" />
+        <ns4:requires rdf:resource="http://web.resource.org/cc/Attribution" />
+        <ns4:permits rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+        <ns4:requires rdf:resource="http://web.resource.org/cc/ShareAlike" />
+      </ns4:License>
+    </rdf:RDF>
+  </metadata>
+  <g ns2:label="Livello 1" ns2:groupmode="layer" id="layer1">
+    <g id="g4129" transform="translate(-3,17)">
+      <path ns1:nodetypes="csszc" id="path2160" d="M 30.732233,65.661165 C 56.689651,64.316438 91.867966,53.696847 107.98795,51.100544 C 129.87192,47.575888 244.10541,11.709326 258.72742,63.021246 C 269.16542,99.650506 217.58304,137.82095 150.61625,134.18402 C 84.003017,130.54709 50.880668,68.253694 30.732233,70.272078" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path transform="translate(-9.2748509e-2,6.559997e-2)" ns1:nodetypes="cscz" id="path3134" d="M 30.732233,65.661165 C 56.689651,64.316438 91.867966,53.696847 107.98795,51.100544 C 129.87192,47.575888 243.77774,11.521826 258.39975,62.833746 C 201.30905,75.421375 142.10828,61.099864 34.482845,68.423089" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path ns1:nodetypes="cc" id="path4105" d="M 34.247475,67.296158 C 75.275406,61.561903 130.74179,56.160584 137.03837,44.636255" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path ns1:nodetypes="ccc" id="path4107" d="M 34.759199,68.835786 C 60.506741,81.311526 91.424256,89.254329 115.10821,99.524793 C 133.01833,109.36662 134.88493,119.73876 135.78159,132.23224" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <path ns1:nodetypes="cc" id="path4109" d="M 115.61195,99.767614 C 166.18842,99.450856 179.97838,115.83945 194.18476,130.55893" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    </g>
+    <text xml:space="preserve" style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" x="33" y="18" id="text4136" transform="translate(173,26)"><tspan ns1:role="line" id="tspan4138" x="33" y="18" style="fill:#800000">C</tspan></text>
+    <text xml:space="preserve" style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" x="33" y="18" id="text4140" transform="translate(94.69824,29.552246)"><tspan ns1:role="line" id="tspan4142" x="33" y="18" style="fill:#800000">R</tspan></text>
+    <text xml:space="preserve" style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" x="33" y="18" id="text4148" transform="translate(230.69824,60.552246)"><tspan ns1:role="line" id="tspan4150" x="33" y="18" style="fill:#800000">R</tspan></text>
+    <text xml:space="preserve" style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" x="33" y="18" id="text4156" transform="translate(107.69824,33.552246)"><tspan ns1:role="line" id="tspan4158" x="33" y="18" style="font-size:14px;fill:#800000">1</tspan></text>
+    <text xml:space="preserve" style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" x="33" y="18" id="text4160" transform="translate(243.42334,65.103027)"><tspan ns1:role="line" id="tspan4162" x="33" y="18" style="font-size:14px;fill:#800000">5</tspan></text>
+    <g id="g2179" transform="translate(67.528696,-2.1213203)">
+      <text transform="translate(88.69824,150.55225)" id="text4144" y="18" x="33" style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan style="fill:#800000" y="18" x="33" id="tspan4146" ns1:role="line">CuA</tspan></text>
+      <text transform="translate(125.86521,155.40633)" id="text4164" y="18" x="33" style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan style="font-size:14px;fill:#800000" y="18" x="33" id="tspan4166" ns1:role="line">1</tspan></text>
+    </g>
+    <g id="g2185" transform="translate(-14.840622,-0.3620474)">
+      <text transform="translate(88.69824,150.55225)" id="text2187" y="18" x="33" style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan style="fill:#800000" y="18" x="33" id="tspan2189" ns1:role="line">CuA</tspan></text>
+      <text transform="translate(125.86521,155.40633)" id="text2191" y="18" x="33" style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" xml:space="preserve"><tspan style="font-size:14px;fill:#800000" y="18" x="33" id="tspan2193" ns1:role="line">2</tspan></text>
+    </g>
+  </g>
+</svg>
