@@ -2,8 +2,7 @@
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import reviewedEristalisPayload from "./Eristalis-reference.entowing-template.json";
-import PhyloAtlas, { FamilyWingReference, FamilyWingTemplate } from "./PhyloAtlas";
-import WingIdentifier from "./WingIdentifier";
+import PhyloAtlas, { FamilyWingTemplate, familyMorphotypes } from "./PhyloAtlas";
 
 type Point = { x: number; y: number };
 type CanvasView = { x: number; y: number; width: number; height: number };
@@ -11,7 +10,7 @@ type TemplateEditTool = "drag" | "insert" | "delete" | "join" | "crossvein";
 type CurveNodeMode = "smooth" | "corner" | "bezier";
 type CurveHandle = { dx: number; dy: number };
 type CurveControl = { mode: CurveNodeMode; in?: CurveHandle; out?: CurveHandle };
-type AtlasMode = "atlas" | "identify" | "mapper" | "learn";
+type AtlasMode = "atlas" | "mapper" | "learn";
 type VisualTheme = "scientific" | "nocturnal";
 type WingImage = { src: string; name: string; width: number; height: number; isLocal: boolean };
 type AutoCandidate = { id: string; points: Point[]; length: number };
@@ -53,6 +52,10 @@ const presets: VeinDefinition[] = [
   { id: "R1", label: "R1", fullName: "First branch of Radius", symbolMeaning: "R = Radius · 1 = first branch", plainMeaning: "an anterior branch of the radial system", group: "radial", color: "#c85d48", note: "Radius is one of the major longitudinal vein systems. Its branches are numbered from anterior toward posterior; R1 is the anterior radial branch." },
   { id: "R2+3", label: "R2+3", fullName: "Fused radial branches R2 + R3", symbolMeaning: "R = Radius · 2+3 = fused branches", plainMeaning: "two radial branches travelling as one vein", group: "radial", color: "#c85d48", note: "In many Diptera, branches that are separate in the generalized venation are fused. R2+3 denotes a single visible vein representing radial branches 2 and 3 together." },
   { id: "R4+5", label: "R4+5", fullName: "Fused radial branches R4 + R5", symbolMeaning: "R = Radius · 4+5 = fused branches", plainMeaning: "a posterior branch of the radial system", group: "radial", color: "#c85d48", note: "R4+5 is a major radial landmark in many flies. It lies posterior to R2+3 and often helps define the shape of radial and medial cells." },
+  { id: "Rs", label: "Rs", fullName: "Radial sector", symbolMeaning: "Rs = radial sector", plainMeaning: "the radial stem that gives rise to the distal radial branches", group: "radial", color: "#c85d48", note: "Used in the Bombyliidae morphotypes as the shared radial sector before the distal branches split." },
+  { id: "R4+5 stem", label: "R4+5 stem", fullName: "Common stem of R4 and R5", symbolMeaning: "R4+5 = shared stem before R4 and R5 divide", plainMeaning: "the short common radial segment before two separate branches", group: "radial", color: "#c85d48", note: "Bombyliidae retain separate R4 and R5 distally; this segment keeps their common stem explicit and independently selectable." },
+  { id: "R4", label: "R4", fullName: "Fourth radial branch", symbolMeaning: "R = Radius · 4 = fourth branch", plainMeaning: "the anterior branch of the distal R4/R5 pair", group: "radial", color: "#c85d48", note: "In the Bombyliidae reference morphotypes R4 and R5 are separate distally, unlike the fused R4+5 label used in the Eristalis anchor." },
+  { id: "R5", label: "R5", fullName: "Fifth radial branch", symbolMeaning: "R = Radius · 5 = fifth branch", plainMeaning: "the posterior branch of the distal R4/R5 pair", group: "radial", color: "#c85d48", note: "R5 is a key Bombyliidae morphotype character: it may end free or converge distally with M1." },
   { id: "M1", label: "M1", fullName: "Vein M1 · modern Syrphidae", symbolMeaning: "M = Media · 1 = first branch", plainMeaning: "the branch of M that joins R4+5", group: "medial", color: "#7a6bb0", note: "Van Steenis et al. (2023): M1 is the branch of Media that joins R4+5; its apical direction varies among syrphid groups.", legacyAlias: "older Eristalis plates may place M3/M1+2 labels differently" },
   { id: "M4", label: "M4", fullName: "Vein M4 · modern Syrphidae", symbolMeaning: "M = Media · 4 = fourth medial vein", plainMeaning: "the posterior medial boundary of cell dm", group: "medial", color: "#7a6bb0", note: "Van Steenis et al. (2023) treats this as M4. In the older McAlpine system this structure was called CuA1.", legacyAlias: "CuA1 in the older system" },
   { id: "CuA", label: "CuA", fullName: "Vein CuA · modern Syrphidae", symbolMeaning: "Cu = Cubitus · A = anterior branch", plainMeaning: "the anterior cubital vein in the modern system", group: "cubital", color: "#63875f", note: "Van Steenis et al. (2023) uses CuA for the structure called CuA2 in the older system.", legacyAlias: "CuA2 in the older system" },
@@ -63,6 +66,12 @@ const presets: VeinDefinition[] = [
   { id: "dm-m", label: "dm-m", fullName: "Discal medial crossvein · modern Syrphidae", symbolMeaning: "dm-m = discal medial crossvein", plainMeaning: "the distal crossvein closing cell dm", group: "crossvein", color: "#d97941", note: "Van Steenis et al. (2023) uses dm-m for the crossvein called dm-cu in the older system.", legacyAlias: "dm-cu in the older system" },
   { id: "sv", label: "vena spuria", fullName: "Vena spuria · spurious vein", symbolMeaning: "vena spuria = the characteristic syrphid false vein", plainMeaning: "a vein-like longitudinal thickening rather than a standard true vein", group: "landmark", color: "#db7d87", note: "The vena spuria is a characteristic wing landmark of most Syrphidae. It is kept separate from the true longitudinal veins in EntoWing.", legacyAlias: "s or sv on older plates" },
   { id: "h", label: "h", fullName: "Humeral crossvein", symbolMeaning: "h = humeral crossvein", plainMeaning: "the basal crossvein near the costal region", group: "crossvein", color: "#b76f4e", note: "Modern Diptera/Syrphidae terminology treats h as the humeral crossvein." },
+  { id: "M2", label: "M2", fullName: "Second medial branch", symbolMeaning: "M = Media · 2 = second branch", plainMeaning: "a medial branch retained in some fly lineages", group: "medial", color: "#7a6bb0", note: "M2 is important in the Bombyliidae morphotype set: the Bombylius- and Anthrax-types retain three medial branches, while the Usiinae-type shown here is reduced." },
+  { id: "M3+4", label: "M3+4", fullName: "Fused medial branches M3 + M4", symbolMeaning: "M = Media · 3+4 = fused posterior branches", plainMeaning: "the posterior medial branch in the Bombyliidae reference diagrams", group: "medial", color: "#7a6bb0", note: "The Bombyliidae reference diagrams label the posterior medial branch M3+4. It is kept separate from the Syrphidae-specific modern M4 nomenclature used by the Eristalis anchor." },
+  { id: "m-m", label: "m-m", fullName: "Medial crossvein", symbolMeaning: "m-m = Media ↔ Media", plainMeaning: "a crossvein joining medial branches", group: "crossvein", color: "#d97941", note: "Used in the Bombyliidae reference morphotypes; its exact endpoints shift when M2 is absent." },
+  { id: "R5+M1", label: "R5+M1", fullName: "Common distal stem of R5 and M1", symbolMeaning: "R5 + M1 = convergent distal stem", plainMeaning: "two longitudinal systems sharing a short terminal stem", group: "fusion", color: "#9c665c", note: "Used in the Bombylius-type Bombyliidae morphotype to encode the diagnostic distal convergence without making R4+5 and M1 one unclickable path." },
+  { id: "CuA+A1", label: "CuA+A1", fullName: "Common distal stem of CuA and A1", symbolMeaning: "CuA + A1 = convergent distal stem", plainMeaning: "cubital and anal veins sharing a terminal stem", group: "fusion", color: "#66817c", note: "Used in the Usiinae-type Bombyliidae morphotype. The two parent veins remain independently selectable before their shared terminal segment." },
+  { id: "R4+5 app.", label: "R4+5 app.", fullName: "Appendix of vein R4+5", symbolMeaning: "R4+5 app. = short appendicular branch", plainMeaning: "a short incomplete branch projecting from R4+5 into cell r4+5", group: "radial appendix", color: "#c85d48", note: "The 2023 Syrphidae glossary recognizes an appendix of R4+5; it occurs in some syrphid groups and is useful as a morphotype-level character." },
 ];
 
 const generalizedDipteraNodes: Record<string, Point> = {
@@ -103,8 +112,22 @@ const reviewedEristalisTemplate: WingTemplate = {
   paths: (reviewedEristalisPayload.paths as TemplatePath[]).map((path) => path.veinId === "Cu1" ? { ...path, veinId: "m-cu" } : path),
 };
 
+const atlasMorphotypeTemplates: WingTemplate[] = [
+  ...familyMorphotypes.bombyliidae,
+  ...familyMorphotypes.syrphidae.filter((wing) => wing.morphotypeId !== "eristalis"),
+].map((wing) => ({
+  id: wing.id,
+  name: wing.name,
+  taxon: wing.taxon,
+  note: wing.note,
+  referenceSize: wing.referenceSize,
+  nodes: Object.fromEntries(Object.entries(wing.nodes).map(([id, point]) => [id, { ...point }])),
+  paths: wing.paths.map((path) => ({ veinId: path.veinId, nodeIds: [...path.nodeIds] })),
+}));
+
 const builtInTemplates: WingTemplate[] = [
   reviewedEristalisTemplate,
+  ...atlasMorphotypeTemplates,
   {
     id: "diptera-general",
     name: "Generalized Diptera",
@@ -490,7 +513,6 @@ async function makeAutoTrace(src: string, naturalWidth: number, naturalHeight: n
     const img = new Image();
     img.onload = () => resolve(img);
     img.onerror = () => reject(new Error("Could not read this image."));
-    if (/^https?:/i.test(src)) img.crossOrigin = "anonymous";
     img.src = src;
   });
   const scale = Math.min(1, 640 / Math.max(naturalWidth, naturalHeight));
@@ -615,7 +637,6 @@ async function traceBetweenAnchors(src: string, naturalWidth: number, naturalHei
     const img = new Image();
     img.onload = () => resolve(img);
     img.onerror = () => reject(new Error("Could not read this image."));
-    if (/^https?:/i.test(src)) img.crossOrigin = "anonymous";
     img.src = src;
   });
   const scale = Math.min(1, 480 / Math.max(naturalWidth, naturalHeight));
@@ -1676,35 +1697,6 @@ export default function Home() {
     event.target.value = "";
   }
 
-  function openIdentificationPhotoInMapper(wing: { src: string; name: string; width: number; height: number }) {
-    setWingImage({ ...wing, isLocal: true });
-    setCanvasView({ x: 0, y: 0, width: wing.width, height: wing.height });
-    touchPointersRef.current.clear();
-    touchTapRef.current.clear();
-    pinchStartRef.current = null;
-    setMap({});
-    setSelectedVeinId(null);
-    setMapperPreview(false);
-    setAutoCandidates([]);
-    setSelectedAutoIds([]);
-    setManualAddMode(true);
-    setGuidedMode(false);
-    setGuidedAnchors([]);
-    setGuidedRunning(false);
-    setGuidedStatus("Choose a vein, then place two anchors for Guided Trace.");
-    setDraftHypotheses({});
-    setPlacedTemplate(null);
-    setTemplateNodes({});
-    setTemplateUndoStack([]);
-    setTemplateEditMode(true);
-    setTemplateDraggingNode(null);
-    setTemplateStatus("Wing ID Lab photo ready. Place the closest candidate template, then verify every junction.");
-    setWholeDraftStatus("Ready to propose a rough whole-wing topology.");
-    setAutoStatus("Ready to make an automatic SVG draft.");
-    setMode("mapper");
-    window.setTimeout(() => document.querySelector(".mapper-shell")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
-  }
-
   function resetToReference() {
     setWingImage({ src: referenceImage, name: "Eristalis-reference.jpg", width: 560, height: 246, isLocal: false });
     setSelectedTemplateId("eristalis-reviewed");
@@ -1915,43 +1907,25 @@ export default function Home() {
     downloadText(`${wingImage.name.replace(/\.[^.]+$/, "") || "wing"}-annotated.svg`, svg, "image/svg+xml");
   }
 
-  function openFamilyWingInMapper(familyId: string, familyWing: FamilyWingTemplate, reference?: FamilyWingReference) {
-    const source: WingTemplate = familyId === "syrphidae"
-      ? reviewedEristalisTemplate
-      : {
-          ...familyWing,
-          paths: familyWing.paths.map((path) => ({ ...path, veinId: path.veinId === "vena spuria" ? "sv" : path.veinId, nodeIds: [...path.nodeIds] })),
-          nodes: Object.fromEntries(Object.entries(familyWing.nodes).map(([id, point]) => [id, { ...point }])),
-        };
+  function openFamilyWingInMapper(familyId: string, familyWing: FamilyWingTemplate) {
+    // Use the exact morphotype selected in the atlas. v0.34 forced every Syrphidae
+    // selection back to Eristalis here, which defeated the new family variation.
+    const source: WingTemplate = {
+      ...familyWing,
+      paths: familyWing.paths.map((path) => ({ ...path, veinId: path.veinId === "vena spuria" ? "sv" : path.veinId, nodeIds: [...path.nodeIds] })),
+      nodes: Object.fromEntries(Object.entries(familyWing.nodes).map(([id, point]) => [id, { ...point }])),
+    };
     const prepared = withSharedJunctionCorners(source);
-    const referenceWidth = reference?.width && reference.width > 0 ? reference.width : wingImage.width;
-    const referenceHeight = reference?.height && reference.height > 0 ? reference.height : wingImage.height;
-    if (reference) {
-      setWingImage({ src: reference.assetPath, name: reference.title, width: referenceWidth, height: referenceHeight, isLocal: true });
-      setCanvasView({ x: 0, y: 0, width: referenceWidth, height: referenceHeight });
-      setMap({});
-      setSelectedVeinId(null);
-      setAutoCandidates([]);
-      setSelectedAutoIds([]);
-      setGuidedAnchors([]);
-      setGuidedMode(false);
-      setDraftHypotheses({});
-      setAutoStatus(`Ready to trace the ${reference.family} reference SVG.`);
-      setGuidedStatus("Choose a vein, then place two anchors on the published SVG reference.");
-      setWholeDraftStatus("Ready to propose a whole-wing draft from the published SVG reference.");
-    }
-    if (familyId !== "syrphidae") persistCustomTemplate(prepared);
+    if (familyId !== "syrphidae" || familyWing.morphotypeId !== "eristalis") persistCustomTemplate(prepared);
     setSelectedTemplateId(prepared.id);
     setPlacedTemplate(prepared);
-    setTemplateNodes(fitTemplateNodes(prepared, referenceWidth, referenceHeight));
+    setTemplateNodes(fitTemplateNodes(prepared, wingImage.width, wingImage.height));
     setActiveVeinId(prepared.paths[0]?.veinId ?? "R4+5");
     setSelectedTemplateNodeId(null);
     setTemplateEditTool("drag");
     setTemplateEditMode(true);
     setTemplateUndoStack([]);
-    setTemplateStatus(reference
-      ? `${reference.title} is loaded underneath the editable EntoWing graph. The outline is pre-fitted; verify every junction and label.`
-      : `${prepared.name} loaded from the evolutionary atlas. Upload a matching specimen or edit this working morphotype directly.`);
+    setTemplateStatus(`${prepared.name} loaded from the evolutionary atlas. Upload a matching specimen or edit this working morphotype directly.`);
     setMapperPreview(false);
     setMode("mapper");
     window.setTimeout(() => document.querySelector(".mapper-shell")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
@@ -1966,7 +1940,6 @@ export default function Home() {
         </button>
         <nav className="nav-pills" aria-label="EntoWing modes">
           <button className={mode === "atlas" ? "active" : ""} onClick={enterAtlas}>Atlas</button>
-          <button className={mode === "identify" ? "active" : ""} onClick={() => setMode("identify")}>Wing ID Lab</button>
           <button className={mode === "mapper" ? "active" : ""} onClick={() => setMode("mapper")}>Wing Mapper</button>
           <button className={mode === "learn" ? "active" : ""} onClick={enterLearn}>Learn</button>
           <button className="soft-disabled" title="Planned next">Compare <sup>soon</sup></button>
@@ -1990,14 +1963,12 @@ export default function Home() {
               <span aria-hidden="true">✦</span> Nocturnal
             </button>
           </div>
-          <div className="version-chip">Research atlas · v0.40</div>
+          <div className="version-chip">Research atlas · v0.35</div>
         </div>
       </header>
 
       {mode === "atlas" ? (
         <PhyloAtlas onOpenMapper={openFamilyWingInMapper} />
-      ) : mode === "identify" ? (
-        <WingIdentifier onUseInMapper={openIdentificationPhotoInMapper} />
       ) : mode === "mapper" ? (
         <>
           <section className="intro mapper-intro">
@@ -2474,7 +2445,7 @@ export default function Home() {
               <div className="atlas-toolbar">
                 <div><span className="tool-kicker">CURRENT WING</span><strong>{wingImage.name}</strong></div>
                 <div className="atlas-toolbar-actions">
-                  {(mode as AtlasMode) === "atlas" && <label className="overlay-toggle"><input type="checkbox" checked={showAll} onChange={(event) => setShowAll(event.target.checked)} /> Show all mapped veins</label>}
+                  {mode === "atlas" && <label className="overlay-toggle"><input type="checkbox" checked={showAll} onChange={(event) => setShowAll(event.target.checked)} /> Show all mapped veins</label>}
                   <button onClick={() => setMode("mapper")}>Edit map</button>
                 </div>
               </div>
@@ -2483,7 +2454,7 @@ export default function Home() {
                 <svg className="atlas-photo-svg" viewBox={`0 0 ${wingImage.width} ${wingImage.height}`} role="img" aria-label="Mapped wing with interactive vein overlay">
                   <image href={wingImage.src} x="0" y="0" width={wingImage.width} height={wingImage.height} />
                   {mappedVeins.map((vein) => {
-                    const isHot = hoveredVeinId === vein.id || ((mode as AtlasMode) === "atlas" && selectedVeinId === vein.id);
+                    const isHot = hoveredVeinId === vein.id || (mode === "atlas" && selectedVeinId === vein.id);
                     return (
                       <g key={vein.id} className={`atlas-vein ${isHot ? "hot" : ""}`}>
                         <path d={smoothPath(map[vein.id])} fill="none" stroke={vein.color} vectorEffect="non-scaling-stroke" className="atlas-vein-visible" style={{ opacity: showAll || isHot ? 1 : 0 }} />
@@ -2521,7 +2492,7 @@ export default function Home() {
             </div>
 
             <aside className="atlas-info-panel">
-              {selectedVein && (mode as AtlasMode) === "atlas" ? (
+              {selectedVein && mode === "atlas" ? (
                 <>
                   <div className="atlas-selected-head"><i style={{ background: selectedVein.color }} /><div><span>{selectedVein.group}</span><h2>{selectedVein.label}</h2></div></div>
                   <h3>{selectedVein.fullName}</h3>

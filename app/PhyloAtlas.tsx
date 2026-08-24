@@ -2,24 +2,9 @@
 
 import { ChangeEvent, CSSProperties, memo, PointerEvent as ReactPointerEvent, WheelEvent as ReactWheelEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import reviewedEristalisPayload from "./Eristalis-reference.entowing-template.json";
-import wingReferenceData from "./family-wing-references.generated.json";
-import { mapReferenceSvgToTemplate } from "./svgWingMapper";
-import {
-  DIPTERA_FAMILY_CATALOG,
-  DIPTERA_FAMILY_COUNT,
-  DipteraFamilyCatalogEntry,
-  SYSTEMA_DIPTERORUM_FAMILY_SOURCE,
-} from "./dipteraFamilyCatalog";
 
 export type FamilyWingPoint = { x: number; y: number };
-export type FamilyWingPath = {
-  veinId: string;
-  displayLabel?: string;
-  nodeIds: string[];
-  color?: string;
-  sourcePathId?: string;
-  confidence?: "high" | "medium" | "unassigned";
-};
+export type FamilyWingPath = { veinId: string; nodeIds: string[]; color?: string };
 export type FamilyWingTemplate = {
   id: string;
   name: string;
@@ -28,29 +13,13 @@ export type FamilyWingTemplate = {
   referenceSize: { width: number; height: number };
   nodes: Record<string, FamilyWingPoint>;
   paths: FamilyWingPath[];
-  outlinePoints?: FamilyWingPoint[];
-  mappingStatus?: "reviewed" | "machine-draft" | "scaffold";
-  mappingStats?: { sourcePathCount: number; namedPathCount: number; nodeCount: number };
-  sourceReference?: string;
+  morphotypeId?: string;
+  morphotypeLabel?: string;
+  geometryStatus?: "user-reviewed" | "literature-derived" | "scaffold";
+  sourceLabel?: string;
+  sourceUrl?: string;
+  recognitionHints?: string[];
 };
-
-export type FamilyWingReference = {
-  family: string;
-  title: string;
-  assetPath: string;
-  sourcePage: string;
-  originalUrl: string;
-  author: string;
-  credit: string;
-  license: string;
-  licenseUrl: string;
-  width: number;
-  height: number;
-  localAsset: boolean;
-  referenceOnly: true;
-};
-
-const familyWingReferences = wingReferenceData as Record<string, FamilyWingReference>;
 
 type BoardPoint = { x: number; y: number };
 type BoardView = { x: number; y: number; scale: number };
@@ -124,6 +93,12 @@ const MANUAL_VOL2 = "https://www.biodiversitylibrary.org/page/64795149";
 const MANUAL_VOL3 = "https://www.nhm.ac.uk/our-science/research/projects/manual-afrotropical-diptera.html";
 const MAD_OVERVIEW = "https://www.nhm.ac.uk/our-science/research/projects/manual-afrotropical-diptera.html";
 const SYRPHID_GLOSSARY = "https://doi.org/10.55710/1.AIMS1978";
+const BOMBYLIUS_WING_SOURCE = "https://commons.wikimedia.org/wiki/File:Bombyliidae_wing_veins-1.svg";
+const ANTHRAX_WING_SOURCE = "https://commons.wikimedia.org/wiki/File:Bombyliidae_wing_veins-2.svg";
+const USIINAE_WING_SOURCE = "https://commons.wikimedia.org/wiki/File:Bombyliidae_wing_veins-3.svg";
+const CERIANA_WING_SOURCE = "https://commons.wikimedia.org/wiki/File:Syrphidae_(Ceriana)_wing_veins.svg";
+const CERIANA_ACCOUNT_SOURCE = "https://pollinatoracademy.eu/assets/Uploads/Document/genus-ceriana-2024-10-22.pdf";
+const SYRPHID_KEY_SOURCE = "https://pmc.ncbi.nlm.nih.gov/articles/PMC9848622/";
 
 const reviewedVeinDetails = Object.fromEntries(reviewedEristalisPayload.veins.map((source) => {
   if (source.id === "Cu1") {
@@ -155,6 +130,10 @@ const wingLabelPlacements: Record<string, WingLabelPlacement> = {
   R1: { x: 357, y: 21, nodeId: "r1Mid", anchor: "middle" },
   "R2+3": { x: 454, y: 27, nodeId: "edit-1786217036683-nugxh", anchor: "middle" },
   "R4+5": { x: 514, y: 103, nodeId: "edit-1786216927165-u37e3", anchor: "end" },
+  R4: { x: 525, y: 88, nodeId: "r4End", anchor: "end" },
+  R5: { x: 525, y: 133, nodeId: "r5End", anchor: "end" },
+  Rs: { x: 205, y: 63, nodeId: "r1Fork", anchor: "middle" },
+  "R4+5 stem": { x: 330, y: 76, nodeId: "r45Fork", anchor: "middle" },
   M1: { x: 489, y: 153, nodeId: "edit-1786216913013-j4pdx", anchor: "end" },
   M4: { x: 363, y: 211, nodeId: "dmBottom", anchor: "middle" },
   CuA: { x: 238, y: 226, nodeId: "edit-1786216834382-82qud", anchor: "middle" },
@@ -163,6 +142,12 @@ const wingLabelPlacements: Record<string, WingLabelPlacement> = {
   sv: { x: 236, y: 91, nodeId: "svMid1", anchor: "middle" },
   "m-cu": { x: 222, y: 171, nodeId: "edit-1786216834382-82qud", anchor: "end" },
   h: { x: 60, y: 48, nodeId: "scMid", anchor: "middle" },
+  M2: { x: 480, y: 171, nodeId: "m2End", anchor: "end" },
+  "M3+4": { x: 455, y: 219, nodeId: "m34End", anchor: "end" },
+  "m-m": { x: 382, y: 178, nodeId: "mmM34", anchor: "middle" },
+  "R5+M1": { x: 525, y: 80, nodeId: "bm-common-end", anchor: "end" },
+  "CuA+A1": { x: 455, y: 225, nodeId: "usi-common-end", anchor: "end" },
+  "R4+5 app.": { x: 430, y: 103, nodeId: "syr-app-end", anchor: "middle" },
 };
 
 function veinMeta(veinId: string, color = "#52645a"): WingVeinMeta {
@@ -484,56 +469,13 @@ const additionalProfiles: FamilyProfile[] = [
   },
 ];
 
+const initialProfiles: FamilyProfile[] = [...coreProfiles, ...additionalProfiles];
 const constellationPalette = ["#8b624d", "#587982", "#9a763d", "#756a82", "#55715f", "#98645f"];
 
 function constellationAccent(value: string) {
   const hash = [...value].reduce((sum, character) => sum + character.charCodeAt(0), 0);
   return constellationPalette[hash % constellationPalette.length];
 }
-
-const authoredProfiles: FamilyProfile[] = [...coreProfiles, ...additionalProfiles];
-const authoredProfileIds = new Set(authoredProfiles.map((profile) => profile.id));
-
-function catalogVariant(entry: DipteraFamilyCatalogEntry): WingVariant {
-  if (entry.major === "nematocera") {
-    if (entry.groupId === "culicomorpha") return "culicid";
-    if (entry.groupId === "psychodomorpha") return "psychodid";
-    return "tipulid";
-  }
-  if (entry.groupId === "stratiomyomorpha") return "stratiomyid";
-  if (entry.groupId === "tabanomorpha") return "tabanid";
-  if (entry.groupId === "asiloidea" || entry.groupId === "vermileonomorpha") return "asilid";
-  if (entry.groupId === "empidoidea") return "empidid";
-  if (entry.groupId === "calyptratae") return "muscid";
-  if (entry.groupId === "aschiza") return entry.family === "Phoridae" ? "phorid" : "syrphid";
-  return "drosophilid";
-}
-
-const catalogScaffoldProfiles: FamilyProfile[] = DIPTERA_FAMILY_CATALOG
-  .filter((entry) => !authoredProfileIds.has(entry.id))
-  .map((entry) => ({
-    id: entry.id,
-    family: entry.family,
-    commonName: entry.rankNote ?? "family-level atlas entry",
-    clade: entry.groupLabel,
-    representative: familyWingReferences[entry.id]
-      ? "published SVG reference · machine-review workflow"
-      : "reference search pending · editable scaffold",
-    diagnosticWing: "This complete-catalogue card is ready for a representative wing and a literature-checked venation diagnosis; no family character has been inferred from the neutral scaffold.",
-    evolutionaryReading: `Placement follows the working ${entry.groupLabel} family container in Systema Dipterorum; it is not presented as a fully resolved phylogenetic branch.`,
-    caveat: entry.rankNote
-      ? "Systema Dipterorum lists this as the Iteaphila group because its family-level rank remains unsettled."
-      : "No reviewed family geometry is claimed here until a licensed reference or specimen tracing has been checked.",
-    confidence: "working",
-    sourceLabel: "Systema Dipterorum 7.2 · family classification",
-    sourceUrl: SYSTEMA_DIPTERORUM_FAMILY_SOURCE,
-    accent: constellationAccent(entry.groupId),
-    variant: catalogVariant(entry),
-  }));
-
-const initialProfiles: FamilyProfile[] = [...authoredProfiles, ...catalogScaffoldProfiles];
-const atlasReferenceCount = initialProfiles.filter((profile) => familyWingReferences[profile.id]).length;
-const atlasScaffoldCount = DIPTERA_FAMILY_COUNT - atlasReferenceCount;
 
 function cladeNode(id: string, parentId: string | null, label: string, order: number, confidence: Confidence, changeType: ChangeType, changeTitle: string, changeSummary: string, sourceLabel: string, sourceUrl: string): TreeNode {
   return { id, parentId, label, rank: id === "diptera" ? "root" : "clade", order, confidence, changeType, changeTitle, changeSummary, sourceLabel, sourceUrl };
@@ -549,7 +491,7 @@ function familyTreeNode(familyId: string, parentId: string, order: number, chang
   };
 }
 
-const sampledTree: TreeNode[] = [
+const initialTree: TreeNode[] = [
   cladeNode("diptera", null, "Diptera", 0, "high", "gain", "One functional wing pair", "Hind wings are transformed into halteres; this atlas follows changes inside the forewing venation.", "Wiegmann et al. 2011", PHYLOGENY_SOURCE),
 
   cladeNode("lower", "diptera", "early dipteran radiations · teaching grade", 0, "working", "uncertain", "Deep lower-Diptera order remains difficult", "This is an editable teaching container, not a claim that the included lineages form one clade. Short ancient internodes remain sensitive to sampling and analysis.", "Wiegmann et al. 2011", PHYLOGENY_SOURCE),
@@ -639,61 +581,7 @@ const sampledTree: TreeNode[] = [
   familyTreeNode("sarcophagidae", "oestroidea", 1),
 ];
 
-const classificationGroups: Array<{ id: string; parentId: string; label: string; order: number }> = [
-  { id: "tipulomorpha", parentId: "lower", label: "Tipulomorpha", order: 0 },
-  { id: "psychodomorpha", parentId: "lower", label: "Psychodomorpha", order: 1 },
-  { id: "ptychopteromorpha", parentId: "lower", label: "Ptychopteromorpha", order: 2 },
-  { id: "culicomorpha", parentId: "lower", label: "Culicomorpha", order: 3 },
-  { id: "blephariceromorpha", parentId: "lower", label: "Blephariceromorpha", order: 4 },
-  { id: "bibionomorpha", parentId: "lower", label: "Bibionomorpha · catalogue container", order: 5 },
-  { id: "axymyiomorpha", parentId: "lower", label: "Axymyiomorpha", order: 6 },
-  { id: "stratiomyomorpha", parentId: "early-brachycera", label: "Stratiomyomorpha", order: 0 },
-  { id: "tabanomorpha", parentId: "early-brachycera", label: "Tabanomorpha", order: 1 },
-  { id: "vermileonomorpha", parentId: "early-brachycera", label: "Vermileonomorpha", order: 2 },
-  { id: "asiloidea", parentId: "heterodactyla", label: "Asiloidea", order: 1 },
-  { id: "empidoidea", parentId: "eremoneura", label: "Empidoidea", order: 0 },
-  { id: "aschiza", parentId: "cyclorrhapha", label: "Aschiza · traditional working grade", order: 0 },
-  { id: "calyptratae", parentId: "schizophora", label: "Calyptratae", order: 0 },
-  { id: "acalyptratae", parentId: "schizophora", label: "Acalyptratae · non-monophyletic working grade", order: 3 },
-  { id: "nerioidea", parentId: "acalyptratae", label: "Nerioidea", order: 0 },
-  { id: "diopsoidea", parentId: "remaining-schizophora", label: "Diopsoidea", order: 3 },
-  { id: "conopoidea", parentId: "remaining-schizophora", label: "Conopoidea", order: 4 },
-  { id: "tephritoidea", parentId: "remaining-schizophora", label: "Tephritoidea", order: 0 },
-  { id: "lauxanioidea", parentId: "remaining-schizophora", label: "Lauxanioidea", order: 1 },
-  { id: "sciomyzoidea", parentId: "schizophora", label: "Sciomyzoidea", order: 1 },
-  { id: "opomyzoidea", parentId: "remaining-schizophora", label: "Opomyzoidea", order: 2 },
-  { id: "carnoidea", parentId: "acalyptratae", label: "Carnoidea", order: 6 },
-  { id: "sphaeroceroidea", parentId: "acalyptratae", label: "Sphaeroceroidea", order: 7 },
-  { id: "ephydroidea", parentId: "ephydro-calyptratae", label: "Ephydroidea", order: 0 },
-];
-
-const sampledNodeIds = new Set(sampledTree.map((node) => node.id));
-const sampledFamilyIds = new Set(sampledTree.flatMap((node) => node.familyId ? [node.familyId] : []));
-const supplementalGroupNodes = classificationGroups
-  .filter((group) => !sampledNodeIds.has(group.id))
-  .map((group) => cladeNode(
-    group.id,
-    group.parentId,
-    group.label,
-    group.order,
-    "working",
-    "uncertain",
-    "complete family-classification container",
-    "This node completes the global family catalogue. It is a navigation scaffold, not a claim that every higher relationship is fully resolved.",
-    "Systema Dipterorum 7.2 · family classification",
-    SYSTEMA_DIPTERORUM_FAMILY_SOURCE,
-  ));
-const supplementalFamilyNodes = DIPTERA_FAMILY_CATALOG
-  .filter((entry) => !sampledFamilyIds.has(entry.id))
-  .map((entry) => familyTreeNode(
-    entry.id,
-    entry.groupId,
-    DIPTERA_FAMILY_CATALOG.filter((candidate) => candidate.groupId === entry.groupId).findIndex((candidate) => candidate.id === entry.id),
-    "uncertain",
-  ));
-const initialTree: TreeNode[] = [...sampledTree, ...supplementalGroupNodes, ...supplementalFamilyNodes];
-
-function buildWing(profile: FamilyProfile): FamilyWingTemplate {
+function eristalisBase(): FamilyWingTemplate {
   const nodes = Object.fromEntries(Object.entries(reviewedEristalisPayload.nodes).map(([id, point]) => [id, { x: point.x, y: point.y }])) as Record<string, FamilyWingPoint>;
   const veinColors = Object.fromEntries(reviewedEristalisPayload.veins.map((vein) => [vein.id === "Cu1" ? "m-cu" : vein.id, vein.color]));
   const paths = reviewedEristalisPayload.paths.map((path) => ({
@@ -701,16 +589,166 @@ function buildWing(profile: FamilyProfile): FamilyWingTemplate {
     nodeIds: [...path.nodeIds],
     color: veinColors[path.veinId === "Cu1" ? "m-cu" : path.veinId],
   }));
-
   return {
-    id: `family-${profile.id}`,
-    name: `${profile.family} · editable copy of your reviewed template`,
-    taxon: `${profile.family} · Eristalis-derived starting scaffold`,
-    note: `Your hand-reviewed Eristalis topology is used as a neutral editable starting point. Refit and relabel it against a representative ${profile.family} specimen before treating it as family geometry.`,
+    id: "family-syrphidae-eristalis",
+    name: "Eristalis · user-reviewed",
+    taxon: "Syrphidae · Eristalis",
+    note: "The original hand-reviewed 47-node EntoWing Eristalis geometry. This remains the high-confidence anchor, not a universal Syrphidae wing.",
     referenceSize: { width: reviewedEristalisPayload.sourceImage.width, height: reviewedEristalisPayload.sourceImage.height },
     nodes,
     paths,
-    mappingStatus: profile.id === "syrphidae" ? "reviewed" : "scaffold",
+    morphotypeId: "eristalis",
+    morphotypeLabel: "Eristalis · deep R4+5 loop",
+    geometryStatus: "user-reviewed",
+    sourceLabel: "EntoWing reviewed Eristalis + van Steenis et al. 2023",
+    sourceUrl: SYRPHID_GLOSSARY,
+    recognitionHints: ["vena spuria present", "R4+5 strongly looped into cell r4+5", "closed/petiolate apical radial cell"],
+  };
+}
+
+function bombyliidBaseNodes(): Record<string, FamilyWingPoint> {
+  return {
+    cBase:{x:14,y:62}, cMid:{x:102,y:50}, scEnd:{x:350,y:42}, r1End:{x:440,y:45}, r23End:{x:500,y:58}, r4End:{x:538,y:80},
+    scStart:{x:18,y:74}, scMid:{x:126,y:62},
+    rBase:{x:22,y:82}, r1Fork:{x:158,y:70}, rsFork:{x:278,y:78}, r45Fork:{x:346,y:86},
+    r1Mid:{x:345,y:49}, r23Mid:{x:405,y:59}, r4Mid:{x:445,y:69}, rmR:{x:360,y:96}, r5Mid:{x:420,y:108}, r5End:{x:532,y:111},
+    mBase:{x:88,y:96}, mStem:{x:185,y:106}, mFork:{x:275,y:120}, rmM:{x:360,y:121}, m1Mid:{x:415,y:126}, m1End:{x:520,y:129},
+    mmM2:{x:355,y:144}, m2Mid:{x:410,y:146}, m2End:{x:490,y:148},
+    mcuM34:{x:300,y:150}, mmM34:{x:340,y:162}, m34Mid:{x:375,y:174}, m34End:{x:425,y:185},
+    cuBase:{x:28,y:96}, cuMid1:{x:108,y:116}, cuMid2:{x:205,y:145}, mcuCu:{x:285,y:163}, cuEnd:{x:365,y:205},
+    aBase:{x:70,y:116}, aMid:{x:145,y:158}, aMid2:{x:220,y:195}, aEnd:{x:300,y:219},
+    hC:{x:102,y:50}, hR:{x:110,y:72},
+  };
+}
+
+function bombyliidMorphotype(kind: "bombylius" | "anthrax" | "usiinae"): FamilyWingTemplate {
+  const nodes = bombyliidBaseNodes();
+  const paths: FamilyWingPath[] = [
+    { veinId:"C", nodeIds:["cBase","cMid","scEnd","r1End","r23End","r4End"], color:"#525d57" },
+    { veinId:"Sc", nodeIds:["scStart","scMid","scEnd"], color:"#4f9ca4" },
+    { veinId:"Rs", nodeIds:["rBase","r1Fork","rsFork"], color:"#c85d48" },
+    { veinId:"R1", nodeIds:["r1Fork","r1Mid","r1End"], color:"#c85d48" },
+    { veinId:"R2+3", nodeIds:["rsFork","r23Mid","r23End"], color:"#c85d48" },
+    { veinId:"R4+5 stem", nodeIds:["rsFork","r45Fork"], color:"#c85d48" },
+    { veinId:"R4", nodeIds:["r45Fork","r4Mid","r4End"], color:"#c85d48" },
+    { veinId:"r-m", nodeIds:["rmR","rmM"], color:"#d97941" },
+    { veinId:"M3+4", nodeIds:["mFork","mcuM34","mmM34","m34Mid","m34End"], color:"#7a6bb0" },
+    { veinId:"CuA", nodeIds:["cuBase","cuMid1","cuMid2","mcuCu","cuEnd"], color:"#63875f" },
+    { veinId:"A1", nodeIds:["aBase","aMid","aMid2","aEnd"], color:"#5c7fa0" },
+    { veinId:"h", nodeIds:["hR","hC"], color:"#b76f4e" },
+    { veinId:"m-cu", nodeIds:["mcuM34","mcuCu"], color:"#b76f4e" },
+  ];
+
+  let sourceUrl = BOMBYLIUS_WING_SOURCE;
+  let label = "Bombylius · R5+M1 common stem";
+  let note = "Literature-derived independent redraw of the Bombylius-type state: R4 and R5 are separate radial branches; distal R5 and M1 converge into a common stem; Media has M1, M2 and M3+4; CuA and A1 remain free.";
+  let hints = ["R4 and R5 are separate", "R5 and M1 converge distally", "M1, M2 and M3+4 retained", "CuA and A1 end separately", "supplementary radial crossveins may occur"];
+
+  // R5 and M1 are separate clickable structures before any distal convergence.
+  if (kind === "bombylius") {
+    nodes["bm-common-join"]={x:480,y:119}; nodes["bm-common-end"]={x:536,y:105}; nodes.r5End={...nodes["bm-common-join"]};
+    paths.push(
+      { veinId:"R5", nodeIds:["r45Fork","rmR","r5Mid","bm-common-join"], color:"#c85d48" },
+      { veinId:"M1", nodeIds:["mBase","mStem","mFork","rmM","m1Mid","bm-common-join"], color:"#7a6bb0" },
+      { veinId:"R5+M1", nodeIds:["bm-common-join","bm-common-end"], color:"#9c665c" },
+      { veinId:"M2", nodeIds:["mFork","mmM2","m2Mid","m2End"], color:"#7a6bb0" },
+      { veinId:"m-m", nodeIds:["mmM2","mmM34"], color:"#d97941" },
+    );
+  } else {
+    paths.push(
+      { veinId:"R5", nodeIds:["r45Fork","rmR","r5Mid","r5End"], color:"#c85d48" },
+      { veinId:"M1", nodeIds:["mBase","mStem","mFork","rmM","m1Mid","m1End"], color:"#7a6bb0" },
+    );
+  }
+
+  if (kind === "anthrax") {
+    sourceUrl = ANTHRAX_WING_SOURCE;
+    label = "Anthrax · R5 and M1 free";
+    note = "Literature-derived independent redraw of the Anthrax-type state: R4 and R5 are separate; R5 and M1 reach the distal margin independently; Media retains M1, M2 and M3+4; CuA and A1 remain free.";
+    hints = ["R4 and R5 are separate", "R5 and M1 end free", "M1, M2 and M3+4 retained", "CuA and A1 separate", "supplementary radial crossveins may occur"];
+    paths.push(
+      { veinId:"M2", nodeIds:["mFork","mmM2","m2Mid","m2End"], color:"#7a6bb0" },
+      { veinId:"m-m", nodeIds:["mmM2","mmM34"], color:"#d97941" },
+    );
+  }
+
+  if (kind === "usiinae") {
+    sourceUrl = USIINAE_WING_SOURCE;
+    label = "Usiinae · two medial branches + CuA/A1 stem";
+    note = "Literature-derived independent redraw of the Usiinae-type state: R4 and R5 are separate; R5 and M1 end free; Media is reduced to M1 and M3+4; CuA and A1 converge into a common terminal stem.";
+    hints = ["R4 and R5 are separate", "R5 and M1 end free", "M2 absent in this morphotype", "CuA and A1 converge distally"];
+    nodes["usi-cu-join"]={x:292,y:191}; nodes["usi-a-join"]={x:292,y:191}; nodes["usi-common-end"]={x:360,y:205};
+    const cu=paths.find(p=>p.veinId==="CuA"); const a=paths.find(p=>p.veinId==="A1");
+    if (cu) cu.nodeIds=["cuBase","cuMid1","cuMid2","mcuCu","usi-cu-join"];
+    if (a) a.nodeIds=["aBase","aMid","aMid2","usi-a-join"];
+    paths.push(
+      { veinId:"CuA+A1", nodeIds:["usi-cu-join","usi-common-end"], color:"#66817c" },
+      { veinId:"m-m", nodeIds:["m1Mid","mmM34"], color:"#d97941" },
+    );
+  }
+
+  return {
+    id:`family-bombyliidae-${kind}`,
+    name:`Bombyliidae · ${label}`,
+    taxon:`Bombyliidae · ${kind === "usiinae" ? "Usiinae" : kind === "anthrax" ? "Anthrax" : "Bombylius"}-type`,
+    note,
+    referenceSize:{width:560,height:246}, nodes, paths,
+    morphotypeId:kind, morphotypeLabel:label, geometryStatus:"literature-derived",
+    sourceLabel:"Giancarlo Dessì · Wikimedia Commons wing-venation diagram (topology independently redrawn)", sourceUrl,
+    recognitionHints:hints,
+  };
+}
+
+function syrphidMorphotype(kind: "eristalis" | "ceriana" | "straight-r45"): FamilyWingTemplate {
+  if (kind === "eristalis") return eristalisBase();
+  const base=eristalisBase();
+  const nodes=Object.fromEntries(Object.entries(base.nodes).map(([id,p])=>[id,{...p}])) as Record<string,FamilyWingPoint>;
+  const paths=base.paths.map(p=>({...p,nodeIds:[...p.nodeIds]}));
+  if (kind === "ceriana") {
+    // Moderate the Eristalis loop and add the characteristic R4+5 appendicular vein.
+    nodes["edit-1786216928148-w6a3x"]={x:382,y:90};
+    nodes.r45Mid={x:420,y:99};
+    nodes["edit-1786216927165-u37e3"]={x:462,y:82};
+    nodes["syr-app-base"]={x:420,y:99}; nodes["syr-app-end"]={x:418,y:126};
+    paths.push({veinId:"R4+5 app.",nodeIds:["syr-app-base","syr-app-end"],color:"#c85d48"});
+    return {...base,id:"family-syrphidae-ceriana",name:"Syrphidae · Ceriana-like",taxon:"Syrphidae · Ceriana-like morphotype",
+      note:"Literature-derived Ceriana-like redraw. The R4+5 loop is retained but differs from Eristalis and may bear an appendicular vein into cell r4+5; r-m is relatively distal.",
+      nodes,paths,morphotypeId:"ceriana",morphotypeLabel:"Ceriana · R4+5 appendix",geometryStatus:"literature-derived",
+      sourceLabel:"Taxo-Fly Ceriana account (2024) + Commons venation diagram",sourceUrl:CERIANA_ACCOUNT_SOURCE,
+      recognitionHints:["vena spuria present","R4+5 loop with possible appendix","r-m relatively distal","do not require every distal vein to touch the margin exactly"]};
+  }
+  // A common Syrphinae teaching state: R4+5 is much straighter than in Eristalis.
+  nodes["edit-1786216928148-w6a3x"]={x:386,y:91}; nodes.r45Mid={x:430,y:91}; nodes["edit-1786216927165-u37e3"]={x:472,y:84};
+  nodes.m1End={x:522,y:72}; nodes["edit-1786216913013-j4pdx"]={x:500,y:88};
+  return {...base,id:"family-syrphidae-straight-r45",name:"Syrphidae · straight-R4+5 type",taxon:"Syrphidae · Syrphinae-like working morphotype",
+    note:"A literature-derived Syrphinae-like alternative for specimens where R4+5 is nearly straight or only gently curved. It prevents the Eristalis deep loop from dominating every Syrphidae comparison.",
+    nodes,paths,morphotypeId:"straight-r45",morphotypeLabel:"Syrphinae-like · straighter R4+5",geometryStatus:"literature-derived",
+    sourceLabel:"Madeira Syrphidae pictorial key + van Steenis et al. 2023",sourceUrl:SYRPHID_KEY_SOURCE,
+    recognitionHints:["vena spuria usually present","R4+5 straight to gently curved","no Eristalis-style deep loop required","distal endpoints use margin tolerance"]};
+}
+
+export const familyMorphotypes: Record<string, FamilyWingTemplate[]> = {
+  bombyliidae:[bombyliidMorphotype("bombylius"),bombyliidMorphotype("anthrax"),bombyliidMorphotype("usiinae")],
+  syrphidae:[syrphidMorphotype("eristalis"),syrphidMorphotype("ceriana"),syrphidMorphotype("straight-r45")],
+};
+
+function buildWing(profile: FamilyProfile): FamilyWingTemplate {
+  const special=familyMorphotypes[profile.id]?.[0];
+  if (special) return {
+    ...special,
+    nodes:Object.fromEntries(Object.entries(special.nodes).map(([id,p])=>[id,{...p}])),
+    paths:special.paths.map(path=>({...path,nodeIds:[...path.nodeIds]})),
+  };
+  const generic=eristalisBase();
+  return {
+    ...generic,
+    id:`family-${profile.id}`,
+    name:`${profile.family} · editable Eristalis-derived scaffold`,
+    taxon:`${profile.family} · starting scaffold`,
+    note:`Your hand-reviewed Eristalis topology remains an editable starting scaffold here. Refit it to a representative ${profile.family} specimen before treating it as family geometry.`,
+    morphotypeId:"scaffold", morphotypeLabel:"Eristalis-derived scaffold", geometryStatus:"scaffold",
+    sourceLabel:profile.sourceLabel, sourceUrl:profile.sourceUrl,
+    recognitionHints:["editable scaffold only — not a family diagnosis"],
   };
 }
 
@@ -746,7 +784,6 @@ function cloneWings(wings: Record<string, FamilyWingTemplate>) {
     ...wing,
     nodes: Object.fromEntries(Object.entries(wing.nodes).map(([nodeId, point]) => [nodeId, { ...point }])),
     paths: wing.paths.map((path) => ({ ...path, nodeIds: [...path.nodeIds] })),
-    outlinePoints: wing.outlinePoints?.map((point) => ({ ...point })),
   }])) as Record<string, FamilyWingTemplate>;
 }
 
@@ -799,20 +836,18 @@ const WingGlyph = memo(function WingGlyph({ wing, accent, editable = false, anim
   const chooseVein = (veinId: string) => onVeinSelect?.(veinId);
 
   return <svg className={`family-wing-glyph ${editable ? "editable" : ""} ${animate ? "morph-enabled" : ""} ${onVeinSelect ? "vein-selectable" : ""}`} viewBox="0 0 560 246" role={onVeinSelect ? "group" : "img"} aria-label={`${wing.name} vector wing`} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}>
-    <path className="wing-outline" d={wing.outlinePoints?.length ? `${wingPath(wing.outlinePoints)} Z` : "M 12 64 C 92 53 218 34 351 23 C 432 16 503 26 542 49 C 556 58 554 74 541 94 C 514 136 456 172 386 199 C 311 228 224 231 149 205 C 89 184 44 135 18 97 C 8 82 6 70 12 64 Z"} />
+    <path className="wing-outline" d="M 12 64 C 92 53 218 34 351 23 C 432 16 503 26 542 49 C 556 58 554 74 541 94 C 514 136 456 172 386 199 C 311 228 224 231 149 205 C 89 184 44 135 18 97 C 8 82 6 70 12 64 Z" />
     {wing.paths.map((path) => {
       const points = path.nodeIds.map((id) => visibleNodes[id]).filter(Boolean);
       const selected = selectedVeinId === path.veinId;
-      const displayLabel = path.displayLabel ?? path.veinId;
-      const labelPlacement = wingLabelPlacements[displayLabel];
-      const labelAnchor = labelPlacement ? visibleNodes[labelPlacement.nodeId] : undefined;
-      const fallbackLabelPoint = points[Math.max(0, Math.min(points.length - 1, Math.floor(points.length * .68)))];
+      const labelPlacement = wingLabelPlacements[path.veinId];
+      const labelAnchor = labelPlacement ? (visibleNodes[labelPlacement.nodeId] ?? points[Math.floor(points.length * .62)]) : undefined;
       return <g
         key={path.veinId}
         className={`wing-vein-group ${selected ? "selected" : ""} ${onVeinSelect ? "selectable" : ""}`}
         role={onVeinSelect ? "button" : undefined}
         tabIndex={onVeinSelect ? 0 : undefined}
-        aria-label={onVeinSelect ? `Select ${veinMeta(path.displayLabel ?? path.veinId, path.color).fullName}` : undefined}
+        aria-label={onVeinSelect ? `Select ${veinMeta(path.veinId, path.color).fullName}` : undefined}
         aria-pressed={onVeinSelect ? selected : undefined}
         onClick={() => chooseVein(path.veinId)}
         onKeyDown={(event) => {
@@ -826,10 +861,9 @@ const WingGlyph = memo(function WingGlyph({ wing, accent, editable = false, anim
         <path d={wingPath(points)} className="wing-vein-line" style={{ stroke: path.color ?? accent }} vectorEffect="non-scaling-stroke" />
         {showLabels && labelPlacement && labelAnchor && <g className={`wing-label-callout ${selected ? "selected" : ""}`}>
           <line x1={labelAnchor.x} y1={labelAnchor.y} x2={labelPlacement.x} y2={labelPlacement.y - 4} vectorEffect="non-scaling-stroke" />
-          <text x={labelPlacement.x} y={labelPlacement.y} textAnchor={labelPlacement.anchor ?? "middle"}>{displayLabel}</text>
+          <text x={labelPlacement.x} y={labelPlacement.y} textAnchor={labelPlacement.anchor ?? "middle"}>{path.veinId}</text>
         </g>}
-        {showLabels && !labelPlacement && fallbackLabelPoint && <text x={fallbackLabelPoint.x + 4} y={fallbackLabelPoint.y - 5} className={`wing-vein-label source-label ${selected ? "selected" : ""}`}>{displayLabel}</text>}
-        {editable && !showLabels && points.length > 1 && <text x={points[Math.floor(points.length * .62)].x + 4} y={points[Math.floor(points.length * .62)].y - 5} className="wing-vein-label">{displayLabel}</text>}
+        {editable && !showLabels && points.length > 1 && <text x={points[Math.floor(points.length * .62)].x + 4} y={points[Math.floor(points.length * .62)].y - 5} className="wing-vein-label">{path.veinId}</text>}
       </g>;
     })}
     {editable && Object.entries(visibleNodes).map(([nodeId, point]) => <circle key={nodeId} cx={point.x} cy={point.y} r={draggingNode === nodeId ? 7 : 5} className={`family-wing-point ${draggingNode === nodeId ? "dragging" : ""}`} onPointerDown={(event) => onNodeDown?.(nodeId, event)} />)}
@@ -972,34 +1006,11 @@ function safeProject(payload: unknown) {
   return { tree, wings, positions: safeBoardPositions(candidate.positions), boardView: safeBoardView(candidate.boardView) };
 }
 
-function mergeWithCompleteCatalog(savedTree: TreeNode[]) {
-  const savedById = new Map(savedTree.map((node) => [node.id, node]));
-  const builtInIds = new Set(initialTree.map((node) => node.id));
-  return [
-    ...initialTree.map((node) => savedById.has(node.id) ? { ...node, ...savedById.get(node.id)! } : { ...node }),
-    ...savedTree.filter((node) => node.userAdded || !builtInIds.has(node.id)).map((node) => ({ ...node })),
-  ];
-}
-
-function isUntouchedScaffold(wing: FamilyWingTemplate, profileId: string) {
-  if (wing.mappingStatus === "scaffold") return true;
-  if (wing.mappingStatus) return false;
-  const original = initialWings[profileId];
-  if (!original || wing.paths.length !== original.paths.length) return false;
-  const nodeIds = Object.keys(original.nodes);
-  if (Object.keys(wing.nodes).length !== nodeIds.length) return false;
-  return nodeIds.every((nodeId) => {
-    const current = wing.nodes[nodeId];
-    const source = original.nodes[nodeId];
-    return current && Math.abs(current.x - source.x) < .01 && Math.abs(current.y - source.y) < .01;
-  });
-}
-
-export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: string, wing: FamilyWingTemplate, reference?: FamilyWingReference) => void }) {
+export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: string, wing: FamilyWingTemplate) => void }) {
   const [tree, setTree] = useState<TreeNode[]>(() => cloneTree(initialTree));
   const [wings, setWings] = useState<Record<string, FamilyWingTemplate>>(() => cloneWings(initialWings));
   const [positions, setPositions] = useState<Record<string, BoardPoint>>(() => autoLayout(initialTree));
-  const [boardView, setBoardView] = useState<BoardView>({ x: -520, y: -5100, scale: .58 });
+  const [boardView, setBoardView] = useState<BoardView>({ x: -260, y: -2050, scale: .64 });
   const [selectedNodeId, setSelectedNodeId] = useState("syrphidae-node");
   const [editTree, setEditTree] = useState(false);
   const [linkMode, setLinkMode] = useState(false);
@@ -1007,8 +1018,6 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
   const [selectedVeinId, setSelectedVeinId] = useState("C");
   const [draggingWingNode, setDraggingWingNode] = useState<string | null>(null);
   const [storageReady, setStorageReady] = useState(false);
-  const [conversionState, setConversionState] = useState<Record<string, "mapping" | "ready" | "failed">>({});
-  const [conversionError, setConversionError] = useState<Record<string, string>>({});
   const [status, setStatus] = useState("Flowchart loaded · drag the board, then edit cards and connections.");
   const importRef = useRef<HTMLInputElement>(null);
   const wingSvgRef = useRef<SVGSVGElement | null>(null);
@@ -1017,20 +1026,25 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
 
   useEffect(() => {
     try {
-      const saved = window.localStorage.getItem("entowing-phylo-project-v6")
-        ?? window.localStorage.getItem("entowing-phylo-project-v5")
-        ?? window.localStorage.getItem("entowing-phylo-project-v4")
-        ?? window.localStorage.getItem("entowing-phylo-project-v3")
-        ?? window.localStorage.getItem("entowing-phylo-project-v2");
+      const saved = window.localStorage.getItem("entowing-phylo-project-v6");
       if (saved) {
         const parsed = safeProject(JSON.parse(saved));
         if (parsed) {
-          const mergedTree = mergeWithCompleteCatalog(parsed.tree);
-          setTree(mergedTree);
+          setTree(parsed.tree);
           setWings({ ...cloneWings(initialWings), ...parsed.wings });
-          setPositions({ ...autoLayout(mergedTree), ...parsed.positions });
+          setPositions({ ...autoLayout(parsed.tree), ...parsed.positions });
           if (parsed.boardView) setBoardView(parsed.boardView);
-          setStatus(`Your edits were restored and merged with the complete ${DIPTERA_FAMILY_COUNT}-entry Diptera catalogue.`);
+          setStatus("Your editable flowchart, connections and family-wing edits were restored.");
+        }
+      } else {
+        const legacy = window.localStorage.getItem("entowing-phylo-project-v5") ?? window.localStorage.getItem("entowing-phylo-project-v4") ?? window.localStorage.getItem("entowing-phylo-project-v3") ?? window.localStorage.getItem("entowing-phylo-project-v2");
+        const parsed = legacy ? safeProject(JSON.parse(legacy)) : null;
+        if (parsed) {
+          setTree(parsed.tree);
+          setWings(cloneWings(initialWings));
+          setPositions({ ...autoLayout(parsed.tree), ...parsed.positions });
+          if (parsed.boardView) setBoardView(parsed.boardView);
+          setStatus("Tree and positions restored · wing geometry reset to the v0.35 morphotype/scaffold set so legacy Eristalis copies cannot overwrite the new family states.");
         }
       }
     } catch {
@@ -1044,7 +1058,7 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
     if (!storageReady) return;
     const saveTimer = window.setTimeout(() => {
       try {
-        window.localStorage.setItem("entowing-phylo-project-v6", JSON.stringify({ schema: "entowing-phylogeny/6.0", catalogue: `Systema Dipterorum · ${DIPTERA_FAMILY_COUNT} extant family-level entries`, template: "Eristalis-reference · 47 nodes · 13 structures", tree, wings, positions, boardView }));
+        window.localStorage.setItem("entowing-phylo-project-v6", JSON.stringify({ schema: "entowing-phylogeny/6.0", template: "family-morphotypes · Syrphidae/Bombyliidae · editable vein topology", tree, wings, positions, boardView }));
       } catch {
         // The atlas remains usable even when private storage is unavailable.
       }
@@ -1072,38 +1086,10 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
       }
     : null;
   const selectedWing = selectedProfile ? wings[selectedProfile.id] : null;
-  const selectedReference = selectedProfile ? familyWingReferences[selectedProfile.id] : undefined;
+  const selectedMorphotypeOptions = selectedProfile ? familyMorphotypes[selectedProfile.id] ?? [] : [];
   const sortedProfiles = useMemo(() => [...initialProfiles].sort((a, b) => a.family.localeCompare(b.family)), []);
   const selectedVeinPath = selectedWing?.paths.find((path) => path.veinId === selectedVeinId) ?? selectedWing?.paths[0];
-  const selectedVein = selectedVeinPath ? veinMeta(selectedVeinPath.displayLabel ?? selectedVeinPath.veinId, selectedVeinPath.color) : null;
-
-  async function rebuildReferenceDraft(familyId: string, reference: FamilyWingReference) {
-    setConversionState((current) => ({ ...current, [familyId]: "mapping" }));
-    setConversionError((current) => {
-      const next = { ...current };
-      delete next[familyId];
-      return next;
-    });
-    setStatus(`${reference.family}: separating venation, labels and leader lines from the published SVG…`);
-    try {
-      const draft = await mapReferenceSvgToTemplate(reference);
-      setWings((current) => ({ ...current, [familyId]: draft }));
-      setSelectedVeinId(draft.paths.find((path) => path.confidence !== "unassigned")?.veinId ?? draft.paths[0]?.veinId ?? "C");
-      setConversionState((current) => ({ ...current, [familyId]: "ready" }));
-      setStatus(`${reference.family}: machine-mapped ${draft.mappingStats?.sourcePathCount ?? draft.paths.length} vector paths; ${draft.mappingStats?.namedPathCount ?? 0} received label suggestions. Please verify them.`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "the SVG could not be reconstructed";
-      setConversionState((current) => ({ ...current, [familyId]: "failed" }));
-      setConversionError((current) => ({ ...current, [familyId]: message }));
-      setStatus(`${reference.family}: ${message}`);
-    }
-  }
-
-  useEffect(() => {
-    if (!storageReady || !selectedProfile || !selectedReference || !selectedWing || selectedProfile.id === "syrphidae") return;
-    if (conversionState[selectedProfile.id] || !isUntouchedScaffold(selectedWing, selectedProfile.id)) return;
-    void rebuildReferenceDraft(selectedProfile.id, selectedReference);
-  }, [conversionState, selectedProfile, selectedReference, selectedWing, storageReady]);
+  const selectedVein = selectedVeinPath ? veinMeta(selectedVeinPath.veinId, selectedVeinPath.color) : null;
 
   useEffect(() => {
     if (!selectedWing?.paths.length || selectedWing.paths.some((path) => path.veinId === selectedVeinId)) return;
@@ -1301,14 +1287,14 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
     setTree(cloneTree(initialTree));
     setWings(cloneWings(initialWings));
     setPositions(autoLayout(initialTree));
-    setBoardView({ x: -520, y: -5100, scale: .58 });
+    setBoardView({ x: -260, y: -2050, scale: .64 });
     setSelectedNodeId("syrphidae-node");
     setWingEditing(false);
-    setStatus(`Research tree reset; all ${DIPTERA_FAMILY_COUNT} family-level entries are present again.`);
+    setStatus("Research tree reset; Syrphidae and Bombyliidae restored to their default morphotypes, while the remaining families keep the editable Eristalis-derived scaffold.");
   }
 
   function exportProject() {
-    const blob = new Blob([JSON.stringify({ schema: "entowing-phylogeny/6.0", catalogue: `Systema Dipterorum · ${DIPTERA_FAMILY_COUNT} extant family-level entries`, exportedAt: new Date().toISOString(), tree, wings, positions, boardView }, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify({ schema: "entowing-phylogeny/6.0", exportedAt: new Date().toISOString(), tree, wings, positions, boardView }, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -1326,13 +1312,12 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
       try {
         const parsed = safeProject(JSON.parse(String(reader.result)));
         if (!parsed) throw new Error("Not an EntoWing phylogeny project.");
-        const mergedTree = mergeWithCompleteCatalog(parsed.tree);
-        setTree(mergedTree);
+        setTree(parsed.tree);
         setWings({ ...cloneWings(initialWings), ...parsed.wings });
-        setPositions({ ...autoLayout(mergedTree), ...parsed.positions });
+        setPositions({ ...autoLayout(parsed.tree), ...parsed.positions });
         if (parsed.boardView) setBoardView(parsed.boardView);
-        setSelectedNodeId(mergedTree[0].id);
-        setStatus(`${file.name} imported and merged with the complete family catalogue.`);
+        setSelectedNodeId(parsed.tree[0].id);
+        setStatus(`${file.name} imported.`);
       } catch (error) {
         setStatus(error instanceof Error ? error.message : "Could not import this project.");
       }
@@ -1362,36 +1347,44 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
 
   function resetSelectedWing() {
     if (!selectedProfile) return;
-    if (selectedReference && selectedProfile.id !== "syrphidae") {
-      void rebuildReferenceDraft(selectedProfile.id, selectedReference);
-      return;
-    }
-    setWings((current) => ({ ...current, [selectedProfile.id]: buildWing(selectedProfile) }));
-    setStatus(`${selectedProfile.family} working morphotype reset.`);
+    const currentMorphotype = selectedMorphotypeOptions.find((item) => item.morphotypeId === selectedWing?.morphotypeId);
+    const resetWing = currentMorphotype ?? buildWing(selectedProfile);
+    setWings((current) => ({ ...current, [selectedProfile.id]: cloneWings({ wing: resetWing }).wing }));
+    setStatus(`${selectedProfile.family} · ${resetWing.morphotypeLabel ?? "working morphotype"} reset.`);
+  }
+
+  function chooseMorphotype(morphotypeId: string) {
+    if (!selectedProfile) return;
+    const morphotype = selectedMorphotypeOptions.find((item) => item.morphotypeId === morphotypeId);
+    if (!morphotype) return;
+    setWings((current) => ({ ...current, [selectedProfile.id]: cloneWings({ wing: morphotype }).wing }));
+    setSelectedVeinId(morphotype.paths[0]?.veinId ?? "C");
+    setWingEditing(false);
+    setStatus(`${selectedProfile.family}: loaded ${morphotype.morphotypeLabel}. Individual veins remain editable.`);
   }
 
   return <>
     <section className="phylo-hero">
       <div className="hero-wing-watermark" aria-hidden="true"><WingGlyph wing={initialWings.syrphidae} accent="#ff5fa2" /></div>
-      <div className="hero-field-notes" aria-hidden="true"><span>DIPTERA / WING / PHYLOGENY</span><span>{DIPTERA_FAMILY_COUNT} ENTRIES · {atlasReferenceCount} SVG REFERENCES</span><span>ZÜRICH · 2026</span></div>
+      <div className="hero-field-notes" aria-hidden="true"><span>DIPTERA / WING / PHYLOGENY</span><span>50 FAMILY RESEARCH ATLAS</span><span>ZÜRICH · 2026</span></div>
       <div>
-        <p className="eyebrow">COMPARATIVE WING MORPHOLOGY · {DIPTERA_FAMILY_COUNT} EXTANT FAMILY-LEVEL ENTRIES</p>
+        <p className="eyebrow">COMPARATIVE WING MORPHOLOGY · 50 FAMILIES</p>
         <h1>Diptera wing evolution, mapped.</h1>
       </div>
       <div className="phylo-hero-copy">
-        <p>A complete working catalogue for comparing venation across living Diptera. Detailed phylogenetic branches retain their evidence, while unresolved higher relationships and the Iteaphila group remain visibly provisional.</p>
+        <p>A research-oriented atlas for comparing venation across Diptera. Branches carry <em>inferred character changes</em>, never automatic claims of unique innovation; evidence strength, working hypotheses and editable family templates remain explicit.</p>
         <div className="phylo-status"><i />{status}</div>
       </div>
     </section>
 
     <section className="wing-workflow" aria-label="Recommended wing review workflow">
-      <strong>{DIPTERA_FAMILY_COUNT} LIVE ENTRIES · {atlasReferenceCount} PUBLISHED SVG REFERENCES · {atlasScaffoldCount} REVIEW SCAFFOLDS</strong>
-      <div><span><b>1</b> licensed family SVG</span><i>→</i><span><b>2</b> open in Mapper</span><i>→</i><span><b>3</b> fit shared nodes</span><i>→</i><span><b>4</b> hand-check labels</span><i>→</i><span><b>5</b> expert review</span></div>
-      <small>The published family SVG is now the tracing layer where one is available. Your interactive EntoWing graph stays separate until every vein identity and homology has been checked.</small>
+      <strong>REVIEWED ANCHOR · FAMILY MORPHOTYPES · EDITABLE VEINS</strong>
+      <div><span><b>1</b> literature template</span><i>→</i><span><b>2</b> representative photo</span><i>→</i><span><b>3</b> fit shared nodes</span><i>→</i><span><b>4</b> hand-correct veins</span><i>→</i><span><b>5</b> expert review</span></div>
+      <small>Syrphidae and Bombyliidae now use multiple literature-grounded morphotypes instead of one universal Eristalis copy. Every vein remains independently clickable/editable; other families keep the old scaffold until their own morphology pass.</small>
     </section>
 
     <section className="phylo-toolbar" aria-label="Phylogeny project tools">
-      <label className="family-jump"><span>JUMP TO FAMILY</span><select value={selectedNode?.familyId && initialProfiles.some((profile) => profile.id === selectedNode.familyId) ? selectedNode.familyId : ""} onChange={(event) => { const node = tree.find((item) => item.familyId === event.target.value); if (node) { setSelectedNodeId(node.id); setWingEditing(false); window.requestAnimationFrame(() => centerBoardOn(node.id, .78)); } }}><option value="">Choose one of {DIPTERA_FAMILY_COUNT}…</option>{sortedProfiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.family} · {profile.commonName}</option>)}</select></label>
+      <label className="family-jump"><span>JUMP TO FAMILY</span><select value={selectedNode?.familyId && initialProfiles.some((profile) => profile.id === selectedNode.familyId) ? selectedNode.familyId : ""} onChange={(event) => { const node = tree.find((item) => item.familyId === event.target.value); if (node) { setSelectedNodeId(node.id); setWingEditing(false); window.requestAnimationFrame(() => centerBoardOn(node.id, .78)); } }}><option value="">Choose one of 50…</option>{sortedProfiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.family} · {profile.commonName}</option>)}</select></label>
       <div className="phylo-toolbar-group view-controls"><span>BOARD</span><button onClick={() => zoomBoard(.82)}>−</button><button className="zoom-readout">{Math.round(boardView.scale * 100)}%</button><button onClick={() => zoomBoard(1.22)}>＋</button><button onClick={() => centerBoardOn()}>◎ Selected</button><button onClick={fitBoard}>Fit all</button></div>
       <div className="phylo-toolbar-group"><span>STRUCTURE</span><button className={editTree ? "active" : ""} onClick={() => { setEditTree((value) => !value); setLinkMode(false); }}>✎ Arrange</button><button className={linkMode ? "active connect-mode" : ""} disabled={!editTree || selectedNode?.id === "diptera"} onClick={() => setLinkMode((value) => !value)}>↗ Connect parent</button><button onClick={() => addNode("clade")}>＋ Clade</button><button onClick={() => addNode("family")}>＋ Family</button><button onClick={autoArrangeBoard}>⌁ Auto layout</button></div>
       <div className="phylo-toolbar-group project-actions"><span>PROJECT</span><button onClick={exportProject}>↓ Export</button><button onClick={() => importRef.current?.click()}>↑ Import</button><button onClick={resetProject}>↺ Reset</button><input ref={importRef} type="file" accept="application/json,.json" onChange={importProject} hidden /></div>
@@ -1400,7 +1393,7 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
     <section className="phylo-workbench">
       <div className="tree-panel">
         <div className="tree-map-heading">
-          <span>INFINITE PHYLOGENY BOARD · {DIPTERA_FAMILY_COUNT} FAMILY-LEVEL WING RECORDS</span>
+          <span>INFINITE PHYLOGENY BOARD · 50 FAMILY WINGS</span>
           <strong>Drag the sky. Rebuild the tree.</strong>
           <small>Drag empty space to pan · trackpad to move · pinch or ⌘-scroll to zoom · select a family to open its wing.</small>
         </div>
@@ -1448,7 +1441,6 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
               const position = positions[node.id] ?? { x: 0, y: 0 };
               const profile = node.familyId ? initialProfiles.find((item) => item.id === node.familyId) : null;
               const wing = node.familyId ? wings[node.familyId] : null;
-              const reference = node.familyId ? familyWingReferences[node.familyId] : undefined;
               const accent = profile ? constellationAccent(profile.id) : node.rank === "root" ? "#ff5fa2" : "#62d9ff";
               const childCount = tree.filter((item) => item.parentId === node.id).length;
               return <button
@@ -1459,7 +1451,7 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
                 onPointerDown={(event) => beginNodeGesture(node, event)}
               >
                 <span className="flow-node-port input" aria-hidden="true" />
-                <span className={`flow-node-icon ${reference ? "has-reference" : ""}`} aria-hidden="true">{reference ? <img src={reference.assetPath} alt="" loading="lazy" crossOrigin="anonymous" referrerPolicy="no-referrer" /> : wing ? <WingGlyph wing={wing} accent={accent} /> : <i>{node.rank === "root" ? "D" : "✦"}</i>}</span>
+                <span className="flow-node-icon" aria-hidden="true">{wing ? <WingGlyph wing={wing} accent={accent} /> : <i>{node.rank === "root" ? "D" : "✦"}</i>}</span>
                 <span className="flow-node-copy"><em>{node.rank}{childCount ? ` · ${childCount} branches` : ""}</em><strong>{node.label}</strong><small>{profile?.commonName ?? node.changeTitle}</small></span>
                 <span className={`flow-node-confidence ${node.confidence}`}>{node.confidence}</span>
                 <span className="flow-node-port output" aria-hidden="true" />
@@ -1502,28 +1494,13 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
         </div>}
 
         {selectedProfile && selectedWing && <div className="family-study-card">
-          <div className="family-study-title"><span>FAMILY REFERENCE + INTERACTIVE VENATION</span><strong>{selectedProfile.family} · reference and editable EntoWing layer</strong></div>
-          {selectedReference ? <div className="published-wing-reference">
-            <div className="published-wing-reference-head"><span>PUBLISHED SVG REFERENCE</span><b>{selectedReference.title.replace(/\.svg$/i, "")}</b></div>
-            <div className="published-wing-reference-plate"><img src={selectedReference.assetPath} alt={`${selectedProfile.family} wing venation reference`} loading="lazy" crossOrigin="anonymous" referrerPolicy="no-referrer" /></div>
-            <div className="published-wing-reference-meta"><span>{selectedReference.author} · {selectedReference.license}</span><a href={selectedReference.sourcePage} target="_blank" rel="noreferrer">Source & licence ↗</a></div>
-            <div className="published-wing-reference-actions">
-              <button type="button" disabled={conversionState[selectedProfile.id] === "mapping" || selectedProfile.id === "syrphidae"} onClick={() => void rebuildReferenceDraft(selectedProfile.id, selectedReference)}>{selectedProfile.id === "syrphidae" ? "✓ User-reviewed Eristalis geometry" : conversionState[selectedProfile.id] === "mapping" ? "Mapping vector paths…" : conversionState[selectedProfile.id] === "failed" ? "↺ Retry SVG conversion" : selectedWing.mappingStatus === "machine-draft" ? "↺ Rebuild machine mapping" : "Convert to editable EntoWing SVG"}</button>
-              <button type="button" onClick={() => onOpenMapper(selectedProfile.id, selectedWing, selectedReference)}>Open in Mapper →</button>
-            </div>
-            {conversionState[selectedProfile.id] === "failed" && <small className="conversion-error" role="alert">Conversion stopped: {conversionError[selectedProfile.id]}. Tap retry; the published reference remains unchanged.</small>}
-          </div> : <div className="published-wing-reference missing"><span>REFERENCE GAP</span><b>No reusable family SVG is attached yet.</b><small>The editable Eristalis-derived graph remains a scaffold, not this family’s finished venation.</small></div>}
-          <div className={`geometry-status ${selectedWing.mappingStatus === "reviewed" ? "reviewed" : selectedWing.mappingStatus === "machine-draft" ? "machine" : conversionState[selectedProfile.id] === "failed" ? "failed" : "draft"}`}><i />{
-            conversionState[selectedProfile.id] === "mapping"
-              ? "SEPARATING SOURCE PATHS + MATCHING LABELS…"
-              : conversionState[selectedProfile.id] === "failed"
-                ? "SVG CONVERSION STOPPED · RETRY AVAILABLE"
-                : selectedWing.mappingStatus === "reviewed"
-                  ? "ORIGINAL ERISTALIS · USER-REVIEWED GEOMETRY"
-                  : selectedWing.mappingStatus === "machine-draft"
-                    ? `MACHINE-MAPPED DRAFT · ${selectedWing.mappingStats?.namedPathCount ?? 0}/${selectedWing.mappingStats?.sourcePathCount ?? selectedWing.paths.length} PATHS LABELLED · VERIFY`
-                    : "ERISTALIS SCAFFOLD · WAITING FOR FAMILY SVG MAPPING"
-          }</div>
+          <div className="family-study-title"><span>INTERACTIVE WING-VENATION PLATE</span><strong>{selectedProfile.family} · {selectedWing.morphotypeLabel ?? "editable scaffold"}</strong></div>
+          <div className={`geometry-status ${selectedWing.geometryStatus === "user-reviewed" ? "reviewed" : "draft"}`}><i />{selectedWing.geometryStatus === "user-reviewed" ? "USER-REVIEWED GEOMETRY" : selectedWing.geometryStatus === "literature-derived" ? "LITERATURE-DERIVED MORPHOTYPE · EDITABLE" : "STARTING SCAFFOLD · VERIFY"}</div>
+          {selectedMorphotypeOptions.length > 1 && <div className="morphotype-switcher">
+            <span>MORPHOTYPE</span>
+            <div>{selectedMorphotypeOptions.map((option) => <button key={option.morphotypeId} type="button" className={selectedWing.morphotypeId === option.morphotypeId ? "active" : ""} onClick={() => chooseMorphotype(option.morphotypeId ?? "")}>{option.morphotypeLabel}</button>)}</div>
+            <small>Switching loads a fresh topology for this morphology. It no longer forces every specimen through the Eristalis loop.</small>
+          </div>}
           <div className="wing-selection-guide"><span>SELECT A STRUCTURE</span><small>Tap a coloured vein, its label, or a code below.</small></div>
           <div className="family-wing-editor" ref={(element) => { wingSvgRef.current = element?.querySelector("svg") ?? null; }}>
             <WingGlyph
@@ -1545,7 +1522,7 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
           </div>
           <div className="vein-code-list" role="group" aria-label="Select a wing vein or landmark">
             {selectedWing.paths.map((path) => {
-              const meta = veinMeta(path.displayLabel ?? path.veinId, path.color);
+              const meta = veinMeta(path.veinId, path.color);
               return <button
                 key={`vein-code-${path.veinId}`}
                 type="button"
@@ -1553,7 +1530,7 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
                 aria-pressed={selectedVeinPath?.veinId === path.veinId}
                 style={{ "--vein-color": path.color ?? meta.color } as CSSProperties}
                 onClick={() => setSelectedVeinId(path.veinId)}
-              ><i aria-hidden="true" />{path.displayLabel ?? meta.label}</button>;
+              ><i aria-hidden="true" />{meta.label}</button>;
             })}
           </div>
           {selectedVein && selectedVeinPath && <div className="selected-vein-card" role="status" aria-live="polite" style={{ "--vein-color": selectedVeinPath.color ?? selectedVein.color } as CSSProperties}>
@@ -1566,20 +1543,22 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
             </dl>
             <p>{selectedVein.note}</p>
           </div>}
-          <div className="family-wing-actions"><button className={wingEditing ? "active" : ""} onClick={() => setWingEditing((value) => !value)}>{wingEditing ? "✓ Finish quick edit" : "✥ Drag wing points"}</button><button onClick={resetSelectedWing}>{selectedReference && selectedProfile.id !== "syrphidae" ? "↺ Re-map source SVG" : "↺ Reset wing"}</button></div>
+          <div className="family-wing-actions"><button className={wingEditing ? "active" : ""} onClick={() => setWingEditing((value) => !value)}>{wingEditing ? "✓ Finish quick edit" : "✥ Drag wing points"}</button><button onClick={resetSelectedWing}>↺ Reset wing</button></div>
           <h3>{selectedProfile.diagnosticWing}</h3>
           <p>{selectedProfile.evolutionaryReading}</p>
+          {selectedWing.recognitionHints?.length ? <div className="morphotype-hints"><span>MATCH BY TOPOLOGY, NOT PIXEL-PERFECT MARGINS</span><ul>{selectedWing.recognitionHints.map((hint) => <li key={hint}>{hint}</li>)}</ul></div> : null}
+          {selectedWing.sourceUrl && <a className="morphotype-source" href={selectedWing.sourceUrl} target="_blank" rel="noreferrer">{selectedWing.sourceLabel ?? "Morphotype source"} ↗</a>}
           <div className="family-caveat"><span>VERIFY</span>{selectedProfile.caveat}</div>
-          <button className="open-mapper-button" onClick={() => onOpenMapper(selectedProfile.id, selectedWing, selectedReference)}>{selectedReference ? `Open ${selectedProfile.family} SVG + overlay in Mapper →` : `Open ${selectedProfile.family} scaffold in Mapper →`}</button>
+          <button className="open-mapper-button" onClick={() => onOpenMapper(selectedProfile.id, selectedWing)}>Open {selectedProfile.family} in full Wing Mapper →</button>
           <small>In Mapper you can insert/delete points, join nodes, create crossveins, control Bézier handles, upload a specimen and export the result.</small>
         </div>}
       </aside>
     </section>
 
     <section className="research-ledger">
-      <div><span className="section-number">{atlasReferenceCount}</span><h2>Family SVG references now become editable EntoWing drafts.</h2></div>
+      <div><span className="section-number">50</span><h2>Families are hypotheses with receipts.</h2></div>
       <div className="research-ledger-copy">
-        <p>{atlasReferenceCount} of the {DIPTERA_FAMILY_COUNT} live family-level cards open an actual published SVG and automatically separate its wing outline, venation, labels and leader lines into editable EntoWing geometry. Every remaining card is already present as a clearly marked scaffold, ready for a licensed reference or specimen tracing. Machine-matched labels remain explicit suggestions for review, and no single reference is treated as universal for every member of a family.</p>
+        <p>The backbone is cross-checked against broad phylogenomic studies, while wing interpretations point to morphology manuals or family-focused work. A thumbnail is a representative teaching morphotype—not a claim that every member of a family has the same wing. Red “working” nodes are scientific uncertainties, not unfinished styling.</p>
         <div className="source-grid">
           <a href={PHYLOGENY_SOURCE} target="_blank" rel="noreferrer"><strong>Diptera backbone</strong><span>Wiegmann et al. 2011 · 149 families</span></a>
           <a href={BRACHYCERA_2025_SOURCE} target="_blank" rel="noreferrer"><strong>Brachycera update</strong><span>Mulhair et al. 2025 · 186 genomes, 44 families</span></a>
@@ -1587,7 +1566,6 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
           <a href={CALYPTRATAE_SOURCE} target="_blank" rel="noreferrer"><strong>Calyptratae</strong><span>Kutty et al. 2019 · 1,456 genes</span></a>
           <a href={MAD_OVERVIEW} target="_blank" rel="noreferrer"><strong>Wing morphology</strong><span>Manual of Afrotropical Diptera</span></a>
           <a href={SYRPHID_GLOSSARY} target="_blank" rel="noreferrer"><strong>Syrphidae terms</strong><span>van Steenis et al. 2023</span></a>
-          <a href={SYSTEMA_DIPTERORUM_FAMILY_SOURCE} target="_blank" rel="noreferrer"><strong>Complete family catalogue</strong><span>Systema Dipterorum 7.2 · {DIPTERA_FAMILY_COUNT} extant entries</span></a>
         </div>
       </div>
     </section>
