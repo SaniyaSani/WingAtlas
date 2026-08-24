@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" role="img" aria-label="Musca domestica wing venation reference">
+  <title>Musca domestica wing venation</title>
+  <desc>EntoWing vector trace after Comstock 1918, figure 372. The sharply forward-curved M1 represents the Musca-like muscid morphotype.</desc>
+  <g fill="none" stroke="#111111" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round">
+    <path id="wing-outline" d="M 22 127 C 118 91 260 61 420 37 C 590 11 726 17 815 60 C 872 88 889 128 877 176 C 860 244 757 315 619 362 C 493 405 340 411 224 381 C 125 356 63 306 42 249 C 24 203 18 160 22 127 Z"/>
+    <path id="vein-c" data-vein="C" d="M 22 127 C 155 91 297 62 454 37 C 614 12 747 22 815 60 C 842 75 858 91 868 110"/>
+    <path id="vein-sc" data-vein="Sc" d="M 34 148 C 122 138 211 117 292 88 C 321 77 345 59 365 48"/>
+    <path id="vein-r1" data-vein="R1" d="M 42 153 C 151 148 253 126 350 96 C 487 54 640 39 755 53 C 783 56 802 58 815 60"/>
+    <path id="vein-r23" data-vein="R2+3" d="M 49 165 C 160 157 263 142 361 121 C 511 88 658 78 789 88 C 831 91 850 99 868 110"/>
+    <path id="vein-r45" data-vein="R4+5" d="M 54 177 C 171 171 282 166 393 158 C 549 146 711 126 843 126 C 855 126 865 119 868 110"/>
+    <path id="vein-m1" data-vein="M1" d="M 69 198 C 176 193 281 194 393 198 C 501 202 598 221 678 229 C 715 233 735 219 737 197 C 739 171 750 153 778 139 C 808 124 838 118 868 110"/>
+    <path id="vein-m4" data-vein="M4" d="M 76 216 C 184 228 286 245 389 270 C 486 293 565 323 620 362"/>
+    <path id="vein-cua" data-vein="CuA" d="M 70 232 C 160 256 242 292 317 335 C 402 383 511 395 620 362"/>
+    <path id="vein-a1" data-vein="A1" d="M 60 248 C 124 287 177 334 224 381"/>
+    <path id="vein-rm" data-vein="r-m" d="M 393 158 C 399 173 400 185 393 198"/>
+    <path id="vein-dmm" data-vein="dm-m" d="M 552 213 C 537 235 526 257 521 283"/>
+    <path id="vein-mcu" data-vein="m-cu" d="M 521 283 C 545 314 578 339 620 362"/>
+    <path id="vein-h" data-vein="h" d="M 92 118 C 88 134 83 146 77 154"/>
+  </g>
+</svg>

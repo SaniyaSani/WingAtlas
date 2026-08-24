@@ -261,6 +261,10 @@ export async function mapReferenceSvgToTemplate(reference: FamilyWingReference):
       const existing = assignments.get(closest);
       if (!existing || score < existing.score) assignments.set(closest, { label: candidate.label, score });
     });
+    veinPaths.forEach((path) => {
+      const embeddedLabel = normalizeLabel(path.element.getAttribute("data-vein") ?? path.element.getAttribute("data-label") ?? "");
+      if (embeddedLabel) assignments.set(path, { label: embeddedLabel, score: 0 });
+    });
 
     const geometry = normalizeGeometry(veinPaths, outline);
     const nodes: Record<string, FamilyWingPoint> = {};

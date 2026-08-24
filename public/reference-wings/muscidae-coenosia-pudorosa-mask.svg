@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" role="img" aria-label="Classifier mask traced from Coenosia pudorosa wing">
+  <title>Coenosia pudorosa classifier mask</title>
+  <desc>Neutral venation trace after Michelsen 2022, figure 1B. Captions, brackets, scale marks and membrane texture are excluded.</desc>
+  <g fill="none" stroke="#111111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 24 111 C 136 78 279 48 443 38 C 607 28 744 47 827 92 C 879 120 891 164 877 214 C 854 289 748 354 600 388 C 451 422 293 410 178 372 C 80 339 35 292 25 233 C 18 190 18 146 24 111 Z"/>
+    <path data-vein="C" d="M 24 111 C 178 69 331 43 492 38 C 653 34 775 58 827 92 C 852 108 868 124 877 142"/>
+    <path data-vein="Sc" d="M 35 130 C 122 123 214 102 307 72 C 342 61 367 49 389 41"/>
+    <path data-vein="R1" d="M 38 143 C 152 136 264 113 371 83 C 518 42 690 51 827 92"/>
+    <path data-vein="R2+3" d="M 43 157 C 160 150 277 134 392 111 C 558 78 716 87 858 126 C 866 128 872 134 877 142"/>
+    <path data-vein="R4+5" d="M 50 178 C 176 176 292 172 402 171 C 566 171 720 181 877 205"/>
+    <path data-vein="M1" d="M 59 198 C 176 202 287 207 398 220 C 558 238 722 262 866 283"/>
+    <path data-vein="M4" d="M 67 218 C 181 236 292 263 391 297 C 494 333 563 368 600 388"/>
+    <path data-vein="CuA" d="M 62 239 C 166 278 257 327 334 365 C 416 405 513 408 600 388"/>
+    <path data-vein="A1" d="M 50 258 C 105 306 146 344 178 372"/>
+    <path data-vein="r-m" d="M 402 171 C 400 190 399 205 398 220"/>
+    <path data-vein="dm-m" d="M 564 240 C 553 269 548 297 548 335"/>
+    <path data-vein="m-cu" d="M 548 335 C 565 355 582 373 600 388"/>
+    <path data-vein="h" d="M 93 113 C 89 128 86 140 83 150"/>
+  </g>
+</svg>

@@ -44,6 +44,7 @@ function orientationText(orientation: WingOrientation) {
 export default function WingIdentifier({ onUseInMapper }: { onUseInMapper: (wing: LoadedWing) => void }) {
   const references = useMemo(() => Object.entries(referenceData) as Array<[string, WingReferenceRecord]>, []);
   const localReferenceCount = references.filter(([, reference]) => reference.localAsset).length;
+  const atlasReferenceCount = references.length;
   const [wing, setWing] = useState<LoadedWing | null>(null);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [sensitivity, setSensitivity] = useState(58);
@@ -144,10 +145,10 @@ export default function WingIdentifier({ onUseInMapper }: { onUseInMapper: (wing
   return <>
     <section className="idlab-intro">
       <div>
-        <p className="eyebrow">WING ID LAB · LOCAL IMAGE ANALYSIS</p>
-        <h1>One wing. Three evidence-ranked candidates.</h1>
+        <p className="eyebrow">WING ID LAB · DUAL-LAYER VEIN ANALYSIS</p>
+        <h1>One wing. Three visual candidates—or an honest no-match.</h1>
       </div>
-      <p>EntoWing compares the outline, vein-field distribution and regional geometry of your prepared wing with its reusable reference SVGs. It tests all eight rotation-and-mirror orientations and keeps an explicit “not represented” probability.</p>
+      <p>EntoWing preserves every coloured, clickable atlas vein, but compares an invisible neutral mask made from the same geometry. Membrane fills, labels and leader lines cannot influence the result. It tests all eight rotation-and-mirror orientations and refuses a family call when the evidence is weak.</p>
     </section>
 
     <section className="idlab-shell" aria-label="Wing identification laboratory">
@@ -201,14 +202,26 @@ export default function WingIdentifier({ onUseInMapper }: { onUseInMapper: (wing
         <div className="idlab-card-head"><span>02 · CANDIDATES</span><b>{result ? `${result.referencesCompared} REFERENCES COMPARED` : "WAITING FOR PHOTO"}</b></div>
         {!result ? <div className="idlab-empty-result">
           <div className="idlab-ghost-wing" aria-hidden="true"><i /><i /><i /><i /></div>
-          <strong>{status === "analysing" ? "Reading the wing geometry…" : "Your three candidates will appear here."}</strong>
-          <p>These will be ranked only against illustrated taxa currently present in EntoWing—not against every Diptera species.</p>
+          <strong>{status === "analysing" ? "Cleaning and comparing the vein field…" : "Your three nearest visual references will appear here."}</strong>
+          <p>If none passes the structural threshold, EntoWing will keep the specimen unidentified instead of forcing a family name.</p>
           {status === "analysing" && <div className="idlab-progress"><i style={{ width: `${progress.total ? progress.done / progress.total * 100 : 0}%` }} /></div>}
         </div> : <>
-          <div className={`idlab-verdict ${result.uncertain ? "uncertain" : "supported"}`}>
-            <span>{result.uncertain ? "LOW SEPARATION · REVIEW REQUIRED" : "REFERENCE MATCH FOUND · REVIEW REQUIRED"}</span>
-            <strong>{result.uncertain ? "The leading candidates are too close for a confident call." : `${result.candidates[0].taxon} is the closest current reference.`}</strong>
-            <small>Probabilities are relative to this prototype reference set; they are not a validated species diagnosis.</small>
+          <div className={`idlab-verdict ${result.noReliableMatch ? "no-match" : result.uncertain ? "uncertain" : "supported"}`}>
+            <span>{result.noReliableMatch ? "NO RELIABLE MATCH IN THE CURRENT LIBRARY" : result.uncertain ? "LOW SEPARATION · REVIEW REQUIRED" : "REFERENCE MATCH · REVIEW REQUIRED"}</span>
+            <strong>{result.noReliableMatch
+              ? "This wing should remain unidentified: none of the available references reproduces its venation closely enough."
+              : result.uncertain
+                ? `${result.candidates[0].taxon} is nearest, but the evidence is not strongly separated.`
+                : `${result.candidates[0].taxon} is the closest current reference.`}</strong>
+            <small>{result.noReliableMatch
+              ? "The three cards below are nearest neighbours for manual comparison—not diagnoses."
+              : "Percentages are provisional support within this reference set; they are not validated species probabilities."}</small>
+            {!!result.rejectionReasons.length && <ul className="idlab-rejection-reasons">{result.rejectionReasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>}
+          </div>
+
+          <div className="idlab-analysis-readout">
+            <img src={result.analysisPreview} alt="Cleaned vein-field map extracted from the uploaded wing" />
+            <div><span>WHAT ENTOWING COMPARED</span><strong>Cleaned vein-field map</strong><small>Darker pixels carry more evidence. The crop boundary, background tone and disconnected captions are removed; no artificial junction points are generated.</small></div>
           </div>
 
           <div className="idlab-orientation-result">
@@ -220,12 +233,12 @@ export default function WingIdentifier({ onUseInMapper }: { onUseInMapper: (wing
           </div>
 
           <div className="idlab-candidates">
-            {result.candidates.map((candidate, index) => <article key={candidate.id} className={index === 0 ? "leading" : ""}>
-              <div className="idlab-rank"><span>#{index + 1}</span><b>{Math.round(candidate.probability * 100)}%</b></div>
+            {result.candidates.map((candidate, index) => <article key={candidate.id} className={index === 0 && !result.noReliableMatch ? "leading" : "nearest"}>
+              <div className="idlab-rank"><span>#{index + 1} · {result.noReliableMatch ? "NEAREST ONLY" : "CANDIDATE"}</span><b>{Math.round(candidate.probability * 100)}%</b></div>
               <div className="idlab-candidate-copy">
                 <span>{candidate.rank}</span>
                 <h2><i>{candidate.taxon}</i></h2>
-                <p>{candidate.family} · aligned in the selected global orientation</p>
+                <p>{candidate.family} · hybrid fit {Math.round(candidate.similarity * 100)}/100 · aligned globally</p>
               </div>
               <img src={candidate.reference.assetPath} alt={`${candidate.family} reference wing`} />
               <div className="idlab-probability"><i style={{ width: `${candidate.probability * 100}%` }} /></div>
@@ -235,7 +248,7 @@ export default function WingIdentifier({ onUseInMapper }: { onUseInMapper: (wing
           </div>
 
           <div className="idlab-unknown">
-            <span>NOT REPRESENTED / OTHER TAXON</span>
+            <span>{result.noReliableMatch ? "KEEP UNIDENTIFIED / FAMILY MAY BE ABSENT" : "NOT REPRESENTED / OTHER TAXON"}</span>
             <strong>{Math.round(result.unknownProbability * 100)}%</strong>
             <div><i style={{ width: `${result.unknownProbability * 100}%` }} /></div>
           </div>
@@ -257,8 +270,8 @@ export default function WingIdentifier({ onUseInMapper }: { onUseInMapper: (wing
     </section>}
 
     <section className="idlab-method-note">
-      <div><span>WHAT THIS VERSION CAN SAY</span><h2>Similarity is not yet species identity.</h2></div>
-      <p>The current library contains {localReferenceCount} locally analysable family- and genus-level SVG morphotypes. Exact species probabilities require multiple verified wings per species, sex and population, plus an independent validation set. EntoWing therefore exposes uncertainty and never silently upgrades a family or genus reference to a species name.</p>
+      <div><span>WHAT THIS VERSION CAN SAY</span><h2>Useful visual ranking. Uncertainty stays visible.</h2></div>
+      <p>The current atlas records {atlasReferenceCount} published SVG references, of which {localReferenceCount} can presently be analysed on-device. Atlas artwork and classifier masks are now separate views of the same geometry: clickable vein layers remain untouched, while fills and annotations are excluded from matching. Multiple morphotypes can represent one variable family without producing duplicate family cards. The user-reviewed Eristalis geometry remains the Syrphidae reference. Exact species probabilities still require multiple verified wings per species, sex and population plus an independent validation set.</p>
     </section>
   </>;
 }

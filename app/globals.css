@@ -4403,9 +4403,18 @@ html[data-entowing-theme="nocturnal"] .published-wing-reference.missing { backgr
 
 .idlab-verdict { display: grid; gap: 6px; margin-bottom: 14px; padding: 14px 16px; border-left: 4px solid #55705f; background: #e7eee5; }
 .idlab-verdict.uncertain { border-left-color: #a37b3b; background: #f2ead8; }
+.idlab-verdict.no-match { border-left-color: #a65f75; background: #f2e5e8; }
 .idlab-verdict span { color: #52645a; font: 800 7px/1 ui-monospace, monospace; letter-spacing: .12em; }
 .idlab-verdict strong { color: #2d4036; font: 500 18px/1.2 Georgia, "Times New Roman", serif; }
 .idlab-verdict small { color: #68756d; font-size: 8px; line-height: 1.45; }
+.idlab-rejection-reasons { display: flex; flex-wrap: wrap; gap: 5px 14px; margin: 3px 0 0; padding: 7px 0 0 14px; border-top: 1px solid rgba(106,74,82,.16); color: #765864; font-size: 7.5px; line-height: 1.4; }
+
+.idlab-analysis-readout { display: grid; grid-template-columns: minmax(170px,.72fr) 1fr; gap: 14px; align-items: center; margin-bottom: 14px; padding: 10px; border: 1px solid #c4cbc1; border-radius: 5px; background: #f7f5ed; }
+.idlab-analysis-readout img { width: 100%; min-height: 88px; object-fit: contain; border: 1px solid #dcddd5; background: #fbfaf4; }
+.idlab-analysis-readout div { display: grid; gap: 6px; }
+.idlab-analysis-readout span { color: #55705f; font: 800 6.5px/1 ui-monospace, monospace; letter-spacing: .11em; }
+.idlab-analysis-readout strong { color: #2d4036; font: 500 15px/1.15 Georgia, "Times New Roman", serif; }
+.idlab-analysis-readout small { color: #68756d; font-size: 7.5px; line-height: 1.45; }
 
 .idlab-orientation-result { display: grid; grid-template-columns: auto 1fr; gap: 4px 13px; align-items: center; margin: -4px 0 14px; padding: 10px 12px; border: 1px solid #c4cbc1; border-radius: 5px; background: #f7f5ed; }
 .idlab-orientation-result span { grid-row: 1 / span 2; padding: 5px 7px; color: #fff; border-radius: 3px; background: #587982; font: 800 6.5px/1 ui-monospace, monospace; letter-spacing: .09em; white-space: nowrap; }
@@ -4415,6 +4424,7 @@ html[data-entowing-theme="nocturnal"] .published-wing-reference.missing { backgr
 .idlab-candidates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .idlab-candidates article { display: grid; grid-template-rows: auto auto 116px auto 1fr auto; gap: 10px; min-width: 0; padding: 13px; border: 1px solid #c0c6bd; border-radius: 6px; background: #fffef8; }
 .idlab-candidates article.leading { border-color: #55705f; box-shadow: inset 0 3px 0 #55705f; }
+.idlab-candidates article.nearest { border-color: #d0c5c6; box-shadow: inset 0 3px 0 #c8a9b2; }
 .idlab-rank { display: flex; justify-content: space-between; align-items: center; }
 .idlab-rank span { color: #6b766f; font: 800 8px/1 ui-monospace, monospace; }
 .idlab-rank b { color: #29483b; font: 500 26px/1 Georgia, "Times New Roman", serif; }
@@ -4488,11 +4498,16 @@ html[data-entowing-theme="nocturnal"] .idlab-orientation-buttons button.active {
 html[data-entowing-theme="nocturnal"] .idlab-orientation-result { border-color: rgba(98,217,255,.22); background: #100d18; }
 html[data-entowing-theme="nocturnal"] .idlab-orientation-result strong { color: #fff2fa; }
 html[data-entowing-theme="nocturnal"] .idlab-orientation-result small { color: #aaa0b0; }
+html[data-entowing-theme="nocturnal"] .idlab-analysis-readout { border-color: rgba(98,217,255,.22); background: #100d18; }
+html[data-entowing-theme="nocturnal"] .idlab-analysis-readout strong { color: #fff2fa; }
+html[data-entowing-theme="nocturnal"] .idlab-analysis-readout small { color: #aaa0b0; }
 html[data-entowing-theme="nocturnal"] .idlab-analyse,
 html[data-entowing-theme="nocturnal"] .idlab-handoff button { color: #07110d; border-color: #65e6ad; background: #65e6ad; }
 html[data-entowing-theme="nocturnal"] .idlab-candidates article > img { background: #f7f4ef; }
 html[data-entowing-theme="nocturnal"] .idlab-verdict { border-left-color: #65e6ad; background: rgba(101,230,173,.08); }
 html[data-entowing-theme="nocturnal"] .idlab-verdict.uncertain { border-left-color: #ffc26a; background: rgba(255,194,106,.08); }
+html[data-entowing-theme="nocturnal"] .idlab-verdict.no-match { border-left-color: #ff8fb3; background: rgba(255,143,179,.09); }
+html[data-entowing-theme="nocturnal"] .idlab-rejection-reasons { color: #d4aaba; border-top-color: rgba(255,143,179,.16); }
 html[data-entowing-theme="nocturnal"] .idlab-verdict strong,
 html[data-entowing-theme="nocturnal"] .idlab-quality-title b { color: #fff2fa; }
 html[data-entowing-theme="nocturnal"] .idlab-verdict span,
@@ -4527,6 +4542,7 @@ html[data-entowing-theme="nocturnal"] .idlab-method-note p { color: #aaa0b0; }
   .idlab-dropzone,
   .idlab-dropzone.has-photo { min-height: 280px; }
   .idlab-candidates { grid-template-columns: 1fr; }
+  .idlab-analysis-readout { grid-template-columns: 1fr; }
   .idlab-orientation-result { grid-template-columns: 1fr; }
   .idlab-orientation-result span { grid-row: auto; width: max-content; }
   .idlab-candidates article { grid-template-columns: 96px 1fr; grid-template-rows: auto auto auto auto; }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" role="img" aria-label="Classifier mask traced from Drymeia hamata wing">
+  <title>Drymeia hamata classifier mask</title>
+  <desc>Neutral venation trace after Michelsen 2022, figure 6B. The photographic membrane, scale bar and panel label are excluded.</desc>
+  <g fill="none" stroke="#111111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 22 112 C 128 72 276 42 435 35 C 597 28 739 49 823 95 C 873 123 890 166 879 215 C 863 286 762 347 626 383 C 488 419 331 416 207 383 C 104 356 43 309 27 251 C 16 211 16 157 22 112 Z"/>
+    <path data-vein="C" d="M 22 112 C 170 66 332 39 498 36 C 657 34 769 61 823 95 C 849 112 868 130 879 151"/>
+    <path data-vein="Sc" d="M 35 133 C 131 124 219 104 306 74 C 338 63 361 50 382 41"/>
+    <path data-vein="R1" d="M 39 145 C 151 138 260 116 369 84 C 516 41 686 52 823 95"/>
+    <path data-vein="R2+3" d="M 45 160 C 166 151 279 136 391 112 C 547 79 714 87 859 132 C 867 135 874 142 879 151"/>
+    <path data-vein="R4+5" d="M 52 180 C 171 178 286 174 401 174 C 569 175 726 190 879 216"/>
+    <path data-vein="M1" d="M 62 201 C 178 205 291 211 402 226 C 561 247 720 274 864 302"/>
+    <path data-vein="M4" d="M 70 222 C 186 242 293 269 393 305 C 498 343 573 370 626 383"/>
+    <path data-vein="CuA" d="M 65 242 C 171 284 263 330 342 369 C 421 408 532 408 626 383"/>
+    <path data-vein="A1" d="M 51 261 C 108 310 158 354 207 383"/>
+    <path data-vein="r-m" d="M 401 174 C 402 192 403 209 402 226"/>
+    <path data-vein="dm-m" d="M 575 249 C 557 276 548 304 548 339"/>
+    <path data-vein="m-cu" d="M 548 339 C 571 358 597 374 626 383"/>
+    <path data-vein="h" d="M 93 115 C 89 132 86 143 82 153"/>
+  </g>
+</svg>

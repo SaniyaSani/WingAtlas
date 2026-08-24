@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 246" role="img" aria-label="User-reviewed Eristalis wing venation">
+  <title>User-reviewed Eristalis wing venation</title>
+  <desc>EntoWing topology traced and reviewed from the Eristalis reference image. Includes vena spuria and the characteristic R4+5 loop.</desc>
+  <g fill="none" stroke="#111111" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+  <polyline data-vein="C" points="13.89,63.95 83.30,57.56 310.43,37.45 428.36,30.09 505.53,43.47 533.55,55.81"/>
+  <polyline data-vein="Sc" points="16.12,78.14 91.50,70.96 271.30,51.08 310.43,37.45"/>
+  <polyline data-vein="R1" points="14.85,84.43 142.45,74.98 287.88,56.81 361.28,42.08 443.20,40.02 494.59,47.10"/>
+  <polyline data-vein="R2+3" points="14.85,84.43 142.45,74.98 249.18,79.68 330.02,60.86 459.77,61.96 494.59,47.10 505.53,43.47"/>
+  <polyline data-vein="R4+5" points="14.85,84.43 142.45,74.98 249.18,79.68 339.79,85.08 385.60,87.24 420.96,111.02 463.71,78.52 522.38,63.06 533.55,55.81"/>
+  <polyline data-vein="M1" points="94.80,87.52 266.63,107.55 338.97,118.91 405.78,135.73 422.88,144.00 511.37,97.12 522.38,63.06"/>
+  <polyline data-vein="M4" points="94.80,87.52 266.63,107.55 261.05,121.66 255.50,137.18 281.01,155.05 319.89,182.62 422.88,144.00"/>
+  <polyline data-vein="CuA" points="23.55,89.42 74.06,102.70 165.17,122.05 238.11,152.56 270.12,200.14"/>
+  <polyline data-vein="A1" points="85.06,109.45 101.83,126.69 131.44,141.83 186.54,187.05 225.04,190.10 270.12,200.14"/>
+  <polyline data-vein="r-m" points="339.79,85.08 338.97,118.91"/>
+  <polyline data-vein="sv" points="127.53,81.08 259.94,94.64 352.49,111.32 386.86,124.27"/>
+  <polyline data-vein="Cu1" points="238.11,152.56 255.50,137.18"/>
+  <polyline data-vein="h" points="91.50,70.96 83.30,57.56"/>
+  </g>
+</svg>

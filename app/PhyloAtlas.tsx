@@ -37,7 +37,10 @@ export type FamilyWingTemplate = {
 export type FamilyWingReference = {
   family: string;
   title: string;
+  taxon?: string;
+  rank?: string;
   assetPath: string;
+  classifierAssetPath?: string;
   sourcePage: string;
   originalUrl: string;
   author: string;
@@ -210,7 +213,7 @@ const coreProfiles: FamilyProfile[] = [
     caveat: "The R4 appendix is variable and cannot be treated as present throughout Tabanidae.", confidence: "high", sourceLabel: "Manual of Afrotropical Diptera, vol. 2", sourceUrl: MANUAL_VOL2, accent: "#a77555", variant: "tabanid",
   },
   {
-    id: "bombyliidae", family: "Bombyliidae", commonName: "bee flies", clade: "Heterodactyla · sister to Asiloidea + Eremoneura", representative: "Bombylius-like working morphotype",
+    id: "bombyliidae", family: "Bombyliidae", commonName: "bee flies", clade: "Heterodactyla · sister to Asiloidea + Eremoneura", representative: "Bombylius · Anthrax · Usiinae classifier morphotypes",
     diagnosticWing: "Venation is diverse but often retains several radial branches and a well-developed discal system; dark patterning may be as diagnostic as the veins.",
     evolutionaryReading: "Genome-scale evidence places Bombyliidae as a heterodactylan branch beside Asiloidea and Eremoneura, not inside Asiloidea; its wing morphology remains highly heterogeneous.",
     caveat: "One Bombylius-like scheme cannot summarize 19 currently recognized subfamilial lineages.", confidence: "medium", sourceLabel: "Mulhair et al. 2025; Li et al. 2021", sourceUrl: BRACHYCERA_2025_SOURCE, accent: "#b38b47", variant: "bombyliid",
@@ -237,7 +240,7 @@ const coreProfiles: FamilyProfile[] = [
     id: "syrphidae", family: "Syrphidae", commonName: "hover flies", clade: "Syrphoidea · Cyclorrhapha", representative: "Eristalis reference · user-reviewed geometry",
     diagnosticWing: "Most have a vena spuria, a vein-like longitudinal thickening; many groups also show characteristic configurations of R4+5 and closed radial cells.",
     evolutionaryReading: "Vena spuria is the strongest family-level teaching landmark here, while radial loops and cell closure remain subgroup-dependent.",
-    caveat: "Terminology follows van Steenis et al. 2023; the Mapper opens your reviewed Eristalis geometry, not this thumbnail sketch.", confidence: "high", sourceLabel: "van Steenis et al. 2023", sourceUrl: SYRPHID_GLOSSARY, accent: "#c3654f", variant: "syrphid", geometryStatus: "reviewed",
+    caveat: "Terminology follows van Steenis et al. 2023; the Mapper keeps your reviewed Eristalis geometry, while the identifier also compares Ceriana, Episyrphus and Pipiza morphotypes.", confidence: "high", sourceLabel: "van Steenis et al. 2023", sourceUrl: SYRPHID_GLOSSARY, accent: "#c3654f", variant: "syrphid", geometryStatus: "reviewed",
   },
   {
     id: "drosophilidae", family: "Drosophilidae", commonName: "vinegar flies", clade: "Ephydroidea · Schizophora", representative: "Drosophila-like working morphotype",
@@ -246,10 +249,10 @@ const coreProfiles: FamilyProfile[] = [
     caveat: "The familiar Drosophila pattern is only one part of family diversity; exact costal-break terminology must be checked.", confidence: "high", sourceLabel: "Manual of Afrotropical Diptera, vol. 3", sourceUrl: MANUAL_VOL3, accent: "#9b6f93", variant: "drosophilid",
   },
   {
-    id: "muscidae", family: "Muscidae", commonName: "house & stable flies", clade: "Calyptratae · Schizophora", representative: "Musca-like working morphotype",
+    id: "muscidae", family: "Muscidae", commonName: "house & stable flies", clade: "Calyptratae · Schizophora", representative: "Musca domestica · Coenosia · Drymeia references",
     diagnosticWing: "The medial vein bends forward distally in many familiar muscids; the calypter and the width of cell r4+5 are also important identification characters.",
     evolutionaryReading: "Represents the calyptrate branch here; the forward bend is conspicuous in Musca-like wings but varies across Muscidae.",
-    caveat: "Do not score an entire family from the Musca domestica condition alone.", confidence: "medium", sourceLabel: "Cumming & Wood 2017; Muscidae literature", sourceUrl: MAD_OVERVIEW, accent: "#5d7780", variant: "muscid",
+    caveat: "The Musca, Coenosia and Drymeia references deliberately cover both strongly curved and straighter medial-vein states; family identification still requires non-wing characters.", confidence: "medium", sourceLabel: "Comstock 1918; Michelsen 2022", sourceUrl: "https://doi.org/10.5852/ejt.2022.826.1839", accent: "#5d7780", variant: "muscid",
   },
 ];
 
