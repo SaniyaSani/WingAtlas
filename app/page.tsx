@@ -1910,22 +1910,36 @@ export default function Home() {
   function openFamilyWingInMapper(familyId: string, familyWing: FamilyWingTemplate) {
     // Use the exact morphotype selected in the atlas. v0.34 forced every Syrphidae
     // selection back to Eristalis here, which defeated the new family variation.
+    // Also replace the Eristalis photo background with a neutral workspace canvas,
+    // otherwise every family morphotype appears to have "turned back into" Eristalis.
     const source: WingTemplate = {
       ...familyWing,
       paths: familyWing.paths.map((path) => ({ ...path, veinId: path.veinId === "vena spuria" ? "sv" : path.veinId, nodeIds: [...path.nodeIds] })),
       nodes: Object.fromEntries(Object.entries(familyWing.nodes).map(([id, point]) => [id, { ...point }])),
     };
     const prepared = withSharedJunctionCorners(source);
+    const targetWidth = Math.max(560, prepared.referenceSize?.width ?? 560);
+    const targetHeight = Math.max(320, prepared.referenceSize?.height ?? Math.round(targetWidth * .56));
+    const neutralWorkspace = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${targetWidth}" height="${targetHeight}" viewBox="0 0 ${targetWidth} ${targetHeight}"><rect width="100%" height="100%" fill="#f6f2e8"/><path d="M 28 ${Math.round(targetHeight * .68)} Q ${Math.round(targetWidth * .34)} ${Math.round(targetHeight * .12)}, ${Math.round(targetWidth * .95)} ${Math.round(targetHeight * .38)}" fill="none" stroke="#d7d0c0" stroke-width="2" stroke-dasharray="8 8" opacity=".9"/></svg>`)}`;
     if (familyId !== "syrphidae" || familyWing.morphotypeId !== "eristalis") persistCustomTemplate(prepared);
+    setWingImage({
+      src: neutralWorkspace,
+      name: `${prepared.name}.workspace.svg`,
+      width: targetWidth,
+      height: targetHeight,
+      isLocal: false,
+    });
+    setMap({});
+    setCanvasView({ x: 0, y: 0, width: targetWidth, height: targetHeight });
     setSelectedTemplateId(prepared.id);
     setPlacedTemplate(prepared);
-    setTemplateNodes(fitTemplateNodes(prepared, wingImage.width, wingImage.height));
+    setTemplateNodes(fitTemplateNodes(prepared, targetWidth, targetHeight));
     setActiveVeinId(prepared.paths[0]?.veinId ?? "R4+5");
     setSelectedTemplateNodeId(null);
     setTemplateEditTool("drag");
     setTemplateEditMode(true);
     setTemplateUndoStack([]);
-    setTemplateStatus(`${prepared.name} loaded from the evolutionary atlas. Upload a matching specimen or edit this working morphotype directly.`);
+    setTemplateStatus(`${prepared.name} loaded from the evolutionary atlas. The Mapper now opens on a neutral workspace so this family wing is no longer visually collapsed back onto the Eristalis photo.`);
     setMapperPreview(false);
     setMode("mapper");
     window.setTimeout(() => document.querySelector(".mapper-shell")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
