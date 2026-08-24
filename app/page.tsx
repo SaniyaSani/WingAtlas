@@ -1990,7 +1990,7 @@ export default function Home() {
               <span aria-hidden="true">✦</span> Nocturnal
             </button>
           </div>
-          <div className="version-chip">Research atlas · v0.41</div>
+          <div className="version-chip">Research atlas · v0.40</div>
         </div>
       </header>
 
