@@ -2,8 +2,7 @@
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import reviewedEristalisPayload from "./Eristalis-reference.entowing-template.json";
-import PhyloAtlas, { FamilyWingReference, FamilyWingTemplate } from "./PhyloAtlas";
-import WingIdentifier from "./WingIdentifier";
+import PhyloAtlas, { FamilyWingTemplate } from "./PhyloAtlas";
 
 type Point = { x: number; y: number };
 type CanvasView = { x: number; y: number; width: number; height: number };
@@ -11,8 +10,7 @@ type TemplateEditTool = "drag" | "insert" | "delete" | "join" | "crossvein";
 type CurveNodeMode = "smooth" | "corner" | "bezier";
 type CurveHandle = { dx: number; dy: number };
 type CurveControl = { mode: CurveNodeMode; in?: CurveHandle; out?: CurveHandle };
-type AtlasMode = "atlas" | "identify" | "mapper" | "learn";
-type VisualTheme = "scientific" | "nocturnal";
+type AtlasMode = "atlas" | "mapper" | "learn";
 type WingImage = { src: string; name: string; width: number; height: number; isLocal: boolean };
 type AutoCandidate = { id: string; points: Point[]; length: number };
 type TemplatePath = { veinId: string; nodeIds: string[]; curve?: Record<string, CurveControl> };
@@ -490,7 +488,6 @@ async function makeAutoTrace(src: string, naturalWidth: number, naturalHeight: n
     const img = new Image();
     img.onload = () => resolve(img);
     img.onerror = () => reject(new Error("Could not read this image."));
-    if (/^https?:/i.test(src)) img.crossOrigin = "anonymous";
     img.src = src;
   });
   const scale = Math.min(1, 640 / Math.max(naturalWidth, naturalHeight));
@@ -615,7 +612,6 @@ async function traceBetweenAnchors(src: string, naturalWidth: number, naturalHei
     const img = new Image();
     img.onload = () => resolve(img);
     img.onerror = () => reject(new Error("Could not read this image."));
-    if (/^https?:/i.test(src)) img.crossOrigin = "anonymous";
     img.src = src;
   });
   const scale = Math.min(1, 480 / Math.max(naturalWidth, naturalHeight));
@@ -767,7 +763,6 @@ async function traceBetweenAnchors(src: string, naturalWidth: number, naturalHei
 
 export default function Home() {
   const [mode, setMode] = useState<AtlasMode>("atlas");
-  const [visualTheme, setVisualTheme] = useState<VisualTheme>("scientific");
   const [wingImage, setWingImage] = useState<WingImage>({ src: referenceImage, name: "Eristalis-reference.jpg", width: 560, height: 246, isLocal: false });
   const [map, setMap] = useState<Record<string, Point[]>>({});
   const [customVeins, setCustomVeins] = useState<VeinDefinition[]>([]);
@@ -819,16 +814,6 @@ export default function Home() {
   const touchWasPinchRef = useRef(false);
   const templateDragSnapshotTakenRef = useRef(false);
   const pinchStartRef = useRef<{ distance: number; zoom: number; focus: Point } | null>(null);
-
-  useEffect(() => {
-    const savedTheme = window.localStorage.getItem("entowing-visual-theme-v1");
-    if (savedTheme === "scientific" || savedTheme === "nocturnal") setVisualTheme(savedTheme);
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.dataset.entowingTheme = visualTheme;
-    window.localStorage.setItem("entowing-visual-theme-v1", visualTheme);
-  }, [visualTheme]);
 
   useEffect(() => {
     try {
@@ -1676,35 +1661,6 @@ export default function Home() {
     event.target.value = "";
   }
 
-  function openIdentificationPhotoInMapper(wing: { src: string; name: string; width: number; height: number }) {
-    setWingImage({ ...wing, isLocal: true });
-    setCanvasView({ x: 0, y: 0, width: wing.width, height: wing.height });
-    touchPointersRef.current.clear();
-    touchTapRef.current.clear();
-    pinchStartRef.current = null;
-    setMap({});
-    setSelectedVeinId(null);
-    setMapperPreview(false);
-    setAutoCandidates([]);
-    setSelectedAutoIds([]);
-    setManualAddMode(true);
-    setGuidedMode(false);
-    setGuidedAnchors([]);
-    setGuidedRunning(false);
-    setGuidedStatus("Choose a vein, then place two anchors for Guided Trace.");
-    setDraftHypotheses({});
-    setPlacedTemplate(null);
-    setTemplateNodes({});
-    setTemplateUndoStack([]);
-    setTemplateEditMode(true);
-    setTemplateDraggingNode(null);
-    setTemplateStatus("Wing ID Lab photo ready. Place the closest candidate template, then verify every junction.");
-    setWholeDraftStatus("Ready to propose a rough whole-wing topology.");
-    setAutoStatus("Ready to make an automatic SVG draft.");
-    setMode("mapper");
-    window.setTimeout(() => document.querySelector(".mapper-shell")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
-  }
-
   function resetToReference() {
     setWingImage({ src: referenceImage, name: "Eristalis-reference.jpg", width: 560, height: 246, isLocal: false });
     setSelectedTemplateId("eristalis-reviewed");
@@ -1915,7 +1871,7 @@ export default function Home() {
     downloadText(`${wingImage.name.replace(/\.[^.]+$/, "") || "wing"}-annotated.svg`, svg, "image/svg+xml");
   }
 
-  function openFamilyWingInMapper(familyId: string, familyWing: FamilyWingTemplate, reference?: FamilyWingReference) {
+  function openFamilyWingInMapper(familyId: string, familyWing: FamilyWingTemplate) {
     const source: WingTemplate = familyId === "syrphidae"
       ? reviewedEristalisTemplate
       : {
@@ -1924,41 +1880,23 @@ export default function Home() {
           nodes: Object.fromEntries(Object.entries(familyWing.nodes).map(([id, point]) => [id, { ...point }])),
         };
     const prepared = withSharedJunctionCorners(source);
-    const referenceWidth = reference?.width && reference.width > 0 ? reference.width : wingImage.width;
-    const referenceHeight = reference?.height && reference.height > 0 ? reference.height : wingImage.height;
-    if (reference) {
-      setWingImage({ src: reference.assetPath, name: reference.title, width: referenceWidth, height: referenceHeight, isLocal: true });
-      setCanvasView({ x: 0, y: 0, width: referenceWidth, height: referenceHeight });
-      setMap({});
-      setSelectedVeinId(null);
-      setAutoCandidates([]);
-      setSelectedAutoIds([]);
-      setGuidedAnchors([]);
-      setGuidedMode(false);
-      setDraftHypotheses({});
-      setAutoStatus(`Ready to trace the ${reference.family} reference SVG.`);
-      setGuidedStatus("Choose a vein, then place two anchors on the published SVG reference.");
-      setWholeDraftStatus("Ready to propose a whole-wing draft from the published SVG reference.");
-    }
     if (familyId !== "syrphidae") persistCustomTemplate(prepared);
     setSelectedTemplateId(prepared.id);
     setPlacedTemplate(prepared);
-    setTemplateNodes(fitTemplateNodes(prepared, referenceWidth, referenceHeight));
+    setTemplateNodes(fitTemplateNodes(prepared, wingImage.width, wingImage.height));
     setActiveVeinId(prepared.paths[0]?.veinId ?? "R4+5");
     setSelectedTemplateNodeId(null);
     setTemplateEditTool("drag");
     setTemplateEditMode(true);
     setTemplateUndoStack([]);
-    setTemplateStatus(reference
-      ? `${reference.title} is loaded underneath the editable EntoWing graph. The outline is pre-fitted; verify every junction and label.`
-      : `${prepared.name} loaded from the evolutionary atlas. Upload a matching specimen or edit this working morphotype directly.`);
+    setTemplateStatus(`${prepared.name} loaded from the evolutionary atlas. Upload a matching specimen or edit this working morphotype directly.`);
     setMapperPreview(false);
     setMode("mapper");
     window.setTimeout(() => document.querySelector(".mapper-shell")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
   }
 
   return (
-    <main className="atlas-shell" data-visual-theme={visualTheme}>
+    <main className="atlas-shell">
       <header className="topbar">
         <button className="brand brand-button" onClick={() => setMode("atlas")} aria-label="EntoWing atlas home">
           <span className="brand-mark" aria-hidden="true">EW</span>
@@ -1966,38 +1904,15 @@ export default function Home() {
         </button>
         <nav className="nav-pills" aria-label="EntoWing modes">
           <button className={mode === "atlas" ? "active" : ""} onClick={enterAtlas}>Atlas</button>
-          <button className={mode === "identify" ? "active" : ""} onClick={() => setMode("identify")}>Wing ID Lab</button>
           <button className={mode === "mapper" ? "active" : ""} onClick={() => setMode("mapper")}>Wing Mapper</button>
           <button className={mode === "learn" ? "active" : ""} onClick={enterLearn}>Learn</button>
           <button className="soft-disabled" title="Planned next">Compare <sup>soon</sup></button>
         </nav>
-        <div className="topbar-meta">
-          <div className="theme-toggle" role="group" aria-label="Atlas visual theme">
-            <button
-              type="button"
-              className={visualTheme === "scientific" ? "active" : ""}
-              aria-pressed={visualTheme === "scientific"}
-              onClick={() => setVisualTheme("scientific")}
-            >
-              <span aria-hidden="true">⌁</span> Scientific
-            </button>
-            <button
-              type="button"
-              className={visualTheme === "nocturnal" ? "active" : ""}
-              aria-pressed={visualTheme === "nocturnal"}
-              onClick={() => setVisualTheme("nocturnal")}
-            >
-              <span aria-hidden="true">✦</span> Nocturnal
-            </button>
-          </div>
-          <div className="version-chip">Research atlas · v0.45</div>
-        </div>
+        <div className="version-chip">Prototype · v0.29</div>
       </header>
 
       {mode === "atlas" ? (
         <PhyloAtlas onOpenMapper={openFamilyWingInMapper} />
-      ) : mode === "identify" ? (
-        <WingIdentifier onUseInMapper={openIdentificationPhotoInMapper} />
       ) : mode === "mapper" ? (
         <>
           <section className="intro mapper-intro">
@@ -2474,7 +2389,7 @@ export default function Home() {
               <div className="atlas-toolbar">
                 <div><span className="tool-kicker">CURRENT WING</span><strong>{wingImage.name}</strong></div>
                 <div className="atlas-toolbar-actions">
-                  {(mode as AtlasMode) === "atlas" && <label className="overlay-toggle"><input type="checkbox" checked={showAll} onChange={(event) => setShowAll(event.target.checked)} /> Show all mapped veins</label>}
+                  {mode === "atlas" && <label className="overlay-toggle"><input type="checkbox" checked={showAll} onChange={(event) => setShowAll(event.target.checked)} /> Show all mapped veins</label>}
                   <button onClick={() => setMode("mapper")}>Edit map</button>
                 </div>
               </div>
@@ -2483,7 +2398,7 @@ export default function Home() {
                 <svg className="atlas-photo-svg" viewBox={`0 0 ${wingImage.width} ${wingImage.height}`} role="img" aria-label="Mapped wing with interactive vein overlay">
                   <image href={wingImage.src} x="0" y="0" width={wingImage.width} height={wingImage.height} />
                   {mappedVeins.map((vein) => {
-                    const isHot = hoveredVeinId === vein.id || ((mode as AtlasMode) === "atlas" && selectedVeinId === vein.id);
+                    const isHot = hoveredVeinId === vein.id || (mode === "atlas" && selectedVeinId === vein.id);
                     return (
                       <g key={vein.id} className={`atlas-vein ${isHot ? "hot" : ""}`}>
                         <path d={smoothPath(map[vein.id])} fill="none" stroke={vein.color} vectorEffect="non-scaling-stroke" className="atlas-vein-visible" style={{ opacity: showAll || isHot ? 1 : 0 }} />
@@ -2521,7 +2436,7 @@ export default function Home() {
             </div>
 
             <aside className="atlas-info-panel">
-              {selectedVein && (mode as AtlasMode) === "atlas" ? (
+              {selectedVein && mode === "atlas" ? (
                 <>
                   <div className="atlas-selected-head"><i style={{ background: selectedVein.color }} /><div><span>{selectedVein.group}</span><h2>{selectedVein.label}</h2></div></div>
                   <h3>{selectedVein.fullName}</h3>

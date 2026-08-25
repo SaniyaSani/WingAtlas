@@ -1,9 +1,9 @@
 {
   "schema": "entowing-template/1.0",
   "kind": "wing-template",
-  "name": "Eristalis-reference",
-  "taxon": "Syrphidae-like · alignment archetype · user-edited tracing",
-  "note": "User-edited EntoWing topology from Eristalis-reference.jpg. The source photograph is not included.",
+  "name": "Eristalis-reference · reviewed · modern nomenclature",
+  "taxon": "Syrphidae · Eristalis · geometry user-reviewed · terminology van Steenis et al. 2023",
+  "note": "User-edited EntoWing topology from Eristalis-reference.jpg. Geometry is preserved; labels are normalized to the modern Syrphidae terminology of van Steenis et al. (2023). The source photograph is not included.",
   "sourceImage": {
     "fileName": "Eristalis-reference.jpg",
     "width": 560,
@@ -320,7 +320,7 @@
       ]
     },
     {
-      "veinId": "Cu1",
+      "veinId": "m-cu",
       "nodeIds": [
         "edit-1786216834382-82qud",
         "m4Mid"
@@ -446,14 +446,14 @@
       "note": "The spurious vein is a vein-like longitudinal structure characteristic of most Syrphidae. EntoWing never assigns it automatically without taxonomic context."
     },
     {
-      "id": "Cu1",
-      "label": "Cu1",
-      "fullName": "Cu1 · user-defined crossvein",
-      "symbolMeaning": "Cu1 = user-defined crossvein",
-      "plainMeaning": "a user-added transverse vein connecting two existing veins",
+      "id": "m-cu",
+      "label": "m-cu",
+      "fullName": "Medial–cubital crossvein · modern Syrphidae",
+      "symbolMeaning": "m-cu = Media ↔ Cubitus",
+      "plainMeaning": "the crossvein connecting the medial and cubital systems",
       "group": "crossvein",
       "color": "#b76f4e",
-      "note": "Added manually from this specimen. Verify its homology and name against the nomenclature used for your taxon."
+      "note": "Geometry comes from the user-reviewed tracing. Modern Syrphidae terminology follows van Steenis et al. (2023); older literature may call this bm-cu."
     },
     {
       "id": "h",
