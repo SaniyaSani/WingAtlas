@@ -14,10 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "EntoWing — Interactive Diptera Wing Atlas",
-  description: "Explore, compare, and learn the venation of insect wings through an interactive scientific atlas.",
-  other: {
-    "codex-preview": "development",
-  },
+  description: "Compare prepared-wing photographs with reusable Diptera references, reconstruct SVG venation, and edit specimen-true wing maps.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
