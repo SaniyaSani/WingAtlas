@@ -4,6 +4,9 @@ import { ChangeEvent, CSSProperties, memo, PointerEvent as ReactPointerEvent, Wh
 import reviewedEristalisPayload from "./Eristalis-reference.entowing-template.json";
 import wingReferenceData from "./family-wing-references.generated.json";
 import { mapReferenceSvgToTemplate } from "./svgWingMapper";
+import SearchCombobox from "./components/SearchCombobox";
+import { localPlatesForFamily, primaryLocalPlateId, REFERENCE_RECORDS } from "./lib/referenceIndex";
+import { readStoredString, STORAGE_KEYS, writeStoredString } from "./lib/safeStorage";
 import {
   DIPTERA_FAMILY_CATALOG,
   DIPTERA_FAMILY_COUNT,
@@ -538,6 +541,45 @@ const initialProfiles: FamilyProfile[] = [...authoredProfiles, ...catalogScaffol
 const atlasReferenceCount = initialProfiles.filter((profile) => familyWingReferences[profile.id]).length;
 const atlasScaffoldCount = DIPTERA_FAMILY_COUNT - atlasReferenceCount;
 
+type ReferenceKind = "local" | "remote" | "none";
+type ReferenceFilter = "all" | "local" | "any" | "none";
+
+/** What kind of published reference the atlas can show for a family (missing data is never read as an absent character). */
+function referenceKindFor(profile: Pick<FamilyProfile, "id" | "family">): ReferenceKind {
+  if (localPlatesForFamily(profile.family).length) return "local";
+  if (familyWingReferences[profile.id] || REFERENCE_RECORDS.some((record) => record.family.toLowerCase() === profile.family.toLowerCase())) return "remote";
+  return "none";
+}
+
+const referenceKindById = new Map(initialProfiles.map((profile) => [profile.id, referenceKindFor(profile)]));
+const REFERENCE_KIND_LABEL: Record<ReferenceKind, string> = { local: "LOCAL PLATE", remote: "LINKED PLATE", none: "SCAFFOLD" };
+const FILTER_LABEL: Record<ReferenceFilter, string> = { all: "All", local: "Local plate", any: "Any plate", none: "No plate yet" };
+
+function matchesReferenceFilter(kind: ReferenceKind, filter: ReferenceFilter) {
+  if (filter === "all") return true;
+  if (filter === "local") return kind === "local";
+  if (filter === "any") return kind !== "none";
+  return kind === "none";
+}
+
+function foldText(value: string) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
+function searchProfiles(items: FamilyProfile[], query: string) {
+  const needle = foldText(query.trim());
+  if (!needle) return items;
+  return items
+    .map((profile) => {
+      const family = foldText(profile.family);
+      const score = family === needle ? 100 : family.startsWith(needle) ? 80 : family.includes(needle) ? 60 : foldText(profile.commonName).includes(needle) ? 40 : foldText(profile.clade).includes(needle) ? 20 : -1;
+      return { profile, score };
+    })
+    .filter((item) => item.score >= 0)
+    .sort((a, b) => b.score - a.score || a.profile.family.localeCompare(b.profile.family))
+    .map((item) => item.profile);
+}
+
 function cladeNode(id: string, parentId: string | null, label: string, order: number, confidence: Confidence, changeType: ChangeType, changeTitle: string, changeSummary: string, sourceLabel: string, sourceUrl: string): TreeNode {
   return { id, parentId, label, rank: id === "diptera" ? "root" : "clade", order, confidence, changeType, changeTitle, changeSummary, sourceLabel, sourceUrl };
 }
@@ -998,7 +1040,15 @@ function isUntouchedScaffold(wing: FamilyWingTemplate, profileId: string) {
   });
 }
 
-export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: string, wing: FamilyWingTemplate, reference?: FamilyWingReference) => void }) {
+export type AtlasCompareTray = { a: string | null; b: string | null };
+
+export default function PhyloAtlas({ onOpenMapper, compareTray = { a: null, b: null }, onCompareTrayChange, onOpenCompare, focusRequest }: {
+  onOpenMapper: (familyId: string, wing: FamilyWingTemplate, reference?: FamilyWingReference) => void;
+  compareTray?: AtlasCompareTray;
+  onCompareTrayChange?: (tray: AtlasCompareTray) => void;
+  onOpenCompare?: (pair: { a?: string | null; b?: string | null }) => void;
+  focusRequest?: { familyId: string; nonce: number } | null;
+}) {
   const [tree, setTree] = useState<TreeNode[]>(() => cloneTree(initialTree));
   const [wings, setWings] = useState<Record<string, FamilyWingTemplate>>(() => cloneWings(initialWings));
   const [positions, setPositions] = useState<Record<string, BoardPoint>>(() => autoLayout(initialTree));
@@ -1013,6 +1063,8 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
   const [conversionState, setConversionState] = useState<Record<string, "mapping" | "ready" | "failed">>({});
   const [conversionError, setConversionError] = useState<Record<string, string>>({});
   const [status, setStatus] = useState("Flowchart loaded · drag the board, then edit cards and connections.");
+  const [referenceFilter, setReferenceFilter] = useState<ReferenceFilter>("all");
+  const [pendingCenter, setPendingCenter] = useState<string | null>(null);
   const importRef = useRef<HTMLInputElement>(null);
   const wingSvgRef = useRef<SVGSVGElement | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
@@ -1039,9 +1091,21 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
     } catch {
       setStatus("Research tree loaded; a damaged local draft was ignored.");
     } finally {
+      // Keep the reader's place: an explicit request (e.g. from Compare) wins over the stored selection.
+      const requested = focusRequest?.familyId ? `${focusRequest.familyId}-node` : readStoredString(STORAGE_KEYS.atlasSelection);
+      if (requested && initialTree.some((node) => node.id === requested)) {
+        setSelectedNodeId(requested);
+        setPendingCenter(requested);
+        if (focusRequest?.familyId) setStatus(`${initialTree.find((node) => node.id === requested)?.label ?? "Family"} opened from Compare.`);
+      }
       setStorageReady(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (storageReady) writeStoredString(STORAGE_KEYS.atlasSelection, selectedNodeId);
+  }, [selectedNodeId, storageReady]);
 
   useEffect(() => {
     if (!storageReady) return;
@@ -1125,6 +1189,41 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
       scale: nextScale,
     });
   }, [boardView.scale, positions, selectedNodeId]);
+
+  useEffect(() => {
+    if (!pendingCenter || !storageReady) return;
+    const frame = window.requestAnimationFrame(() => {
+      centerBoardOn(pendingCenter, .78);
+      setPendingCenter(null);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [pendingCenter, storageReady, centerBoardOn]);
+
+  const selectedFamilyPlateId = selectedProfile ? primaryLocalPlateId(selectedProfile.id) : null;
+  const filterCounts = useMemo(() => Object.fromEntries((Object.keys(FILTER_LABEL) as ReferenceFilter[]).map((filter) => [filter, initialProfiles.filter((profile) => matchesReferenceFilter(referenceKindById.get(profile.id) ?? "none", filter)).length])) as Record<ReferenceFilter, number>, []);
+  const searchableProfiles = useMemo(() => sortedProfiles.filter((profile) => matchesReferenceFilter(referenceKindById.get(profile.id) ?? "none", referenceFilter)), [sortedProfiles, referenceFilter]);
+
+  function selectFamily(familyId: string) {
+    const node = tree.find((item) => item.familyId === familyId);
+    if (!node) return;
+    setSelectedNodeId(node.id);
+    setWingEditing(false);
+    window.requestAnimationFrame(() => centerBoardOn(node.id, .78));
+    setStatus(`${node.label} selected · board centred on its card.`);
+  }
+
+  function setTraySlot(slot: "a" | "b") {
+    if (!selectedFamilyPlateId || !onCompareTrayChange) return;
+    const next = { ...compareTray, [slot]: selectedFamilyPlateId };
+    onCompareTrayChange(next);
+    setStatus(`${selectedProfile?.family} set as Compare ${slot.toUpperCase()}.`);
+  }
+
+  function trayLabel(id: string | null) {
+    if (!id) return "—";
+    const record = REFERENCE_RECORDS.find((item) => item.id === id);
+    return record ? `${record.family}${record.taxon !== "unknown" ? ` · ${record.taxon}` : ""}` : id;
+  }
 
   function fitPositions(layout: Record<string, BoardPoint>) {
     const board = boardRef.current;
@@ -1393,8 +1492,38 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
       <small>The published family SVG is now the tracing layer where one is available. Your interactive EntoWing graph stays separate until every vein identity and homology has been checked.</small>
     </section>
 
+    <section className="atlas-finder" aria-label="Find families and queue them for Compare">
+      <div className="atlas-finder-search">
+        <SearchCombobox<FamilyProfile>
+          label={<>FIND FAMILY · {searchableProfiles.length} {referenceFilter === "all" ? "entries" : "shown"}</>}
+          items={searchableProfiles}
+          getKey={(profile) => profile.id}
+          search={searchProfiles}
+          selectedKey={selectedProfile?.id ?? null}
+          selectedLabel={selectedProfile ? `${selectedProfile.family} · ${selectedProfile.commonName}` : ""}
+          placeholder="Type a family, common name or clade…"
+          onSelect={(profile) => selectFamily(profile.id)}
+          renderOption={(profile) => {
+            const kind = referenceKindById.get(profile.id) ?? "none";
+            return <span className="atlas-option"><b>{profile.family}</b><span>{profile.commonName}</span><small className={`kind-${kind}`}>{REFERENCE_KIND_LABEL[kind]}</small></span>;
+          }}
+          emptyMessage={(query) => <>No family matches “{query}” with the “{FILTER_LABEL[referenceFilter]}” filter.</>}
+        />
+      </div>
+      <div className="atlas-finder-group reference-filter" role="group" aria-label="Filter families by available reference plate">
+        <span>PLATES</span>
+        {(Object.keys(FILTER_LABEL) as ReferenceFilter[]).map((filter) => <button key={filter} type="button" className={referenceFilter === filter ? "active" : ""} aria-pressed={referenceFilter === filter} onClick={() => { setReferenceFilter(filter); setStatus(filter === "all" ? "Showing every family card." : `Highlighting families with “${FILTER_LABEL[filter].toLowerCase()}”; other cards are dimmed, not removed.`); }}>{FILTER_LABEL[filter]} <small>{filterCounts[filter]}</small></button>)}
+      </div>
+      {onOpenCompare && <div className="atlas-finder-group compare-tray" role="group" aria-label="Families queued for Compare">
+        <span>COMPARE</span>
+        <em><b>A</b>{trayLabel(compareTray.a)}</em>
+        <em><b>B</b>{trayLabel(compareTray.b)}</em>
+        <button type="button" disabled={!compareTray.a && !compareTray.b} onClick={() => onOpenCompare({ a: compareTray.a, b: compareTray.b })}>Open Compare →</button>
+        {(compareTray.a || compareTray.b) && <button type="button" onClick={() => onCompareTrayChange?.({ a: null, b: null })} aria-label="Clear compare selection">✕</button>}
+      </div>}
+    </section>
+
     <section className="phylo-toolbar" aria-label="Phylogeny project tools">
-      <label className="family-jump"><span>JUMP TO FAMILY</span><select value={selectedNode?.familyId && initialProfiles.some((profile) => profile.id === selectedNode.familyId) ? selectedNode.familyId : ""} onChange={(event) => { const node = tree.find((item) => item.familyId === event.target.value); if (node) { setSelectedNodeId(node.id); setWingEditing(false); window.requestAnimationFrame(() => centerBoardOn(node.id, .78)); } }}><option value="">Choose one of {DIPTERA_FAMILY_COUNT}…</option>{sortedProfiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.family} · {profile.commonName}</option>)}</select></label>
       <div className="phylo-toolbar-group view-controls"><span>BOARD</span><button onClick={() => zoomBoard(.82)}>−</button><button className="zoom-readout">{Math.round(boardView.scale * 100)}%</button><button onClick={() => zoomBoard(1.22)}>＋</button><button onClick={() => centerBoardOn()}>◎ Selected</button><button onClick={fitBoard}>Fit all</button></div>
       <div className="phylo-toolbar-group"><span>STRUCTURE</span><button className={editTree ? "active" : ""} onClick={() => { setEditTree((value) => !value); setLinkMode(false); }}>✎ Arrange</button><button className={linkMode ? "active connect-mode" : ""} disabled={!editTree || selectedNode?.id === "diptera"} onClick={() => setLinkMode((value) => !value)}>↗ Connect parent</button><button onClick={() => addNode("clade")}>＋ Clade</button><button onClick={() => addNode("family")}>＋ Family</button><button onClick={autoArrangeBoard}>⌁ Auto layout</button></div>
       <div className="phylo-toolbar-group project-actions"><span>PROJECT</span><button onClick={exportProject}>↓ Export</button><button onClick={() => importRef.current?.click()}>↑ Import</button><button onClick={resetProject}>↺ Reset</button><input ref={importRef} type="file" accept="application/json,.json" onChange={importProject} hidden /></div>
@@ -1407,6 +1536,20 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
           <strong>Drag the sky. Rebuild the tree.</strong>
           <small>Drag empty space to pan · trackpad to move · pinch or ⌘-scroll to zoom · select a family to open its wing.</small>
         </div>
+        <details className="atlas-legend-key">
+          <summary>Legend · how to read the board</summary>
+          <dl>
+            <div><dt><i className="key-kind kind-local">LOCAL PLATE</i></dt><dd>Published wing plate stored with EntoWing; source, author and licence are recorded. Usable in Compare and Wing ID Lab.</dd></div>
+            <div><dt><i className="key-kind kind-remote">LINKED PLATE</i></dt><dd>Published plate shown from its remote host (Wikimedia Commons). Not yet stored locally, so not available in Compare.</dd></div>
+            <div><dt><i className="key-kind kind-none">SCAFFOLD</i></dt><dd>No plate attached. The small wing is the editable Eristalis-derived scaffold — <b>not</b> this family’s venation.</dd></div>
+            <div><dt><i className="key-swatch reconstruction" /></dt><dd><b>Machine reconstruction</b>: paths separated automatically from a published SVG; labels are suggestions until reviewed.</dd></div>
+            <div><dt><i className="key-swatch reviewed" /></dt><dd><b>User-reviewed geometry</b>: hand-checked tracing (currently Syrphidae · Eristalis only).</dd></div>
+            <div><dt><i className="key-swatch markup" /></dt><dd><b>Your markup</b>: edits made here or in Mapper; stored in this browser until you export.</dd></div>
+            <div><dt><i className="key-confidence">high · medium · working</i></dt><dd>Support for the placement of a card in the cited phylogeny; “working” marks teaching containers and unresolved relationships.</dd></div>
+            <div><dt><i className="key-line" /></dt><dd>Highlighted connections and outlined cards trace the selected lineage. Dimmed cards are hidden by the plate filter, not deleted.</dd></div>
+          </dl>
+          <p>A missing plate records missing data in EntoWing. It never means that a family lacks a vein, cell or other character.</p>
+        </details>
         <div
           className={`flow-board-viewport ${editTree ? "arrange-mode" : "explore-mode"} ${linkMode ? "link-mode" : ""}`}
           ref={boardRef}
@@ -1454,16 +1597,22 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
               const reference = node.familyId ? familyWingReferences[node.familyId] : undefined;
               const accent = profile ? constellationAccent(profile.id) : node.rank === "root" ? "#ff5fa2" : "#62d9ff";
               const childCount = tree.filter((item) => item.parentId === node.id).length;
+              const kind: ReferenceKind | null = node.familyId ? referenceKindById.get(node.familyId) ?? "none" : null;
+              const filteredOut = Boolean(kind && !matchesReferenceFilter(kind, referenceFilter));
+              const inLineage = selectedLineage.some((item) => item.id === node.id);
               return <button
                 key={`flow-${node.id}`}
                 type="button"
-                className={`flow-node ${node.rank} confidence-${node.confidence} ${selectedNodeId === node.id ? "selected" : ""}`}
+                aria-label={`${node.label}, ${node.rank}${kind ? `, ${REFERENCE_KIND_LABEL[kind].toLowerCase()}` : ""}${selectedNodeId === node.id ? ", selected" : ""}`}
+                aria-pressed={selectedNodeId === node.id}
+                onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedNodeId(node.id); setWingEditing(false); } }}
+                className={`flow-node ${node.rank} confidence-${node.confidence} ${selectedNodeId === node.id ? "selected" : ""} ${inLineage ? "in-lineage" : ""} ${filteredOut ? "is-filtered-out" : ""}`}
                 style={{ left: position.x, top: position.y, "--node-accent": accent } as CSSProperties}
                 onPointerDown={(event) => beginNodeGesture(node, event)}
               >
                 <span className="flow-node-port input" aria-hidden="true" />
                 <span className={`flow-node-icon ${reference ? "has-reference" : ""}`} aria-hidden="true">{reference ? <img src={reference.assetPath} alt="" loading="lazy" crossOrigin="anonymous" referrerPolicy="no-referrer" /> : wing ? <WingGlyph wing={wing} accent={accent} /> : <i>{node.rank === "root" ? "D" : "✦"}</i>}</span>
-                <span className="flow-node-copy"><em>{node.rank}{childCount ? ` · ${childCount} branches` : ""}</em><strong>{node.label}</strong><small>{profile?.commonName ?? node.changeTitle}</small></span>
+                <span className="flow-node-copy"><em>{node.rank}{childCount ? ` · ${childCount} branches` : ""}</em><strong>{node.label}</strong><small>{profile?.commonName ?? node.changeTitle}</small>{kind && <b className={`flow-node-kind kind-${node.userAdded ? "user" : kind}`}>{node.userAdded ? "USER" : REFERENCE_KIND_LABEL[kind]}</b>}</span>
                 <span className={`flow-node-confidence ${node.confidence}`}>{node.confidence}</span>
                 <span className="flow-node-port output" aria-hidden="true" />
               </button>;
@@ -1475,6 +1624,13 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
       </div>
 
       <aside className="phylo-inspector">
+        <nav className="inspector-breadcrumbs" aria-label="Position in the tree">
+          <ol>{selectedLineage.map((lineageNode, index) => <li key={`crumb-${lineageNode.id}`}>
+            {index === selectedLineage.length - 1
+              ? <span aria-current="location">{lineageNode.label}</span>
+              : <button type="button" onClick={() => { setSelectedNodeId(lineageNode.id); setWingEditing(false); centerBoardOn(lineageNode.id); }}>{lineageNode.label}</button>}
+          </li>)}</ol>
+        </nav>
         <div className="inspector-head">
           <div><span>{selectedNode?.rank ?? "node"} · {selectedNode?.confidence ?? "working"} confidence</span><h2>{selectedNode?.label}</h2></div>
           <span className={`change-pill ${selectedNode?.changeType}`}>{selectedNode?.changeType}</span>
@@ -1515,7 +1671,7 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
               <button type="button" onClick={() => onOpenMapper(selectedProfile.id, selectedWing, selectedReference)}>Open in Mapper →</button>
             </div>
             {conversionState[selectedProfile.id] === "failed" && <small className="conversion-error" role="alert">Conversion stopped: {conversionError[selectedProfile.id]}. Tap retry; the published reference remains unchanged.</small>}
-          </div> : <div className="published-wing-reference missing"><span>REFERENCE GAP</span><b>No reusable family SVG is attached yet.</b><small>The editable Eristalis-derived graph remains a scaffold, not this family’s finished venation.</small></div>}
+          </div> : <div className="published-wing-reference missing"><span>REFERENCE GAP · MISSING DATA</span><b>No reusable family plate is attached yet.</b><small>This records missing data in EntoWing, not the absence of any wing character. The editable Eristalis-derived graph below is a scaffold, not this family’s venation.</small></div>}
           <div className={`geometry-status ${selectedWing.mappingStatus === "reviewed" ? "reviewed" : selectedWing.mappingStatus === "machine-draft" ? "machine" : conversionState[selectedProfile.id] === "failed" ? "failed" : "draft"}`}><i />{
             conversionState[selectedProfile.id] === "mapping"
               ? "SEPARATING SOURCE PATHS + MATCHING LABELS…"
@@ -1527,6 +1683,19 @@ export default function PhyloAtlas({ onOpenMapper }: { onOpenMapper: (familyId: 
                     ? `MACHINE-MAPPED DRAFT · ${selectedWing.mappingStats?.namedPathCount ?? 0}/${selectedWing.mappingStats?.sourcePathCount ?? selectedWing.paths.length} PATHS LABELLED · VERIFY`
                     : "ERISTALIS SCAFFOLD · WAITING FOR FAMILY SVG MAPPING"
           }</div>
+          <ul className="layer-key" aria-label="Layers shown for this family">
+            <li className={selectedReference ? "present" : "absent"}><b>Reference</b>{selectedReference ? (familyWingReferences[selectedProfile.id]?.localAsset ? "published plate · local copy" : "published plate · linked") : "none attached (missing data)"}</li>
+            <li className="present"><b>Morphotype</b>{selectedProfile.representative}</li>
+            <li className={selectedWing.mappingStatus === "machine-draft" ? "present machine" : selectedWing.mappingStatus === "reviewed" ? "present reviewed" : "absent"}><b>Reconstruction</b>{selectedWing.mappingStatus === "machine-draft" ? "machine-mapped draft · verify labels" : selectedWing.mappingStatus === "reviewed" ? "user-reviewed geometry" : "not built · Eristalis scaffold shown"}</li>
+            <li className="present markup"><b>Your markup</b>edits stay in this browser until exported</li>
+          </ul>
+          {onCompareTrayChange && <div className="family-compare-actions" role="group" aria-label={`Send ${selectedProfile.family} to Compare`}>
+            <span>COMPARE</span>
+            <button type="button" disabled={!selectedFamilyPlateId} title={selectedFamilyPlateId ? undefined : "Compare works with locally stored plates; this family has none yet."} className={compareTray.a === selectedFamilyPlateId && selectedFamilyPlateId ? "active" : ""} onClick={() => setTraySlot("a")}>Set as A</button>
+            <button type="button" disabled={!selectedFamilyPlateId} title={selectedFamilyPlateId ? undefined : "Compare works with locally stored plates; this family has none yet."} className={compareTray.b === selectedFamilyPlateId && selectedFamilyPlateId ? "active" : ""} onClick={() => setTraySlot("b")}>Set as B</button>
+            <button type="button" disabled={!onOpenCompare || (!compareTray.a && !compareTray.b && !selectedFamilyPlateId)} onClick={() => onOpenCompare?.(compareTray.a || compareTray.b ? { a: compareTray.a, b: compareTray.b } : { a: selectedFamilyPlateId })}>Open Compare →</button>
+            {!selectedFamilyPlateId && <small>No local plate for {selectedProfile.family} yet, so it cannot be overlaid.</small>}
+          </div>}
           <div className="wing-selection-guide"><span>SELECT A STRUCTURE</span><small>Tap a coloured vein, its label, or a code below.</small></div>
           <div className="family-wing-editor" ref={(element) => { wingSvgRef.current = element?.querySelector("svg") ?? null; }}>
             <WingGlyph

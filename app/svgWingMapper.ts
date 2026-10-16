@@ -195,12 +195,31 @@ function normalizeGeometry(paths: SourcePath[], outline: SourcePath | null) {
   };
 }
 
+/**
+ * The source SVG is measured inside the live document, so strip anything that
+ * could execute or fetch: scripts, foreign content, event-handler attributes
+ * and javascript: / external links. Geometry, styles and text are kept.
+ */
+export function sanitizeSvgDocument(documentSource: Document) {
+  documentSource.querySelectorAll("script, foreignObject, iframe, object, embed, audio, video").forEach((element) => element.remove());
+  documentSource.querySelectorAll("*").forEach((element) => {
+    Array.from(element.attributes).forEach((attribute) => {
+      const name = attribute.name.toLowerCase();
+      const value = attribute.value.trim().toLowerCase();
+      if (name.startsWith("on")) element.removeAttribute(attribute.name);
+      else if ((name === "href" || name.endsWith(":href")) && !value.startsWith("#") && !value.startsWith("data:image/")) element.removeAttribute(attribute.name);
+      else if (/javascript:/i.test(value)) element.removeAttribute(attribute.name);
+    });
+  });
+}
+
 export async function mapReferenceSvgToTemplate(reference: FamilyWingReference): Promise<FamilyWingTemplate> {
   const response = await fetch(reference.assetPath, { mode: "cors" });
   if (!response.ok) throw new Error(`Reference SVG returned ${response.status}.`);
   const source = await response.text();
   const documentSource = new DOMParser().parseFromString(source, "image/svg+xml");
   if (documentSource.querySelector("parsererror")) throw new Error("Reference SVG could not be parsed.");
+  sanitizeSvgDocument(documentSource);
 
   const stage = document.createElement("div");
   stage.setAttribute("aria-hidden", "true");

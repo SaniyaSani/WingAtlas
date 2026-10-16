@@ -3,41 +3,23 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import reviewedEristalisPayload from "./Eristalis-reference.entowing-template.json";
 import PhyloAtlas, { FamilyWingReference, FamilyWingTemplate } from "./PhyloAtlas";
-import WingCompare from "./WingCompare";
+import WingCompare, { type ComparePair } from "./WingCompare";
 import WingIdentifier from "./WingIdentifier";
+import { detectNomenclature, parseTemplatePayload } from "./lib/templateSchema";
+import { AutosaveEntry, describeEntry, entryHasContent, findEntry, imageKey, readStore, removeEntry, upsertEntry } from "./lib/mapperAutosave";
+import { REFERENCE_BY_ID } from "./lib/referenceIndex";
+import { readStoredJson, readStoredString, STORAGE_KEYS, writeStoredJson, writeStoredString } from "./lib/safeStorage";
+import type { CurveControl, CurveHandle, CurveNodeMode, Point, TemplatePath, VeinDefinition, WingTemplate } from "./lib/wingTypes";
 
-type Point = { x: number; y: number };
 type CanvasView = { x: number; y: number; width: number; height: number };
 type TemplateEditTool = "drag" | "insert" | "delete" | "join" | "crossvein";
-type CurveNodeMode = "smooth" | "corner" | "bezier";
-type CurveHandle = { dx: number; dy: number };
-type CurveControl = { mode: CurveNodeMode; in?: CurveHandle; out?: CurveHandle };
 type AtlasMode = "atlas" | "identify" | "compare" | "mapper" | "learn";
 type VisualTheme = "scientific" | "nocturnal";
 type WingImage = { src: string; name: string; width: number; height: number; isLocal: boolean };
 type AutoCandidate = { id: string; points: Point[]; length: number };
-type TemplatePath = { veinId: string; nodeIds: string[]; curve?: Record<string, CurveControl> };
-type WingTemplate = {
-  id: string;
-  name: string;
-  taxon: string;
-  note: string;
-  referenceSize?: { width: number; height: number };
-  nodes: Record<string, Point>;
-  paths: TemplatePath[];
-};
 
-type VeinDefinition = {
-  id: string;
-  label: string;
-  fullName: string;
-  symbolMeaning: string;
-  plainMeaning: string;
-  group: string;
-  color: string;
-  note: string;
-  legacyAlias?: string;
-};
+type MapSnapshot = { map: Record<string, Point[]>; draftHypotheses: Record<string, number> };
+type CompareTray = { a: string | null; b: string | null };
 
 type TemplateUndoSnapshot = {
   template: WingTemplate | null;
@@ -201,25 +183,6 @@ function scaleCurveHandles(template: WingTemplate, factor: number): WingTemplate
       }])) : undefined,
     })),
   };
-}
-
-function readCurveControls(value: unknown, allowedNodeIds: string[]) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
-  const allowed = new Set(allowedNodeIds);
-  const result: Record<string, CurveControl> = {};
-  Object.entries(value as Record<string, unknown>).forEach(([nodeId, raw]) => {
-    if (!allowed.has(nodeId) || !raw || typeof raw !== "object" || Array.isArray(raw)) return;
-    const candidate = raw as { mode?: unknown; in?: unknown; out?: unknown };
-    if (candidate.mode !== "smooth" && candidate.mode !== "corner" && candidate.mode !== "bezier") return;
-    const readHandle = (handle: unknown): CurveHandle | undefined => {
-      if (!handle || typeof handle !== "object" || Array.isArray(handle)) return undefined;
-      const dx = Number((handle as { dx?: unknown }).dx);
-      const dy = Number((handle as { dy?: unknown }).dy);
-      return Number.isFinite(dx) && Number.isFinite(dy) ? { dx, dy } : undefined;
-    };
-    result[nodeId] = { mode: candidate.mode, in: readHandle(candidate.in), out: readHandle(candidate.out) };
-  });
-  return Object.keys(result).length ? result : undefined;
 }
 
 function downloadText(filename: string, content: string, type: string) {
@@ -814,6 +777,15 @@ export default function Home() {
   const [templateStatus, setTemplateStatus] = useState("Choose an anatomical archetype, place it over the photo, then drag shared junctions into position.");
   const [templateSaveName, setTemplateSaveName] = useState("");
   const [canvasView, setCanvasView] = useState<CanvasView>({ x: 0, y: 0, width: 560, height: 246 });
+  const [templateRedoStack, setTemplateRedoStack] = useState<TemplateUndoSnapshot[]>([]);
+  const [mapHistory, setMapHistory] = useState<{ past: MapSnapshot[]; future: MapSnapshot[] }>({ past: [], future: [] });
+  const [importReport, setImportReport] = useState<{ fileName: string; ok: boolean; lines: string[] } | null>(null);
+  const [autosaveOffer, setAutosaveOffer] = useState<AutosaveEntry | null>(null);
+  const [autosaveState, setAutosaveState] = useState<"idle" | "saved" | "failed">("idle");
+  const [autosaveSavedAt, setAutosaveSavedAt] = useState<string | null>(null);
+  const [compareRequest, setCompareRequest] = useState<(ComparePair & { nonce: number }) | null>(null);
+  const [compareTray, setCompareTray] = useState<CompareTray>({ a: null, b: null });
+  const [atlasFocus, setAtlasFocus] = useState<{ familyId: string; nonce: number } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const touchPointersRef = useRef(new Map<number, Point>());
   const touchTapRef = useRef(new Map<number, Point>());
@@ -822,13 +794,17 @@ export default function Home() {
   const pinchStartRef = useRef<{ distance: number; zoom: number; focus: Point } | null>(null);
 
   useEffect(() => {
-    const savedTheme = window.localStorage.getItem("entowing-visual-theme-v1");
-    if (savedTheme === "scientific" || savedTheme === "nocturnal") setVisualTheme(savedTheme);
+    // Read before the persisting effect below writes the default theme.
+    const savedTheme = readStoredString(STORAGE_KEYS.theme);
+    const restoreTimer = window.setTimeout(() => {
+      if (savedTheme === "scientific" || savedTheme === "nocturnal") setVisualTheme(savedTheme);
+    }, 0);
+    return () => window.clearTimeout(restoreTimer);
   }, []);
 
   useEffect(() => {
     document.documentElement.dataset.entowingTheme = visualTheme;
-    window.localStorage.setItem("entowing-visual-theme-v1", visualTheme);
+    writeStoredString(STORAGE_KEYS.theme, visualTheme);
   }, [visualTheme]);
 
   useEffect(() => {
@@ -856,22 +832,142 @@ export default function Home() {
     ? activeTemplatePath.curve?.[selectedTemplateNodeId]?.mode ?? "smooth"
     : "smooth";
 
+  const nomenclature = useMemo(() => detectNomenclature([
+    ...Object.entries(map).filter(([, points]) => points.length >= 2).map(([id]) => id),
+    ...(placedTemplate?.paths.map((path) => path.veinId) ?? []),
+  ]), [map, placedTemplate]);
+  const hasAnnotationWork = Object.values(map).some((points) => points.length > 0) || Boolean(placedTemplate && templateUndoStack.length);
+
   useEffect(() => {
-    const handleUndoShortcut = (event: KeyboardEvent) => {
-      if (!(event.ctrlKey || event.metaKey) || event.shiftKey || event.key.toLowerCase() !== "z") return;
+    const handleHistoryShortcut = (event: KeyboardEvent) => {
+      if (!(event.ctrlKey || event.metaKey)) return;
+      const key = event.key.toLowerCase();
+      const isUndo = key === "z" && !event.shiftKey;
+      const isRedo = (key === "z" && event.shiftKey) || key === "y";
+      if (!isUndo && !isRedo) return;
       const target = event.target;
       if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement || (target instanceof HTMLElement && target.isContentEditable)) return;
-      if (templateEditMode && placedTemplate && templateUndoStack.length) {
-        event.preventDefault();
-        undoTemplateAction();
-      } else if (!templateEditMode && (map[activeVeinId]?.length ?? 0) > 0) {
-        event.preventDefault();
-        undoPoint();
+      if (mode !== "mapper") return;
+      if (templateEditMode && placedTemplate) {
+        if (isUndo && templateUndoStack.length) { event.preventDefault(); undoTemplateAction(); }
+        if (isRedo && templateRedoStack.length) { event.preventDefault(); redoTemplateAction(); }
+      } else {
+        if (isUndo && mapHistory.past.length) { event.preventDefault(); undoMapAction(); }
+        if (isRedo && mapHistory.future.length) { event.preventDefault(); redoMapAction(); }
       }
     };
-    window.addEventListener("keydown", handleUndoShortcut);
-    return () => window.removeEventListener("keydown", handleUndoShortcut);
-  }, [templateUndoStack, templateEditMode, placedTemplate, map, activeVeinId]);
+    window.addEventListener("keydown", handleHistoryShortcut);
+    return () => window.removeEventListener("keydown", handleHistoryShortcut);
+  });
+
+  /* ---------- autosave (geometry + labels only; never the photograph) ---------- */
+
+  const currentImageKey = imageKey(wingImage);
+
+  function autosaveEntryNow(): AutosaveEntry {
+    return {
+      imageKey: currentImageKey,
+      imageName: wingImage.name,
+      width: wingImage.width,
+      height: wingImage.height,
+      savedAt: new Date().toISOString(),
+      map,
+      draftHypotheses,
+      customVeins,
+      placedTemplate,
+      templateNodes,
+      activeVeinId,
+    };
+  }
+
+  function writeAutosave(entry: AutosaveEntry) {
+    if (!entryHasContent(entry)) return true;
+    const ok = writeStoredJson(STORAGE_KEYS.mapperAutosave, upsertEntry(readStore(readStoredJson(STORAGE_KEYS.mapperAutosave)), entry));
+    setAutosaveState(ok ? "saved" : "failed");
+    if (ok) setAutosaveSavedAt(entry.savedAt);
+    return ok;
+  }
+
+  useEffect(() => {
+    // Do not overwrite a stored draft while its restore offer is still open.
+    if (autosaveOffer && autosaveOffer.imageKey === currentImageKey) return;
+    if (!hasAnnotationWork) return;
+    const timer = window.setTimeout(() => writeAutosave(autosaveEntryNow()), 700);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, draftHypotheses, customVeins, placedTemplate, templateNodes, currentImageKey, autosaveOffer, hasAnnotationWork]);
+
+  function offerAutosaveFor(image: { name: string; width: number; height: number }) {
+    const entry = findEntry(readStore(readStoredJson(STORAGE_KEYS.mapperAutosave)), imageKey(image));
+    setAutosaveOffer(entry && entryHasContent(entry) ? entry : null);
+  }
+
+  useEffect(() => {
+    // Offer a draft for the default reference image after the first client render.
+    const timer = window.setTimeout(() => offerAutosaveFor(wingImage), 0);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function restoreAutosave() {
+    if (!autosaveOffer) return;
+    const entry = autosaveOffer;
+    rememberMapState();
+    setMap(entry.map);
+    setDraftHypotheses(entry.draftHypotheses);
+    setCustomVeins((current) => [...current, ...entry.customVeins.filter((vein) => !current.some((item) => item.id === vein.id) && !presets.some((preset) => preset.id === vein.id))]);
+    if (entry.placedTemplate) {
+      setPlacedTemplate(entry.placedTemplate);
+      setTemplateNodes(entry.templateNodes);
+      setTemplateEditMode(false);
+      setManualAddMode(true);
+    }
+    setActiveVeinId(entry.activeVeinId);
+    setAutosaveOffer(null);
+    setTemplateStatus(`Restored the autosaved annotation from ${new Date(entry.savedAt).toLocaleString()}. Undo reverts the restore.`);
+  }
+
+  function discardAutosave() {
+    if (!autosaveOffer) return;
+    writeStoredJson(STORAGE_KEYS.mapperAutosave, removeEntry(readStore(readStoredJson(STORAGE_KEYS.mapperAutosave)), autosaveOffer.imageKey));
+    setAutosaveOffer(null);
+    setTemplateStatus("The autosaved draft for this image was deleted from this browser.");
+  }
+
+  /** Ask before replacing a wing that carries annotation work. */
+  function confirmReplaceWing(action: string) {
+    if (!hasAnnotationWork) return true;
+    const saved = writeAutosave(autosaveEntryNow());
+    const traced = mappedVeins.length;
+    return window.confirm(saved
+      ? `${action} replaces the current wing “${wingImage.name}”.\n\nIts annotation (${traced} traced structure${traced === 1 ? "" : "s"}) has been autosaved in this browser and will be offered again when you reopen the same image.\n\nContinue?`
+      : `${action} replaces the current wing “${wingImage.name}”.\n\nWARNING: the browser refused to autosave this annotation (${traced} traced structure${traced === 1 ? "" : "s"}). Export the map first if you want to keep it.\n\nContinue and discard it?`);
+  }
+
+  /* ---------- annotation history ---------- */
+
+  function rememberMapState() {
+    const snapshot: MapSnapshot = { map, draftHypotheses };
+    setMapHistory((current) => ({ past: [...current.past.slice(-79), snapshot], future: [] }));
+  }
+
+  function undoMapAction() {
+    const previous = mapHistory.past[mapHistory.past.length - 1];
+    if (!previous) return;
+    setMapHistory((current) => ({ past: current.past.slice(0, -1), future: [{ map, draftHypotheses }, ...current.future].slice(0, 80) }));
+    setMap(previous.map);
+    setDraftHypotheses(previous.draftHypotheses);
+    setDragging(null);
+  }
+
+  function redoMapAction() {
+    const next = mapHistory.future[0];
+    if (!next) return;
+    setMapHistory((current) => ({ past: [...current.past, { map, draftHypotheses }].slice(-80), future: current.future.slice(1) }));
+    setMap(next.map);
+    setDraftHypotheses(next.draftHypotheses);
+    setDragging(null);
+  }
 
   function rememberTemplateState() {
     const snapshot: TemplateUndoSnapshot = {
@@ -881,6 +977,16 @@ export default function Home() {
       activeVeinId,
     };
     setTemplateUndoStack((current) => [...current.slice(-79), snapshot]);
+    setTemplateRedoStack([]);
+  }
+
+  function resetTemplateToolState() {
+    setTemplateDraggingNode(null);
+    setTemplateDraggingHandle(null);
+    setSelectedTemplateNodeId(null);
+    setTemplateJoinNodeId(null);
+    setTemplateCrossveinNodeId(null);
+    setTemplateEditTool("drag");
   }
 
   function undoTemplateAction() {
@@ -889,18 +995,32 @@ export default function Home() {
       setTemplateStatus("Nothing to undo yet.");
       return;
     }
+    const current: TemplateUndoSnapshot = { template: placedTemplate, nodes: templateNodes, customVeins, activeVeinId };
     setPlacedTemplate(snapshot.template);
     setTemplateNodes(snapshot.nodes);
     setCustomVeins(snapshot.customVeins);
     setActiveVeinId(snapshot.activeVeinId);
-    setTemplateUndoStack((current) => current.slice(0, -1));
-    setTemplateDraggingNode(null);
-    setTemplateDraggingHandle(null);
-    setSelectedTemplateNodeId(null);
-    setTemplateJoinNodeId(null);
-    setTemplateCrossveinNodeId(null);
-    setTemplateEditTool("drag");
-    setTemplateStatus("Undid the last template edit. Ctrl/Cmd + Z works here too.");
+    setTemplateUndoStack((stack) => stack.slice(0, -1));
+    setTemplateRedoStack((stack) => [current, ...stack].slice(0, 80));
+    resetTemplateToolState();
+    setTemplateStatus("Undid the last template edit · Ctrl/Cmd + Z undo · Ctrl/Cmd + Shift + Z redo.");
+  }
+
+  function redoTemplateAction() {
+    const snapshot = templateRedoStack[0];
+    if (!snapshot) {
+      setTemplateStatus("Nothing to redo.");
+      return;
+    }
+    const current: TemplateUndoSnapshot = { template: placedTemplate, nodes: templateNodes, customVeins, activeVeinId };
+    setPlacedTemplate(snapshot.template);
+    setTemplateNodes(snapshot.nodes);
+    setCustomVeins(snapshot.customVeins);
+    setActiveVeinId(snapshot.activeVeinId);
+    setTemplateRedoStack((stack) => stack.slice(1));
+    setTemplateUndoStack((stack) => [...stack, current].slice(-80));
+    resetTemplateToolState();
+    setTemplateStatus("Redid the template edit.");
   }
 
   function screenToWing(clientX: number, clientY: number): Point | null {
@@ -1098,6 +1218,7 @@ export default function Home() {
     if (mapperPreview || dragging || !manualAddMode || (placedTemplate && templateEditMode)) return;
     const point = screenToWing(clientX, clientY);
     if (!point) return;
+    rememberMapState();
     setMap((current) => ({ ...current, [activeVeinId]: [...(current[activeVeinId] ?? []), point] }));
     setDraftHypotheses((current) => {
       if (!(activeVeinId in current)) return current;
@@ -1158,6 +1279,7 @@ export default function Home() {
     window.setTimeout(async () => {
       try {
         const result = await traceBetweenAnchors(wingImage.src, wingImage.width, wingImage.height, start, end);
+        rememberMapState();
         setMap((current) => ({ ...current, [veinId]: result.points }));
         setDraftHypotheses((current) => {
           const next = { ...current };
@@ -1283,6 +1405,7 @@ export default function Home() {
     setTemplateJoinNodeId(null);
     setTemplateCrossveinNodeId(null);
     setTemplateUndoStack([]);
+    setTemplateRedoStack([]);
     setMapperPreview(false);
     setGuidedMode(false);
     setSelectedAutoIds([]);
@@ -1495,6 +1618,7 @@ export default function Home() {
   function applyTemplateToMap() {
     if (!placedTemplate) return;
     const pathsToAdd = placedTemplate.paths.filter((path) => (map[path.veinId]?.length ?? 0) < 2);
+    rememberMapState();
     setMap((current) => {
       const next = { ...current };
       pathsToAdd.forEach((path) => {
@@ -1534,6 +1658,7 @@ export default function Home() {
         routed.push(...(index === 1 ? result.points : result.points.slice(1)));
       }
       const points = simplifyPoints(routed, Math.max(1.1, wingImage.width / 650));
+      rememberMapState();
       setMap((current) => ({ ...current, [activeVeinId]: points }));
       setDraftHypotheses((current) => { const next = { ...current }; delete next[activeVeinId]; return next; });
       const mean = confidenceScores.reduce((sum, score) => sum + score, 0) / Math.max(1, confidenceScores.length);
@@ -1552,186 +1677,125 @@ export default function Home() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
+      let payload: unknown;
       try {
-        const payload = JSON.parse(String(reader.result));
-        if (payload?.schema === "entowing-template/1.0" && payload?.nodes && Array.isArray(payload?.paths)) {
-          const nodes: Record<string, Point> = {};
-          Object.entries(payload.nodes as Record<string, { x?: unknown; y?: unknown }>).forEach(([id, point]) => {
-            const x = Number(point?.x);
-            const y = Number(point?.y);
-            if (Number.isFinite(x) && Number.isFinite(y)) nodes[id] = { x, y };
-          });
-          const paths: TemplatePath[] = payload.paths.flatMap((path: { veinId?: unknown; nodeIds?: unknown; curve?: unknown }) => {
-            if (typeof path?.veinId !== "string" || !Array.isArray(path.nodeIds)) return [];
-            const nodeIds = path.nodeIds.filter((id): id is string => typeof id === "string" && Boolean(nodes[id]));
-            const veinId = path.veinId === "Cu1" ? "m-cu" : path.veinId;
-            return nodeIds.length >= 2 ? [{ veinId, nodeIds, curve: readCurveControls(path.curve, nodeIds) }] : [];
-          });
-          if (!paths.length) throw new Error("This EntoWing template does not contain reusable vein paths.");
-          const importedDefinitions = Array.isArray(payload.veins) ? payload.veins : [];
-          importedDefinitions.forEach((vein: Partial<VeinDefinition>) => {
-            if (vein.id === "Cu1") return;
-            if (!vein.id || presets.some((preset) => preset.id === vein.id)) return;
-            setCustomVeins((current) => current.some((item) => item.id === vein.id) ? current : [...current, {
-              id: vein.id!,
-              label: vein.label || vein.id!,
-              fullName: vein.fullName || "Imported custom structure",
-              symbolMeaning: vein.symbolMeaning || `${vein.id} · imported label`,
-              plainMeaning: vein.plainMeaning || "custom structure imported from a reviewed EntoWing template",
-              group: vein.group || "custom",
-              color: vein.color || "#7b6f5d",
-              note: vein.note || "Imported from a user-reviewed EntoWing template; verify terminology against its source.",
-            }]);
-          });
-          const template: WingTemplate = {
-            id: `custom-${Date.now()}`,
-            name: String(payload.name || file.name.replace(/\.entowing-template\.json$|\.json$/i, "")),
-            taxon: String(payload.taxon || "User-supplied EntoWing template"),
-            note: String(payload.note || "Portable reviewed template. Shared junctions and editable control points are preserved."),
-            referenceSize: Number(payload?.sourceImage?.width) > 0 && Number(payload?.sourceImage?.height) > 0
-              ? { width: Number(payload.sourceImage.width), height: Number(payload.sourceImage.height) }
-              : undefined,
-            nodes,
-            paths,
-          };
-          persistCustomTemplate(template);
-          setSelectedTemplateId(template.id);
-          setTemplateStatus(`${template.name} imported with ${paths.length} paths and its shared topology intact. Press “Place template” to use it.`);
-          return;
-        }
-        if (!Array.isArray(payload?.veins) || !payload.veins.length) throw new Error("This JSON does not contain EntoWing vein paths.");
-        const nodes: Record<string, Point> = {};
-        const paths: TemplatePath[] = [];
-        payload.veins.forEach((vein: VeinDefinition & { points?: Point[] }, veinIndex: number) => {
-          if (!Array.isArray(vein.points) || vein.points.length < 2 || !vein.id) return;
-          const nodeIds = vein.points.map((point, pointIndex) => {
-            const nodeId = `import-${veinIndex}-${pointIndex}`;
-            nodes[nodeId] = { x: Number(point.x), y: Number(point.y) };
-            return nodeId;
-          });
-          const modernVeinId = vein.id === "Cu1" ? "m-cu" : vein.id;
-          paths.push({ veinId: modernVeinId, nodeIds });
-          if (!presets.some((preset) => preset.id === modernVeinId)) {
-            setCustomVeins((current) => current.some((item) => item.id === modernVeinId) ? current : [...current, {
-              id: modernVeinId,
-              label: vein.label || modernVeinId,
-              fullName: vein.fullName || "Imported custom structure",
-              symbolMeaning: vein.symbolMeaning || `${modernVeinId} · imported label`,
-              plainMeaning: vein.plainMeaning || "custom structure imported from a previous EntoWing map",
-              group: vein.group || "custom",
-              color: vein.color || "#7b6f5d",
-              note: vein.note || "Imported from a user-reviewed EntoWing map; verify terminology against its original source.",
-            }]);
-          }
-        });
-        if (!paths.length) throw new Error("No reusable vein paths were found in this map.");
-        const template: WingTemplate = { id: `custom-${Date.now()}`, name: file.name.replace(/\.entowing\.json$|\.json$/i, ""), taxon: "Your reusable EntoWing map", note: "Imported from a previous annotation. Its labels and homologies are preserved as user-supplied data.", nodes, paths };
-        persistCustomTemplate(template);
-        setSelectedTemplateId(template.id);
-        setTemplateStatus(`${template.name} added to the template library. Press “Place template” to fit it over this wing.`);
-      } catch (error) {
-        setTemplateStatus(error instanceof Error ? error.message : "Could not read this template map.");
+        payload = JSON.parse(String(reader.result));
+      } catch {
+        setTemplateStatus(`${file.name} is not valid JSON, so nothing was imported.`);
+        setImportReport({ fileName: file.name, ok: false, lines: ["The file could not be parsed as JSON."] });
+        return;
       }
+      const result = parseTemplatePayload(payload, { presetIds: presets.map((vein) => vein.id), fileName: file.name });
+      if (!result.ok) {
+        setTemplateStatus(result.error);
+        setImportReport({ fileName: file.name, ok: false, lines: [result.error] });
+        return;
+      }
+      setCustomVeins((current) => [...current, ...result.customVeins.filter((vein) => !current.some((item) => item.id === vein.id))]);
+      const template: WingTemplate = { id: `custom-${Date.now()}`, ...result.template };
+      persistCustomTemplate(template);
+      setSelectedTemplateId(template.id);
+      setImportReport({ fileName: file.name, ok: true, lines: result.warnings });
+      setTemplateStatus(result.format === "template"
+        ? `${template.name} imported with ${template.paths.length} paths and its shared topology intact${result.warnings.length ? ` · ${result.warnings.length} note${result.warnings.length === 1 ? "" : "s"} below` : ""}. Press “Place template” to use it.`
+        : `${template.name} added to the template library from an older map${result.warnings.length ? ` · ${result.warnings.length} note${result.warnings.length === 1 ? "" : "s"} below` : ""}. Press “Place template” to fit it over this wing.`);
     };
     reader.readAsText(file);
     event.target.value = "";
   }
 
+  /** Reset every per-image editing state and load a new wing. Callers must ask first (confirmReplaceWing). */
+  function prepareNewWing(next: WingImage, messages: { template: string; guided: string; whole: string; auto: string }) {
+    setWingImage(next);
+    setCanvasView({ x: 0, y: 0, width: next.width, height: next.height });
+    touchPointersRef.current.clear();
+    touchTapRef.current.clear();
+    pinchStartRef.current = null;
+    setMap({});
+    setMapHistory({ past: [], future: [] });
+    setSelectedVeinId(null);
+    setMapperPreview(false);
+    setAutoCandidates([]);
+    setSelectedAutoIds([]);
+    setManualAddMode(true);
+    setGuidedMode(false);
+    setGuidedAnchors([]);
+    setGuidedRunning(false);
+    setGuidedStatus(messages.guided);
+    setDraftHypotheses({});
+    setPlacedTemplate(null);
+    setTemplateNodes({});
+    setTemplateUndoStack([]);
+    setTemplateRedoStack([]);
+    setTemplateEditMode(true);
+    setTemplateDraggingNode(null);
+    setTemplateStatus(messages.template);
+    setWholeDraftStatus(messages.whole);
+    setAutoStatus(messages.auto);
+    setImportReport(null);
+    offerAutosaveFor(next);
+  }
+
   function loadImage(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
+    event.target.value = "";
     if (!file) return;
+    if (!confirmReplaceWing(`Loading “${file.name}”`)) return;
     const reader = new FileReader();
     reader.onload = () => {
       const src = String(reader.result);
       const img = new Image();
       img.onload = () => {
-        setWingImage({ src, name: file.name, width: img.naturalWidth, height: img.naturalHeight, isLocal: true });
-        setCanvasView({ x: 0, y: 0, width: img.naturalWidth, height: img.naturalHeight });
-        touchPointersRef.current.clear();
-        touchTapRef.current.clear();
-        pinchStartRef.current = null;
-        setMap({});
-        setSelectedVeinId(null);
-        setMapperPreview(false);
-        setAutoCandidates([]);
-        setSelectedAutoIds([]);
-        setManualAddMode(true);
-        setGuidedMode(false);
-        setGuidedAnchors([]);
-        setGuidedRunning(false);
-        setGuidedStatus("Choose a vein, then place two anchors for Guided Trace.");
-        setDraftHypotheses({});
-        setPlacedTemplate(null);
-        setTemplateNodes({});
-        setTemplateUndoStack([]);
-        setTemplateEditMode(true);
-        setTemplateDraggingNode(null);
-        setTemplateStatus("Photo ready. Choose a template and place its shared junctions over the specimen.");
-        setWholeDraftStatus("Ready to propose a rough whole-wing topology.");
-        setAutoStatus("Ready to make an automatic SVG draft.");
+        prepareNewWing({ src, name: file.name, width: img.naturalWidth, height: img.naturalHeight, isLocal: true }, {
+          template: "Photo ready. Choose a template and place its shared junctions over the specimen.",
+          guided: "Choose a vein, then place two anchors for Guided Trace.",
+          whole: "Ready to propose a rough whole-wing topology.",
+          auto: "Ready to make an automatic SVG draft.",
+        });
         setMode("mapper");
       };
+      img.onerror = () => setTemplateStatus(`${file.name} could not be decoded as an image. The current wing was kept.`);
       img.src = src;
     };
     reader.readAsDataURL(file);
-    event.target.value = "";
   }
 
   function openIdentificationPhotoInMapper(wing: { src: string; name: string; width: number; height: number }) {
-    setWingImage({ ...wing, isLocal: true });
-    setCanvasView({ x: 0, y: 0, width: wing.width, height: wing.height });
-    touchPointersRef.current.clear();
-    touchTapRef.current.clear();
-    pinchStartRef.current = null;
-    setMap({});
-    setSelectedVeinId(null);
-    setMapperPreview(false);
-    setAutoCandidates([]);
-    setSelectedAutoIds([]);
-    setManualAddMode(true);
-    setGuidedMode(false);
-    setGuidedAnchors([]);
-    setGuidedRunning(false);
-    setGuidedStatus("Choose a vein, then place two anchors for Guided Trace.");
-    setDraftHypotheses({});
-    setPlacedTemplate(null);
-    setTemplateNodes({});
-    setTemplateUndoStack([]);
-    setTemplateEditMode(true);
-    setTemplateDraggingNode(null);
-    setTemplateStatus("Wing ID Lab photo ready. Place the closest candidate template, then verify every junction.");
-    setWholeDraftStatus("Ready to propose a rough whole-wing topology.");
-    setAutoStatus("Ready to make an automatic SVG draft.");
+    if (!confirmReplaceWing("Opening the Wing ID Lab photo")) return;
+    prepareNewWing({ ...wing, isLocal: true }, {
+      template: "Wing ID Lab photo ready. Place the closest candidate template, then verify every junction.",
+      guided: "Choose a vein, then place two anchors for Guided Trace.",
+      whole: "Ready to propose a rough whole-wing topology.",
+      auto: "Ready to make an automatic SVG draft.",
+    });
+    setMode("mapper");
+    window.setTimeout(() => document.querySelector(".mapper-shell")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+  }
+
+  function openReferencePlateInMapper(referenceId: string) {
+    const record = REFERENCE_BY_ID.get(referenceId);
+    if (!record || !record.asset.local) return;
+    if (!confirmReplaceWing(`Opening the ${record.family} plate`)) return;
+    const extension = record.asset.path.match(/\.[a-z0-9]+$/i)?.[0] ?? "";
+    prepareNewWing({ src: record.asset.path, name: `${record.plateTitle}${extension}`, width: record.asset.width, height: record.asset.height, isLocal: true }, {
+      template: `${record.family} plate loaded from Compare (${record.license.name}, ${record.author}). Place a template or trace directly; labels you add are your interpretation, not the plate's.`,
+      guided: "Choose a vein, then place two anchors on the published plate.",
+      whole: "Ready to propose a whole-wing draft from the published plate.",
+      auto: "Ready to make an automatic SVG draft.",
+    });
     setMode("mapper");
     window.setTimeout(() => document.querySelector(".mapper-shell")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
   }
 
   function resetToReference() {
-    setWingImage({ src: referenceImage, name: "Eristalis-reference.jpg", width: 560, height: 246, isLocal: false });
+    if (!confirmReplaceWing("Switching to the Eristalis reference plate")) return;
+    prepareNewWing({ src: referenceImage, name: "Eristalis-reference.jpg", width: 560, height: 246, isLocal: false }, {
+      template: "Choose an anatomical archetype, place it over the reference, then drag shared junctions into position.",
+      guided: "Guided Trace works on photos you load from your device.",
+      whole: "Whole-wing draft works on photos you load from your device.",
+      auto: "Auto Trace works on photos you load from your device.",
+    });
     setSelectedTemplateId("eristalis-reviewed");
-    setCanvasView({ x: 0, y: 0, width: 560, height: 246 });
-    touchPointersRef.current.clear();
-    touchTapRef.current.clear();
-    pinchStartRef.current = null;
-    setMap({});
-    setSelectedVeinId(null);
-    setMapperPreview(false);
-    setAutoCandidates([]);
-    setSelectedAutoIds([]);
-    setManualAddMode(true);
-    setGuidedMode(false);
-    setGuidedAnchors([]);
-    setGuidedRunning(false);
-    setGuidedStatus("Guided Trace works on photos you load from your device.");
-    setDraftHypotheses({});
-    setPlacedTemplate(null);
-    setTemplateNodes({});
-    setTemplateUndoStack([]);
-    setTemplateEditMode(true);
-    setTemplateDraggingNode(null);
-    setTemplateStatus("Choose an anatomical archetype, place it over the reference, then drag shared junctions into position.");
-    setWholeDraftStatus("Whole-wing draft works on photos you load from your device.");
-    setAutoStatus("Auto Trace works on photos you load from your device.");
     setMode("mapper");
   }
 
@@ -1777,6 +1841,7 @@ export default function Home() {
         const candidates = await makeAutoTrace(wingImage.src, wingImage.width, wingImage.height, autoSensitivity);
         const draft = approximateWholeWingDraft(candidates, wingImage.width, wingImage.height, anteriorAtTop, baseSide);
         const applied = draft.assignments.filter((assignment) => (map[assignment.veinId]?.length ?? 0) < 2);
+        rememberMapState();
         setMap((current) => {
           const next = { ...current };
           applied.forEach((assignment) => { next[assignment.veinId] = assignment.points; });
@@ -1812,6 +1877,7 @@ export default function Home() {
     const selected = autoCandidates.filter((item) => selectedAutoIds.includes(item.id));
     if (!selected.length) return;
     const stitched = stitchCandidates(selected);
+    rememberMapState();
     setMap((current) => ({ ...current, [activeVeinId]: stitched }));
     setDraftHypotheses((current) => {
       const next = { ...current };
@@ -1832,11 +1898,8 @@ export default function Home() {
     setSelectedAutoIds([]);
   }
 
-  function undoPoint() {
-    setMap((current) => ({ ...current, [activeVeinId]: (current[activeVeinId] ?? []).slice(0, -1) }));
-  }
-
   function clearVein() {
+    rememberMapState();
     setMap((current) => ({ ...current, [activeVeinId]: [] }));
     setDraftHypotheses((current) => {
       const next = { ...current };
@@ -1868,6 +1931,7 @@ export default function Home() {
   }
 
   function enterAtlas() {
+    setAtlasFocus(null);
     setMapperPreview(false);
     setSelectedVeinId(mappedVeins[0]?.id ?? null);
     setMode("atlas");
@@ -1901,22 +1965,75 @@ export default function Home() {
     setSelectedVeinId(id);
   }
 
-  function exportJson() {
-    const payload = {
+  function annotationPayload() {
+    return {
       schema: "entowing-wing-map/0.2",
+      generator: "EntoWing v0.48",
+      exportedAt: new Date().toISOString(),
       image: { fileName: wingImage.name, width: wingImage.width, height: wingImage.height },
-      veins: mappedVeins.map((vein) => ({ ...vein, points: map[vein.id], path: smoothPath(map[vein.id]) })),
+      interpretation: {
+        note: "Geometry records what was traced on this image. Labels are interpretations: machine-suggested labels are unreviewed, user-assigned labels are not expert-verified unless stated elsewhere.",
+        builtInTerminology: "van Steenis et al. 2023 · modern Syrphidae wing terminology (built-in labels only)",
+        nomenclatureWarning: nomenclature.message,
+      },
+      veins: mappedVeins.map((vein) => ({
+        ...vein,
+        points: map[vein.id],
+        path: smoothPath(map[vein.id]),
+        observation: {
+          geometry: "traced on this image",
+          geometrySource: draftHypotheses[vein.id] !== undefined ? "machine draft · not yet edited" : "placed or edited by the user",
+        },
+        identification: {
+          label: vein.label,
+          status: draftHypotheses[vein.id] !== undefined ? "machine-suggested · unreviewed" : "user-assigned · not expert-verified",
+          ...(draftHypotheses[vein.id] !== undefined ? { geometricConfidence: draftHypotheses[vein.id] } : {}),
+        },
+      })),
     };
-    downloadText(`${wingImage.name.replace(/\.[^.]+$/, "") || "wing"}.entowing.json`, JSON.stringify(payload, null, 2), "application/json");
+  }
+
+  function exportBaseName() {
+    return wingImage.name.replace(/\.[^.]+$/, "") || "wing";
+  }
+
+  function exportJson() {
+    downloadText(`${exportBaseName()}.entowing.json`, JSON.stringify(annotationPayload(), null, 2), "application/json");
+  }
+
+  function annotatedSvg() {
+    const paths = mappedVeins.map((vein) => `  <path id="${escapeXml(vein.id)}" data-label="${escapeXml(vein.label)}" data-identification="${draftHypotheses[vein.id] !== undefined ? "machine-suggested" : "user-assigned"}" d="${smoothPath(map[vein.id])}" fill="none" stroke="${vein.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`).join("\n");
+    const metadata = JSON.stringify(annotationPayload()).replace(/]]>/g, "]]]]><![CDATA[>");
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${wingImage.width} ${wingImage.height}" width="${wingImage.width}" height="${wingImage.height}">\n  <metadata id="entowing-annotation"><![CDATA[${metadata}]]></metadata>\n  <image href="${escapeXml(wingImage.src)}" x="0" y="0" width="${wingImage.width}" height="${wingImage.height}"/>\n  <g id="entowing-venation">\n${paths}\n  </g>\n</svg>`;
   }
 
   function exportSvg() {
-    const paths = mappedVeins.map((vein) => `  <path id="${escapeXml(vein.id)}" data-label="${escapeXml(vein.label)}" d="${smoothPath(map[vein.id])}" fill="none" stroke="${vein.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`).join("\n");
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${wingImage.width} ${wingImage.height}" width="${wingImage.width}" height="${wingImage.height}">\n  <image href="${escapeXml(wingImage.src)}" x="0" y="0" width="${wingImage.width}" height="${wingImage.height}"/>\n  <g id="entowing-venation">\n${paths}\n  </g>\n</svg>`;
-    downloadText(`${wingImage.name.replace(/\.[^.]+$/, "") || "wing"}-annotated.svg`, svg, "image/svg+xml");
+    downloadText(`${exportBaseName()}-annotated.svg`, annotatedSvg(), "image/svg+xml");
+  }
+
+  function exportSvgAndJson() {
+    exportSvg();
+    window.setTimeout(exportJson, 250);
+    setTemplateStatus(`Downloaded ${exportBaseName()}-annotated.svg and ${exportBaseName()}.entowing.json. The SVG also embeds the same annotation JSON in its <metadata>.`);
+  }
+
+  function openCompare(pair: ComparePair) {
+    setCompareRequest({ ...pair, nonce: Date.now() });
+    setMode("compare");
+    window.scrollTo({ top: 0 });
+  }
+
+  function openReferenceInAtlas(referenceId: string) {
+    const record = REFERENCE_BY_ID.get(referenceId);
+    if (!record) return;
+    const familyId = record.family.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    setAtlasFocus({ familyId, nonce: Date.now() });
+    setMode("atlas");
+    window.setTimeout(() => document.querySelector(".phylo-workbench")?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
   }
 
   function openFamilyWingInMapper(familyId: string, familyWing: FamilyWingTemplate, reference?: FamilyWingReference) {
+    if (!confirmReplaceWing(`Opening the ${reference?.family ?? familyWing.name} wing`)) return;
     const source: WingTemplate = familyId === "syrphidae"
       ? reviewedEristalisTemplate
       : {
@@ -1940,6 +2057,9 @@ export default function Home() {
       setAutoStatus(`Ready to trace the ${reference.family} reference SVG.`);
       setGuidedStatus("Choose a vein, then place two anchors on the published SVG reference.");
       setWholeDraftStatus("Ready to propose a whole-wing draft from the published SVG reference.");
+      setMapHistory({ past: [], future: [] });
+      setImportReport(null);
+      offerAutosaveFor({ name: reference.title, width: referenceWidth, height: referenceHeight });
     }
     if (familyId !== "syrphidae") persistCustomTemplate(prepared);
     setSelectedTemplateId(prepared.id);
@@ -1950,6 +2070,7 @@ export default function Home() {
     setTemplateEditTool("drag");
     setTemplateEditMode(true);
     setTemplateUndoStack([]);
+    setTemplateRedoStack([]);
     setTemplateStatus(reference
       ? `${reference.title} is loaded underneath the editable EntoWing graph. The outline is pre-fitted; verify every junction and label.`
       : `${prepared.name} loaded from the evolutionary atlas. Upload a matching specimen or edit this working morphotype directly.`);
@@ -1961,16 +2082,16 @@ export default function Home() {
   return (
     <main className="atlas-shell" data-visual-theme={visualTheme}>
       <header className="topbar">
-        <button className="brand brand-button" onClick={() => setMode("atlas")} aria-label="EntoWing atlas home">
+        <button className="brand brand-button" onClick={() => { setAtlasFocus(null); setMode("atlas"); }} aria-label="EntoWing atlas home">
           <span className="brand-mark" aria-hidden="true">EW</span>
           <span><strong>EntoWing</strong><small>Interactive Diptera Wing Atlas</small></span>
         </button>
         <nav className="nav-pills" aria-label="EntoWing modes">
-          <button className={mode === "atlas" ? "active" : ""} onClick={enterAtlas}>Atlas</button>
-          <button className={mode === "identify" ? "active" : ""} onClick={() => setMode("identify")}>Wing ID Lab</button>
-          <button className={mode === "compare" ? "active" : ""} onClick={() => setMode("compare")}>Compare</button>
-          <button className={mode === "mapper" ? "active" : ""} onClick={() => setMode("mapper")}>Wing Mapper</button>
-          <button className={mode === "learn" ? "active" : ""} onClick={enterLearn}>Learn</button>
+          <button className={mode === "atlas" ? "active" : ""} aria-current={mode === "atlas" ? "page" : undefined} onClick={enterAtlas}>Atlas</button>
+          <button className={mode === "identify" ? "active" : ""} aria-current={mode === "identify" ? "page" : undefined} onClick={() => setMode("identify")}>Wing ID Lab</button>
+          <button className={mode === "compare" ? "active" : ""} aria-current={mode === "compare" ? "page" : undefined} onClick={() => { setCompareRequest(null); setMode("compare"); }}>Compare</button>
+          <button className={mode === "mapper" ? "active" : ""} aria-current={mode === "mapper" ? "page" : undefined} onClick={() => setMode("mapper")}>Wing Mapper</button>
+          <button className={mode === "learn" ? "active" : ""} aria-current={mode === "learn" ? "page" : undefined} onClick={enterLearn}>Learn</button>
         </nav>
         <div className="topbar-meta">
           <div className="theme-toggle" role="group" aria-label="Atlas visual theme">
@@ -1991,16 +2112,16 @@ export default function Home() {
               <span aria-hidden="true">✦</span> Nocturnal
             </button>
           </div>
-          <div className="version-chip">Research atlas · v0.47</div>
+          <div className="version-chip">Research atlas · v0.48</div>
         </div>
       </header>
 
       {mode === "atlas" ? (
-        <PhyloAtlas onOpenMapper={openFamilyWingInMapper} />
+        <PhyloAtlas onOpenMapper={openFamilyWingInMapper} compareTray={compareTray} onCompareTrayChange={setCompareTray} onOpenCompare={openCompare} focusRequest={atlasFocus} />
       ) : mode === "identify" ? (
         <WingIdentifier onUseInMapper={openIdentificationPhotoInMapper} />
       ) : mode === "compare" ? (
-        <WingCompare />
+        <WingCompare initialPair={compareRequest} onOpenInMapper={openReferencePlateInMapper} onOpenInAtlas={openReferenceInAtlas} />
       ) : mode === "mapper" ? (
         <>
           <section className="intro mapper-intro">
@@ -2010,6 +2131,27 @@ export default function Home() {
             </div>
             <p className="intro-copy">Align a topology-aware wing template to the real specimen, warp shared junctions, then refine individual veins from the photograph. Anatomy guides the pixels — not the other way around.</p>
           </section>
+
+          {(autosaveOffer || nomenclature.mixed || importReport || autosaveState === "failed") && <section className="mapper-notices" aria-live="polite">
+            {autosaveOffer && <div className="mapper-notice notice-restore" role="status">
+              <span>AUTOSAVED DRAFT</span>
+              <p><b>{autosaveOffer.imageName}</b> · {describeEntry(autosaveOffer)} · saved {new Date(autosaveOffer.savedAt).toLocaleString()}</p>
+              <div><button type="button" onClick={restoreAutosave}>↺ Restore draft</button><button type="button" onClick={discardAutosave}>Delete draft</button><button type="button" onClick={() => setAutosaveOffer(null)}>Not now</button></div>
+            </div>}
+            {autosaveState === "failed" && <div className="mapper-notice notice-warning" role="alert">
+              <span>AUTOSAVE UNAVAILABLE</span>
+              <p>This browser refused to store the draft (private window or storage full). Export the map or template file to keep your work.</p>
+            </div>}
+            {nomenclature.mixed && <div className="mapper-notice notice-warning">
+              <span>NOMENCLATURE CHECK</span>
+              <p>{nomenclature.message}</p>
+            </div>}
+            {importReport && <div className={`mapper-notice ${importReport.ok ? "notice-info" : "notice-warning"}`}>
+              <span>{importReport.ok ? "IMPORT REPORT" : "IMPORT FAILED"} · {importReport.fileName}</span>
+              {importReport.lines.length ? <ul>{importReport.lines.map((line) => <li key={line}>{line}</li>)}</ul> : <p>Imported without changes or warnings.</p>}
+              <div><button type="button" onClick={() => setImportReport(null)}>Dismiss</button></div>
+            </div>}
+          </section>}
 
           <section className="mapper-shell" aria-label="Wing annotation editor">
             <aside className="mapper-sidebar mapper-preflight" id="mapper-setup">
@@ -2146,6 +2288,10 @@ export default function Home() {
                   <span>{activeVein.plainMeaning}</span>
                   {activeVein.legacyAlias && <em>Historical alias: {activeVein.legacyAlias}</em>}
                   <p>{activeVein.note}</p>
+                  <div className="observation-split" aria-label="Observed structure versus interpreted identity">
+                    <span><b>OBSERVED</b>{(map[activeVein.id]?.length ?? 0) >= 2 ? `geometry traced on this image · ${map[activeVein.id].length} points` : "no geometry traced yet"}</span>
+                    <span><b>INTERPRETED</b>{draftHypotheses[activeVein.id] !== undefined ? `label “${activeVein.label}” machine-suggested · unreviewed` : `label “${activeVein.label}” is your assignment · not expert-verified`}</span>
+                  </div>
                   {draftHypotheses[activeVein.id] !== undefined && <div className="active-hypothesis"><span>≈ suggested · {Math.round(draftHypotheses[activeVein.id] * 100)}% geometric confidence</span><button onClick={() => setDraftHypotheses((current) => { const next = { ...current }; delete next[activeVein.id]; return next; })}>✓ Accept label as reviewed</button></div>}
                 </div>
                 <div className={`guided-trace-card ${guidedMode ? "active" : ""}`}>
@@ -2175,7 +2321,8 @@ export default function Home() {
                   </div>
                 ) : <p>{autoCandidates.length ? "Tap the first green piece of a vein. Then add its other pieces — you are no longer limited to one fragment." : "Click along the centre of the vein. Existing control points can always be dragged to a better position."}</p>}
                 <div className="edit-actions">
-                  <button onClick={undoPoint} disabled={!map[activeVeinId]?.length || guidedMode}>↶ Undo point</button>
+                  <button onClick={undoMapAction} disabled={!mapHistory.past.length || guidedMode} title="Undo the last annotation change · Ctrl/Cmd + Z">↶ Undo</button>
+                  <button onClick={redoMapAction} disabled={!mapHistory.future.length || guidedMode} title="Redo · Ctrl/Cmd + Shift + Z">↷ Redo</button>
                   <button onClick={clearVein} disabled={!map[activeVeinId]?.length || guidedMode}>Clear vein</button>
                 </div>
                 {!guidedMode && <button className={`manual-mode-button ${manualAddMode ? "active" : ""}`} onClick={() => setManualAddMode((current) => !current)}>{manualAddMode ? "＋ Manual point add · ON" : "✦ Auto-piece selection · ON"}</button>}
@@ -2219,6 +2366,7 @@ export default function Home() {
                   <button className={mapperPreview ? "active" : ""} disabled={guidedMode || guidedRunning} onClick={() => setMapperPreview((current) => !current)}>{mapperPreview ? "Edit points" : "Preview"}</button>
                   <button onClick={exportJson} disabled={!mappedVeins.length}>Export map</button>
                   <button onClick={exportSvg} disabled={!mappedVeins.length}>Export SVG</button>
+                  <button onClick={exportSvgAndJson} disabled={!mappedVeins.length} title="Download the annotated SVG and the JSON map together">SVG + JSON</button>
                   <button className="atlas-button" onClick={enterAtlas} disabled={!mappedVeins.length}>Use in Atlas →</button>
                 </div>
               </div>
@@ -2228,6 +2376,7 @@ export default function Home() {
                   <span>EDIT · <b>{activeVein.label}</b></span>
                   <div>
                     <button className="undo-edit" disabled={!templateUndoStack.length} title="Undo last edit · Ctrl/Cmd + Z" aria-label="Undo last template edit" onClick={undoTemplateAction}>↶ Undo</button>
+                    <button className="undo-edit" disabled={!templateRedoStack.length} title="Redo · Ctrl/Cmd + Shift + Z" aria-label="Redo template edit" onClick={redoTemplateAction}>↷ Redo</button>
                     <button className={templateEditTool === "drag" && templateEditMode ? "active" : ""} onClick={() => chooseTemplateEditTool("drag")}>↔ Drag</button>
                     <button className={templateEditTool === "insert" && templateEditMode ? "active" : ""} onClick={() => chooseTemplateEditTool("insert")}>＋ Insert</button>
                     <button className={templateEditTool === "delete" && templateEditMode ? "active danger" : ""} onClick={() => chooseTemplateEditTool("delete")}>− Delete</button>
@@ -2425,6 +2574,7 @@ export default function Home() {
                               if (event.pointerType === "touch" && touchPointersRef.current.size > 1) return;
                               event.currentTarget.setPointerCapture(event.pointerId);
                               setActiveVeinId(vein.id);
+                              rememberMapState();
                               setDragging({ veinId: vein.id, pointIndex });
                             }}
                           />
@@ -2452,6 +2602,8 @@ export default function Home() {
                 {placedTemplate && <span>◇ {placedTemplate.name} template</span>}
                 {!!autoCandidates.length && <span>{autoCandidates.length} draft segments</span>}
                 <span>{Object.values(map).reduce((sum, points) => sum + points.length, 0)} control points</span>
+                <span className={`autosave-chip ${autosaveState}`}>{autosaveState === "failed" ? "⚠ autosave unavailable" : autosaveSavedAt ? `✓ autosaved ${new Date(autosaveSavedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : "autosave on · geometry only"}</span>
+                {nomenclature.mixed && <span className="nomenclature-chip">⚠ mixed nomenclature</span>}
               </div>
             </div>
           </section>
@@ -2564,7 +2716,7 @@ export default function Home() {
 
       <footer>
         <div><strong>EntoWing</strong><span>Specimen image → your annotation → interactive atlas.</span></div>
-        <div className="footer-roadmap"><span className="done">01 · IMAGE</span><span className="done">02 · MAP</span><span className={mappedVeins.length ? "done" : ""}>03 · ATLAS</span><span>04 · CELLS</span><span>05 · COMPARE</span></div>
+        <div className="footer-roadmap"><span className="done">01 · IMAGE</span><span className="done">02 · MAP</span><span className={mappedVeins.length ? "done" : ""}>03 · ATLAS</span><span>04 · CELLS</span><span className="done">05 · COMPARE</span></div>
       </footer>
     </main>
   );

@@ -1,0 +1,22 @@
+{
+  "schema": "entowing-reference-curation/1.0",
+  "policy": "Only facts with a written basis are recorded here. Everything else stays 'unknown' in the normalized reference model. Do not add values that have not been checked against the cited basis.",
+  "entries": {
+    "syrphidae": {
+      "terminologySystem": "van Steenis et al. 2023 · modern Syrphidae wing terminology",
+      "notes": [
+        "Geometry was traced on Eristalis-reference.jpg, which EntoWing loads from BugGuide; the licence of that photograph has not been verified inside EntoWing.",
+        "The Wikimedia Commons source page is the comparison plate for the taxon, not the origin of this tracing."
+      ],
+      "basis": "The reviewed Eristalis template in app/page.tsx labels every path with the van Steenis et al. (2023) system and records legacy names only as aliases."
+    },
+    "muscidae-coenosia-pudorosa": {
+      "publication": { "doi": "10.5852/ejt.2022.826.1839", "url": "https://doi.org/10.5852/ejt.2022.826.1839" },
+      "basis": "The DOI is embedded in the Wikimedia Commons file name of the source figure and is cited as Michelsen 2022 in the Muscidae atlas profile."
+    },
+    "muscidae-drymeia-hamata": {
+      "publication": { "doi": "10.5852/ejt.2022.826.1839", "url": "https://doi.org/10.5852/ejt.2022.826.1839" },
+      "basis": "The DOI is embedded in the Wikimedia Commons file name of the source figure and is cited as Michelsen 2022 in the Muscidae atlas profile."
+    }
+  }
+}

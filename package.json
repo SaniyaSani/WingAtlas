@@ -1,6 +1,6 @@
 {
   "name": "entowing-atlas",
-  "version": "0.47.0",
+  "version": "0.48.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -10,10 +10,11 @@
     "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vite",
     "build": "bash scripts/build-verified.sh",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
-    "test": "npm run build && node --test tests/rendered-html.test.mjs",
+    "test": "npm run build && node --test tests/*.test.mjs",
     "validate:artifact": "bash scripts/validate-artifact.sh",
     "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate"
+    "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate",
+    "test:logic": "node --test tests/v048-logic.test.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
@@ -40,5 +41,5 @@
     "wrangler": "4.92.0"
   },
   "type": "module",
-  "displayName": "EntoWing \u2014 Interactive Diptera Wing Atlas"
+  "displayName": "EntoWing — Interactive Diptera Wing Atlas"
 }

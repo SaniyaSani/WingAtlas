@@ -31,7 +31,7 @@ test("renders the EntoWing application shell", async () => {
   assert.match(html, /EntoWing/);
   assert.match(html, /Interactive Diptera Wing Atlas/);
   assert.match(html, />Compare</);
-  assert.match(html, /Research atlas · v0\.47/);
+  assert.match(html, /Research atlas · v0\.48/);
   assert.doesNotMatch(html, /vinext-starter/i);
 });
 
