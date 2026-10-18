@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import referenceData from "./family-wing-references.generated.json";
 import {
   identifyWing,
@@ -39,6 +39,39 @@ function scoreClass(value: number) {
 function orientationText(orientation: WingOrientation) {
   const rotation = orientation.rotation ? `rotated ${orientation.rotation}°` : "0° rotation";
   return `${rotation}${orientation.mirrored ? " + mirrored" : " + not mirrored"}`;
+}
+
+type BenchmarkSet = { id: string; title: string; what: string; n: number; now: Record<string, number>; before: Record<string, number> };
+type Benchmark = { date: string; classifier: string; previous: string; sets: BenchmarkSet[]; reading: string };
+
+/** Honest accuracy readout, measured offline (scripts/idlab-benchmark). */
+function BenchmarkPanel() {
+  const [benchmark, setBenchmark] = useState<Benchmark | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/idlab-benchmark.json").then((response) => (response.ok ? response.json() : null)).then((data) => { if (!cancelled && data?.sets) setBenchmark(data); }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, []);
+  if (!benchmark) return null;
+  const line = (set: BenchmarkSet, key: string, label: string) => key in set.now
+    ? <li key={key}><span>{label}</span><b>{set.now[key]}/{set.n}</b><small>before {set.before[key] ?? "—"}/{set.n}</small></li>
+    : null;
+  return <section className="idlab-benchmark" aria-labelledby="idlab-benchmark-title">
+    <div><span>HOW WELL DOES IT WORK? · MEASURED {benchmark.date}</span><h2 id="idlab-benchmark-title">Accuracy test</h2><p>{benchmark.reading}</p></div>
+    <div className="idlab-benchmark-sets">
+      {benchmark.sets.map((set) => <article key={set.id}>
+        <h3>{set.title}</h3>
+        <p>{set.what}</p>
+        <ul>
+          {line(set, "top1", "right family named first")}
+          {line(set, "top3", "right family among the three")}
+          {line(set, "keptUnidentified", "kept unidentified")}
+          {line(set, "confidentlyWrong", "named a wrong family")}
+        </ul>
+      </article>)}
+    </div>
+    <small>“Before” is the classifier of v0.51. Test images are not part of EntoWing; their sources and licences are listed in <code>public/idlab-benchmark.json</code> and <code>docs/IDLAB-BENCHMARK.md</code>.</small>
+  </section>;
 }
 
 export default function WingIdentifier({ onUseInMapper }: { onUseInMapper: (wing: LoadedWing) => void }) {
@@ -269,9 +302,11 @@ export default function WingIdentifier({ onUseInMapper }: { onUseInMapper: (wing
       <button onClick={openInMapper}>Open oriented photo in Wing Mapper →</button>
     </section>}
 
+    <BenchmarkPanel />
+
     <section className="idlab-method-note">
       <div><span>WHAT THIS VERSION CAN SAY</span><h2>Useful visual ranking. Uncertainty stays visible.</h2></div>
-      <p>The current atlas records {atlasReferenceCount} published SVG references, of which {localReferenceCount} can presently be analysed on-device. Atlas artwork and classifier masks are now separate views of the same geometry: clickable vein layers remain untouched, while fills and annotations are excluded from matching. Multiple morphotypes can represent one variable family without producing duplicate family cards. The user-reviewed Eristalis geometry remains the Syrphidae reference. Exact species probabilities still require multiple verified wings per species, sex and population plus an independent validation set.</p>
+      <p>The current atlas records {atlasReferenceCount} published SVG references, of which {localReferenceCount} can presently be analysed on-device. Atlas artwork and classifier masks are now separate views of the same geometry: clickable vein layers remain untouched, while fills and annotations are excluded from matching. Multiple morphotypes can represent one variable family without producing duplicate family cards. Since v0.52 the vein lines are also thinned to one pixel and compared line-to-line, so thick and thin drawings of the same wing match; the accuracy test above shows what this does and does not achieve. The user-reviewed Eristalis geometry remains the Syrphidae reference. Exact species probabilities still require multiple verified wings per species, sex and population plus an independent validation set.</p>
     </section>
   </>;
 }

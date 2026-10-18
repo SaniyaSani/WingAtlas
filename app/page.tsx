@@ -5,18 +5,27 @@ import reviewedEristalisPayload from "./Eristalis-reference.entowing-template.js
 import PhyloAtlas, { FamilyWingReference, FamilyWingTemplate } from "./PhyloAtlas";
 import WingCompare, { type ComparePair } from "./WingCompare";
 import WingIdentifier from "./WingIdentifier";
+import StartGuide from "./StartGuide";
+import PlateReview from "./PlateReview";
+import ModeGuide from "./components/ModeGuide";
+import JournalDoodle from "./components/JournalDoodle";
+import { JOURNEY, JourneyMode, sanitizeVisited } from "./lib/journey";
 import { detectNomenclature, parseTemplatePayload } from "./lib/templateSchema";
 import { AutosaveEntry, describeEntry, entryHasContent, findEntry, imageKey, readStore, removeEntry, upsertEntry } from "./lib/mapperAutosave";
 import { REFERENCE_BY_ID } from "./lib/referenceIndex";
+import { reviewToVeinMap, SYSTEM_COLOUR, systemOf, type PlateVectors } from "./lib/plateVectors";
+import { loadReviewFor } from "./lib/reviewStore";
 import { readStoredJson, readStoredString, STORAGE_KEYS, writeStoredJson, writeStoredString } from "./lib/safeStorage";
 import type { CurveControl, CurveHandle, CurveNodeMode, Point, TemplatePath, VeinDefinition, WingTemplate } from "./lib/wingTypes";
 
 type CanvasView = { x: number; y: number; width: number; height: number };
 type TemplateEditTool = "drag" | "insert" | "delete" | "join" | "crossvein";
-type AtlasMode = "atlas" | "identify" | "compare" | "mapper" | "learn";
-type VisualTheme = "scientific" | "nocturnal";
+type AtlasMode = JourneyMode | "review";
+type VisualTheme = "journal" | "scientific" | "nocturnal";
 type WingImage = { src: string; name: string; width: number; height: number; isLocal: boolean };
 type AutoCandidate = { id: string; points: Point[]; length: number };
+
+const VISITED_KEY = "entowing-journal-visited-v1";
 
 type MapSnapshot = { map: Record<string, Point[]>; draftHypotheses: Record<string, number> };
 type CompareTray = { a: string | null; b: string | null };
@@ -730,8 +739,9 @@ async function traceBetweenAnchors(src: string, naturalWidth: number, naturalHei
 }
 
 export default function Home() {
-  const [mode, setMode] = useState<AtlasMode>("atlas");
-  const [visualTheme, setVisualTheme] = useState<VisualTheme>("scientific");
+  const [mode, setMode] = useState<AtlasMode>("start");
+  const [visualTheme, setVisualTheme] = useState<VisualTheme>("journal");
+  const [visitedModes, setVisitedModes] = useState<JourneyMode[]>([]);
   const [wingImage, setWingImage] = useState<WingImage>({ src: referenceImage, name: "Eristalis-reference.jpg", width: 560, height: 246, isLocal: false });
   const [map, setMap] = useState<Record<string, Point[]>>({});
   const [customVeins, setCustomVeins] = useState<VeinDefinition[]>([]);
@@ -743,7 +753,7 @@ export default function Home() {
   const [mapperPreview, setMapperPreview] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const [quizTarget, setQuizTarget] = useState<string | null>(null);
-  const [quizMessage, setQuizMessage] = useState("Map at least two veins to start a quiz.");
+  const [quizMessage, setQuizMessage] = useState("Trace at least two veins in Wing Mapper — or load the reviewed Eristalis example — to start the quiz.");
   const [autoCandidates, setAutoCandidates] = useState<AutoCandidate[]>([]);
   const [selectedAutoIds, setSelectedAutoIds] = useState<string[]>([]);
   const [autoSensitivity, setAutoSensitivity] = useState(55);
@@ -786,6 +796,7 @@ export default function Home() {
   const [compareRequest, setCompareRequest] = useState<(ComparePair & { nonce: number }) | null>(null);
   const [compareTray, setCompareTray] = useState<CompareTray>({ a: null, b: null });
   const [atlasFocus, setAtlasFocus] = useState<{ familyId: string; nonce: number } | null>(null);
+  const [reviewTarget, setReviewTarget] = useState<{ id: string; nonce: number } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const touchPointersRef = useRef(new Map<number, Point>());
   const touchTapRef = useRef(new Map<number, Point>());
@@ -797,10 +808,24 @@ export default function Home() {
     // Read before the persisting effect below writes the default theme.
     const savedTheme = readStoredString(STORAGE_KEYS.theme);
     const restoreTimer = window.setTimeout(() => {
-      if (savedTheme === "scientific" || savedTheme === "nocturnal") setVisualTheme(savedTheme);
+      if (savedTheme === "journal" || savedTheme === "scientific" || savedTheme === "nocturnal") setVisualTheme(savedTheme);
+      setVisitedModes(sanitizeVisited(readStoredJson(VISITED_KEY)));
     }, 0);
     return () => window.clearTimeout(restoreTimer);
   }, []);
+
+  useEffect(() => {
+    // Stamp the journal page as visited (used by the learning path on the Start page).
+    if (mode === "review") return;
+    const page = mode;
+    const timer = window.setTimeout(() => setVisitedModes((current) => {
+      if (current.includes(page)) return current;
+      const next = sanitizeVisited([...current, page]);
+      writeStoredJson(VISITED_KEY, next);
+      return next;
+    }), 0);
+    return () => window.clearTimeout(timer);
+  }, [mode]);
 
   useEffect(() => {
     document.documentElement.dataset.entowingTheme = visualTheme;
@@ -1787,6 +1812,71 @@ export default function Home() {
     window.setTimeout(() => document.querySelector(".mapper-shell")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
   }
 
+  /** Open one plate on the Vein review page. */
+  function openPlateReview(referenceId: string) {
+    setReviewTarget({ id: referenceId, nonce: Date.now() });
+    setMode("review");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  /**
+   * Use the names a reviewer attached to a plate's lines: the plate becomes the wing image and the
+   * reviewed names become the traced veins, so Wing Mapper and the Learn quiz work on them directly.
+   */
+  async function useReviewedPlate(referenceId: string, target: "mapper" | "learn") {
+    const record = REFERENCE_BY_ID.get(referenceId);
+    if (!record || !record.asset.local) return;
+    let plate: PlateVectors;
+    try {
+      plate = await (await fetch(`/plate-vectors/${referenceId}.json`)).json();
+    } catch {
+      window.alert("The vein map of this plate could not be loaded.");
+      return;
+    }
+    const { review, origin } = await loadReviewFor(plate);
+    const veinMap = reviewToVeinMap(plate, review);
+    const names = Object.keys(veinMap);
+    if (!names.length) {
+      window.alert(`No checked names on ${record.family} yet. Confirm or add names on the Vein review page first.`);
+      return;
+    }
+    if (!confirmReplaceWing(`Opening the reviewed ${record.family} plate`)) return;
+    const extension = record.asset.path.match(/\.[a-z0-9]+$/i)?.[0] ?? "";
+    prepareNewWing({ src: record.asset.path, name: `${record.plateTitle}${extension}`, width: record.asset.width, height: record.asset.height, isLocal: true }, {
+      template: `${record.family}: ${names.length} reviewed name${names.length === 1 ? "" : "s"} loaded as veins (${origin === "published" ? `published review${review.reviewer ? ` by ${review.reviewer}` : ""}` : "your review in this browser"}). They are a reviewer's interpretation of the plate, not the author's.`,
+      guided: "Choose a vein, then place two anchors on the plate.",
+      whole: "Ready to propose a whole-wing draft from the plate.",
+      auto: "Ready to make an automatic SVG draft.",
+    });
+    const known = new Set([...presets, ...customVeins].map((vein) => vein.id));
+    const added: VeinDefinition[] = names.filter((name) => !known.has(name)).map((name) => {
+      const base = name.replace(/·\d+$/, "");
+      const preset = presets.find((vein) => vein.id === base);
+      return {
+        id: name,
+        label: name,
+        fullName: preset ? `${preset.fullName} (further piece)` : "Name from the Vein review",
+        symbolMeaning: preset?.symbolMeaning ?? `${base} · name attached by a reviewer`,
+        plainMeaning: preset?.plainMeaning ?? "a structure named on the Vein review page",
+        group: preset?.group ?? "custom",
+        color: preset?.color ?? SYSTEM_COLOUR[systemOf(base)],
+        note: "Attached on the Vein review page. Check terminology and homology against the plate and a taxonomic source.",
+      };
+    });
+    if (added.length) setCustomVeins((current) => [...current, ...added.filter((vein) => !current.some((item) => item.id === vein.id))]);
+    setMap(veinMap);
+    if (target === "learn") {
+      const first = names[Math.floor(Math.random() * names.length)];
+      setQuizTarget(first);
+      setQuizMessage(`Reviewed ${record.family} plate loaded. Find ${first} on the wing.`);
+      setSelectedVeinId(null);
+      setMode("learn");
+    } else {
+      setMode("mapper");
+      window.setTimeout(() => document.querySelector(".mapper-shell")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+    }
+  }
+
   function resetToReference() {
     if (!confirmReplaceWing("Switching to the Eristalis reference plate")) return;
     prepareNewWing({ src: referenceImage, name: "Eristalis-reference.jpg", width: 560, height: 246, isLocal: false }, {
@@ -1937,6 +2027,45 @@ export default function Home() {
     setMode("atlas");
   }
 
+  /** Single entry point for the tab navigation, the Start page path and the guide notes. */
+  function goTo(next: JourneyMode | "review") {
+    if (next === "atlas") enterAtlas();
+    else if (next === "learn") enterLearn();
+    else {
+      if (next === "compare") setCompareRequest(null);
+      setMode(next);
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  /** Learn needs a traced wing: offer the user-reviewed Eristalis tracing as a ready example. */
+  function loadReviewedExampleForLearn() {
+    const onReference = wingImage.src === referenceImage;
+    if (!onReference) {
+      if (!confirmReplaceWing("Loading the Eristalis example")) return;
+      prepareNewWing({ src: referenceImage, name: "Eristalis-reference.jpg", width: 560, height: 246, isLocal: false }, {
+        template: "Reviewed Eristalis example loaded for the quiz.",
+        guided: "Guided Trace works on photos you load from your device.",
+        whole: "Whole-wing draft works on photos you load from your device.",
+        auto: "Auto Trace works on photos you load from your device.",
+      });
+    } else if (hasAnnotationWork && !window.confirm("Replace your current tracing with the reviewed Eristalis example? Your tracing is autosaved and can be restored in Wing Mapper.")) {
+      return;
+    } else if (hasAnnotationWork) {
+      writeAutosave(autosaveEntryNow());
+      rememberMapState();
+    }
+    const example: Record<string, Point[]> = Object.fromEntries(reviewedEristalisTemplate.paths.map((path) => [path.veinId, path.nodeIds.map((id) => reviewedEristalisTemplate.nodes[id]).filter(Boolean).map((point) => ({ ...point }))]));
+    setMap(example);
+    setDraftHypotheses({});
+    const ids = Object.keys(example).filter((id) => example[id].length >= 2);
+    const first = ids[Math.floor(Math.random() * ids.length)] ?? null;
+    setQuizTarget(first);
+    setQuizMessage(first ? `Example loaded: the user-reviewed Eristalis tracing. Find ${first} on the wing.` : "The example could not be loaded.");
+    setSelectedVeinId(null);
+    setMode("learn");
+  }
+
   function enterLearn() {
     const first = mappedVeins[0];
     setMode("learn");
@@ -1946,7 +2075,7 @@ export default function Home() {
       setQuizMessage(`Find ${first.label} on the wing.`);
     } else {
       setQuizTarget(null);
-      setQuizMessage("Map at least two veins to start a quiz.");
+      setQuizMessage("Trace at least two veins in Wing Mapper — or load the reviewed Eristalis example — to start the quiz.");
     }
   }
 
@@ -2082,19 +2211,30 @@ export default function Home() {
   return (
     <main className="atlas-shell" data-visual-theme={visualTheme}>
       <header className="topbar">
-        <button className="brand brand-button" onClick={() => { setAtlasFocus(null); setMode("atlas"); }} aria-label="EntoWing atlas home">
+        <button className="brand brand-button" onClick={() => goTo("start")} aria-label="EntoWing start page">
           <span className="brand-mark" aria-hidden="true">EW</span>
           <span><strong>EntoWing</strong><small>Interactive Diptera Wing Atlas</small></span>
         </button>
-        <nav className="nav-pills" aria-label="EntoWing modes">
-          <button className={mode === "atlas" ? "active" : ""} aria-current={mode === "atlas" ? "page" : undefined} onClick={enterAtlas}>Atlas</button>
-          <button className={mode === "identify" ? "active" : ""} aria-current={mode === "identify" ? "page" : undefined} onClick={() => setMode("identify")}>Wing ID Lab</button>
-          <button className={mode === "compare" ? "active" : ""} aria-current={mode === "compare" ? "page" : undefined} onClick={() => { setCompareRequest(null); setMode("compare"); }}>Compare</button>
-          <button className={mode === "mapper" ? "active" : ""} aria-current={mode === "mapper" ? "page" : undefined} onClick={() => setMode("mapper")}>Wing Mapper</button>
-          <button className={mode === "learn" ? "active" : ""} aria-current={mode === "learn" ? "page" : undefined} onClick={enterLearn}>Learn</button>
+        <nav className="nav-pills journal-tabs" aria-label="Journal pages">
+          {JOURNEY.map((step) => <button
+            key={step.mode}
+            type="button"
+            className={`tab-${step.colour} ${mode === step.mode ? "active" : ""}`}
+            aria-current={mode === step.mode ? "page" : undefined}
+            title={`Page ${step.page}: ${step.title} — ${step.hint}`}
+            onClick={() => goTo(step.mode)}
+          ><i className="tab-doodle" aria-hidden="true"><JournalDoodle name={step.doodle} size={18} /></i><span>{step.tab}</span><small className="tab-hint" aria-hidden="true">{step.hint}</small></button>)}
         </nav>
         <div className="topbar-meta">
           <div className="theme-toggle" role="group" aria-label="Atlas visual theme">
+            <button
+              type="button"
+              className={visualTheme === "journal" ? "active" : ""}
+              aria-pressed={visualTheme === "journal"}
+              onClick={() => setVisualTheme("journal")}
+            >
+              <span aria-hidden="true">✿</span> Journal
+            </button>
             <button
               type="button"
               className={visualTheme === "scientific" ? "active" : ""}
@@ -2112,12 +2252,18 @@ export default function Home() {
               <span aria-hidden="true">✦</span> Nocturnal
             </button>
           </div>
-          <div className="version-chip">Research atlas · v0.48</div>
+          <div className="version-chip">Research atlas · v0.52</div>
         </div>
       </header>
 
-      {mode === "atlas" ? (
-        <PhyloAtlas onOpenMapper={openFamilyWingInMapper} compareTray={compareTray} onCompareTrayChange={setCompareTray} onOpenCompare={openCompare} focusRequest={atlasFocus} />
+      {mode !== "start" && mode !== "review" && <ModeGuide mode={mode} onGo={goTo} extra={mode === "learn" ? <button type="button" className="mode-guide-example" onClick={loadReviewedExampleForLearn}>✿ Load the reviewed Eristalis example for the quiz</button> : undefined} />}
+
+      {mode === "start" ? (
+        <StartGuide onGo={goTo} visited={visitedModes} />
+      ) : mode === "review" ? (
+        <div className="review-mode"><PlateReview key={reviewTarget?.nonce ?? "review"} initialId={reviewTarget?.id ?? null} onUseReviewed={useReviewedPlate} /></div>
+      ) : mode === "atlas" ? (
+        <PhyloAtlas onOpenMapper={openFamilyWingInMapper} compareTray={compareTray} onCompareTrayChange={setCompareTray} onOpenCompare={openCompare} focusRequest={atlasFocus} onOpenReview={openPlateReview} onUseReviewed={useReviewedPlate} />
       ) : mode === "identify" ? (
         <WingIdentifier onUseInMapper={openIdentificationPhotoInMapper} />
       ) : mode === "compare" ? (
@@ -2664,7 +2810,7 @@ export default function Home() {
                   })}
                 </svg>
                 {!mappedVeins.length && (
-                  <div className="no-map-callout"><span>NO OVERLAY YET</span><strong>This is the real image. Now tell EntoWing where its veins are.</strong><button onClick={() => setMode("mapper")}>Open Wing Mapper →</button></div>
+                  <div className="no-map-callout"><span>NO OVERLAY YET</span><strong>This is the real image. Now tell EntoWing where its veins are.</strong><div className="no-map-actions">{mode === "learn" && <button onClick={loadReviewedExampleForLearn}>✿ Use the reviewed Eristalis example</button>}<button onClick={() => setMode("mapper")}>Open Wing Mapper →</button></div></div>
                 )}
                 {mode === "learn" && quizTarget && <div className="quiz-float"><span>FIND</span><strong>{quizTarget}</strong><small>{quizMessage}</small></div>}
               </div>

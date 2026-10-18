@@ -67,6 +67,9 @@ type WingDescriptor = {
   directions: number[];
   aspect: number;
   density: number;
+  /** Thinned vein lines at the normalised size (1 = line pixel) and their distance field. */
+  skeleton: Int32Array;
+  distance: Float32Array;
 };
 
 const NORMAL_WIDTH = 168;
@@ -80,6 +83,12 @@ const ENDPOINT_ROWS = 7;
 const DIRECTION_COLUMNS = 6;
 const DIRECTION_ROWS = 4;
 const DIRECTION_BINS = 4;
+/** Shade below which a normalised pixel counts as vein line (white = 255). */
+const LINE_SHADE = 190;
+const CHAMFER_TOLERANCE = 2.2;
+const CHAMFER_SHIFT = 3;
+/** Weight of line-to-line (chamfer) agreement in the final similarity; the rest is the v0.47 hybrid score. */
+const CHAMFER_WEIGHT = 0.7;
 const descriptorCache = new Map<string, Promise<WingDescriptor>>();
 const ALL_ORIENTATIONS: WingOrientation[] = ([0, 90, 180, 270] as WingRotation[]).flatMap((rotation) => [
   { rotation, mirrored: false },
@@ -367,6 +376,114 @@ function endpointFeatures(fineCells: number[]) {
   return { interiorCells, endpointMap, interiorEndpointCount };
 }
 
+/** Zhang–Suen thinning: vein lines become one pixel wide, so stroke width no longer matters. */
+function thin(mask: Uint8Array, width: number, height: number) {
+  const image = mask.slice();
+  let changed = true;
+  const remove: number[] = [];
+  for (let iteration = 0; changed && iteration < 40; iteration += 1) {
+    changed = false;
+    for (const step of [0, 1]) {
+      remove.length = 0;
+      for (let y = 1; y < height - 1; y += 1) {
+        for (let x = 1; x < width - 1; x += 1) {
+          const index = y * width + x;
+          if (!image[index]) continue;
+          const p2 = image[index - width], p3 = image[index - width + 1], p4 = image[index + 1], p5 = image[index + width + 1];
+          const p6 = image[index + width], p7 = image[index + width - 1], p8 = image[index - 1], p9 = image[index - width - 1];
+          const neighbours = p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
+          if (neighbours < 2 || neighbours > 6) continue;
+          const ring = [p2, p3, p4, p5, p6, p7, p8, p9, p2];
+          let transitions = 0;
+          for (let k = 0; k < 8; k += 1) if (!ring[k] && ring[k + 1]) transitions += 1;
+          if (transitions !== 1) continue;
+          if (step === 0 ? (p2 * p4 * p6 || p4 * p6 * p8) : (p2 * p4 * p8 || p2 * p6 * p8)) continue;
+          remove.push(index);
+        }
+      }
+      if (remove.length) changed = true;
+      for (const index of remove) image[index] = 0;
+    }
+  }
+  return image;
+}
+
+/** Two-pass chamfer (3-4) distance to the nearest line pixel, in pixels. */
+function distanceField(lines: Uint8Array, width: number, height: number) {
+  const far = 1e6;
+  const field = new Float32Array(lines.length);
+  for (let index = 0; index < lines.length; index += 1) field[index] = lines[index] ? 0 : far;
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const index = y * width + x;
+      let value = field[index];
+      if (x > 0) value = Math.min(value, field[index - 1] + 3);
+      if (y > 0) {
+        value = Math.min(value, field[index - width] + 3);
+        if (x > 0) value = Math.min(value, field[index - width - 1] + 4);
+        if (x < width - 1) value = Math.min(value, field[index - width + 1] + 4);
+      }
+      field[index] = value;
+    }
+  }
+  for (let y = height - 1; y >= 0; y -= 1) {
+    for (let x = width - 1; x >= 0; x -= 1) {
+      const index = y * width + x;
+      let value = field[index];
+      if (x < width - 1) value = Math.min(value, field[index + 1] + 3);
+      if (y < height - 1) {
+        value = Math.min(value, field[index + width] + 3);
+        if (x < width - 1) value = Math.min(value, field[index + width + 1] + 4);
+        if (x > 0) value = Math.min(value, field[index + width - 1] + 4);
+      }
+      field[index] = value;
+    }
+  }
+  for (let index = 0; index < field.length; index += 1) field[index] /= 3;
+  return field;
+}
+
+function lineSkeleton(values: Uint8Array, width: number, height: number) {
+  const mask = new Uint8Array(values.length);
+  for (let y = 1; y < height - 1; y += 1) {
+    for (let x = 1; x < width - 1; x += 1) if (values[y * width + x] < LINE_SHADE) mask[y * width + x] = 1;
+  }
+  const lines = thin(mask, width, height);
+  const points: number[] = [];
+  lines.forEach((value, index) => { if (value) points.push(index); });
+  return { skeleton: Int32Array.from(points), distance: distanceField(lines, width, height) };
+}
+
+/**
+ * Line-to-line agreement: the share of each drawing's thinned vein pixels that lie close to
+ * a vein of the other drawing (symmetric chamfer score), best over small shifts.
+ */
+function chamferSimilarity(first: WingDescriptor, second: WingDescriptor) {
+  if (!first.skeleton.length || !second.skeleton.length) return 0;
+  const width = NORMAL_WIDTH;
+  const height = NORMAL_HEIGHT;
+  const tolerance = CHAMFER_TOLERANCE;
+  const score = (points: Int32Array, field: Float32Array, dx: number, dy: number) => {
+    let total = 0;
+    for (const index of points) {
+      const x = (index % width) + dx;
+      const y = Math.floor(index / width) + dy;
+      if (x < 0 || y < 0 || x >= width || y >= height) continue;
+      const distance = field[y * width + x];
+      total += Math.exp(-(distance * distance) / (tolerance * tolerance));
+    }
+    return total / points.length;
+  };
+  let best = 0;
+  for (let dy = -CHAMFER_SHIFT; dy <= CHAMFER_SHIFT; dy += 1) {
+    for (let dx = -CHAMFER_SHIFT; dx <= CHAMFER_SHIFT; dx += 1) {
+      const value = (score(first.skeleton, second.distance, dx, dy) + score(second.skeleton, first.distance, -dx, -dy)) / 2;
+      if (value > best) best = value;
+    }
+  }
+  return best;
+}
+
 function descriptorFromCanvas(canvas: HTMLCanvasElement, sensitivity: number): WingDescriptor {
   const context = canvas.getContext("2d", { willReadFrequently: true });
   if (!context) throw new Error("Image analysis is unavailable in this browser.");
@@ -445,6 +562,7 @@ function descriptorFromCanvas(canvas: HTMLCanvasElement, sensitivity: number): W
     directions,
     aspect,
     density,
+    ...lineSkeleton(values, canvas.width, canvas.height),
   };
 }
 
@@ -546,7 +664,7 @@ function removeNonVenation(svgText: string) {
 
 async function referenceDescriptor(reference: WingReferenceRecord, sensitivity: number) {
   const classifierAssetPath = reference.classifierAssetPath ?? reference.assetPath;
-  const cacheKey = `dual-mask-v1:${classifierAssetPath}:${Math.round(sensitivity / 5) * 5}`;
+  const cacheKey = `dual-mask-v2:${classifierAssetPath}:${Math.round(sensitivity / 5) * 5}`;
   if (!descriptorCache.has(cacheKey)) {
     descriptorCache.set(cacheKey, (async () => {
       const response = await fetch(classifierAssetPath);
@@ -592,7 +710,7 @@ function descriptorSimilarity(specimen: WingDescriptor, reference: WingDescripto
   const endpointCountSimilarity = countSimilarity(specimen.interiorEndpointCount, reference.interiorEndpointCount);
   const aspectSimilarity = Math.exp(-Math.abs(Math.log(Math.max(.2, specimen.aspect) / Math.max(.2, reference.aspect))));
   const densitySimilarity = Math.exp(-Math.abs(Math.log((specimen.density + .01) / (reference.density + .01))));
-  return clamp(
+  const hybrid = clamp(
     vectorSimilarity * .32
     + fineSimilarity * .13
     + interiorSimilarity * .28
@@ -602,6 +720,7 @@ function descriptorSimilarity(specimen: WingDescriptor, reference: WingDescripto
     + aspectSimilarity * .06
     + densitySimilarity * .01,
   );
+  return clamp(hybrid * (1 - CHAMFER_WEIGHT) + chamferSimilarity(specimen, reference) * CHAMFER_WEIGHT);
 }
 
 function regionSimilarity(first: WingDescriptor, second: WingDescriptor, predicate: (column: number, row: number) => boolean) {

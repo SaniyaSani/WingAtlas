@@ -11,12 +11,795 @@
       "basis": "The reviewed Eristalis template in app/page.tsx labels every path with the van Steenis et al. (2023) system and records legacy names only as aliases."
     },
     "muscidae-coenosia-pudorosa": {
-      "publication": { "doi": "10.5852/ejt.2022.826.1839", "url": "https://doi.org/10.5852/ejt.2022.826.1839" },
+      "publication": {
+        "doi": "10.5852/ejt.2022.826.1839",
+        "url": "https://doi.org/10.5852/ejt.2022.826.1839"
+      },
       "basis": "The DOI is embedded in the Wikimedia Commons file name of the source figure and is cited as Michelsen 2022 in the Muscidae atlas profile."
     },
     "muscidae-drymeia-hamata": {
-      "publication": { "doi": "10.5852/ejt.2022.826.1839", "url": "https://doi.org/10.5852/ejt.2022.826.1839" },
+      "publication": {
+        "doi": "10.5852/ejt.2022.826.1839",
+        "url": "https://doi.org/10.5852/ejt.2022.826.1839"
+      },
       "basis": "The DOI is embedded in the Wikimedia Commons file name of the source figure and is cited as Michelsen 2022 in the Muscidae atlas profile."
+    },
+    "blephariceridae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n157/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Bibiocephala. Family in the source: Blepharoceridae.",
+        "Family assignment: Williston places the figure under Blepharoceridae; Blephariceridae is the current spelling of the same family.",
+        "Caption credits this figure to Kellogg.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n157); orientation set during tracing; the figure carries no scale bar."
+    },
+    "blephariceridae-blepharocera": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n157/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Blepharocera. Family in the source: Blepharoceridae.",
+        "Family assignment: Williston places the figure under Blepharoceridae; Blephariceridae is the current spelling of the same family.",
+        "Caption: 'showing secondary venation' (after Comstock). The fine dotted secondary venation is only partly traced; it is not vein tissue in the usual sense.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n157); orientation set during tracing; the figure carries no scale bar."
+    },
+    "neriidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n281/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Nerius. Family in the source: Micropezidae.",
+        "Family assignment: Nerius is the type genus of Neriidae; Williston (1908) still treated it inside Micropezidae.",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n281); orientation set during tracing; the figure carries no scale bar."
+    },
+    "micropezidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n281/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Micropeza. Family in the source: Micropezidae.",
+        "Family assignment: Micropeza is the type genus of Micropezidae.",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n281); orientation set during tracing; the figure carries no scale bar."
+    },
+    "tanypezidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n281/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Tanypeza. Family in the source: Micropezidae (Tanypezinae).",
+        "Family assignment: Tanypeza is the type genus of Tanypezidae; Williston treated it as Tanypezinae within Micropezidae.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n281); orientation set during tracing; the figure carries no scale bar."
+    },
+    "psilidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n282/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Chyliza. Family in the source: not named in the caption (figure follows Loxocera).",
+        "Family assignment: Chyliza and Loxocera are genera of Psilidae.",
+        "The printed wing is stippled (pigment). Short spurs inside the stippled area are artefacts of the tracing.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n282); orientation set during tracing; the figure carries no scale bar."
+    },
+    "sepsidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n283/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Sepsis. Family in the source: Sepsidae.",
+        "Family assignment: Sepsis is the type genus of Sepsidae.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n283); orientation set during tracing; the figure carries no scale bar."
+    },
+    "piophilidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n283/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Piophila. Family in the source: Sepsidae.",
+        "Family assignment: Piophila is the type genus of Piophilidae; Williston (1908) placed it under Sepsidae.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n283); orientation set during tracing; the figure carries no scale bar."
+    },
+    "pyrgotidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n287/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Pyrgota. Family in the source: Ortalidae.",
+        "Family assignment: Pyrgota is the type genus of Pyrgotidae; Williston (1908) placed it under Ortalidae.",
+        "Shaded (infuscated) areas on the printed wing weaken some faint veins; check posterior veins against the scan.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n287); orientation set during tracing; the figure carries no scale bar."
+    },
+    "platystomatidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n287/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Rivellia. Family in the source: Ortalidae.",
+        "Family assignment: Rivellia is a genus of Platystomatidae; Williston (1908) placed it under Ortalidae.",
+        "Banded wing pattern in the print; small crossings inside the bands may be artefacts.",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n287); orientation set during tracing; the figure carries no scale bar."
+    },
+    "richardiidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n287/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Richardia. Family in the source: Ortalidae.",
+        "Family assignment: Richardia is the type genus of Richardiidae; Williston (1908) placed it under Ortalidae.",
+        "Shaded band across the middle of the printed wing.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n287); orientation set during tracing; the figure carries no scale bar."
+    },
+    "ulidiidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n288/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Euxesta. Family in the source: Ortalidae.",
+        "Family assignment: Euxesta is a genus of Ulidiidae (formerly Otitidae/Ortalidae).",
+        "Stippled bands in the print; short spurs inside the bands are artefacts of the tracing.",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n288); orientation set during tracing; the figure carries no scale bar."
+    },
+    "lonchaeidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n304/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Lonchaea. Family in the source: Sapromyzidae.",
+        "Family assignment: Lonchaea is the type genus of Lonchaeidae; Williston (1908) placed it under Sapromyzidae.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n304); orientation set during tracing; the figure carries no scale bar."
+    },
+    "lauxaniidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n304/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Sapromyza. Family in the source: Sapromyzidae.",
+        "Family assignment: Sapromyza is a genus of Lauxaniidae (Sapromyzidae is an older name for this group).",
+        "Fine stipple over the whole printed wing; several short spurs and some cross-links near the costa are artefacts.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n304); orientation set during tracing; the figure carries no scale bar."
+    },
+    "sphaeroceridae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n330/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Sphaerocera. Family in the source: Borboridae.",
+        "Family assignment: Sphaerocera is the type genus of Sphaeroceridae; Borboridae is an older name for the family.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n330); orientation set during tracing; the figure carries no scale bar."
+    },
+    "heleomyzidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n341/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Leria. Family in the source: Helomyzidae.",
+        "Family assignment: Williston places Leria under Helomyzidae, an older spelling of Heleomyzidae.",
+        "Costal spines of the print are partly visible as short ticks along the costa.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n341); orientation set during tracing; the figure carries no scale bar."
+    },
+    "fanniidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n347/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Homalomyia (Fannia) scalaris. Family in the source: Anthomyidae.",
+        "Family assignment: The caption itself gives 'Homalomyia (Fannia) scalaris'; Fannia is the type genus of Fanniidae, which Williston still kept in Anthomyidae.",
+        "The faint posterior veins of the print are only partly recovered.",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n347); orientation set during tracing; the figure carries no scale bar."
+    },
+    "anthomyiidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n350/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Hammomyia unilineata. Family in the source: Anthomyidae.",
+        "Family assignment: Williston places the species in Anthomyidae; the species is currently listed as Leucophora unilineata in Anthomyiidae.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n350); orientation set during tracing; the figure carries no scale bar."
+    },
+    "calliphoridae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n356/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Chrysomyia. Family in the source: Muscidae.",
+        "Family assignment: Williston's Chrysomyia (North American usage) and the current genera Chrysomya and Cochliomyia all belong to Calliphoridae; the exact current genus of the figured fly is not stated in the caption.",
+        "Costal base is fragmented in the tracing; check against the scan.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n356); orientation set during tracing; the figure carries no scale bar."
+    },
+    "tachinidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n381/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Alophora fumosa. Family in the source: Tachinidae.",
+        "Family assignment: Williston places Alophora in Tachinidae; Alophora is treated as a synonym of Phasia (Tachinidae: Phasiinae).",
+        "Faint posterior part of the print only partly recovered.",
+        "Mirrored from the print (base on the right in Williston 1908).",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n381); orientation set during tracing; the figure carries no scale bar."
+    },
+    "hippoboscidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/manualofnorthame00willuoft/page/n402/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Ornithomyia. Family in the source: Hippoboscidae.",
+        "Family assignment: Ornithomyia is a genus of Hippoboscidae.",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Williston 1908, scan leaf n402); orientation set during tracing; the figure carries no scale bar."
+    },
+    "conopidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/wingsofinsectsex00coms/page/n397/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Conops. Family in the source: not stated in the caption.",
+        "Family assignment: Conops is the type genus of Conopidae.",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Comstock 1918, scan leaf n397); orientation set during tracing; the figure carries no scale bar."
+    },
+    "nemestrinidae-rhynchocephalus": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/wingsofinsectsex00coms/page/n390/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Rhynchocephalus. Family in the source: not stated in the caption.",
+        "Family assignment: Rhynchocephalus is a genus of Nemestrinidae.",
+        "Posterior (anal) region is drawn faintly in the print and only partly traced.",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Comstock 1918, scan leaf n390); orientation set during tracing; the figure carries no scale bar."
+    },
+    "tanyderidae-protoplasa": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/wingsofinsectsex00coms/page/n392/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Protoplasa fitchii. Family in the source: Tipulidae (Comstock's text).",
+        "Family assignment: Comstock treats Protoplasa under the Tipulidae; Protoplasa fitchii is now placed in Tanyderidae.",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Comstock 1918, scan leaf n392); orientation set during tracing; the figure carries no scale bar."
+    },
+    "psychodidae-comstock": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/wingsofinsectsex00coms/page/n394/mode/1up"
+      },
+      "notes": [
+        "Name as printed: unnamed 'moth-like fly'. Family in the source: Psychodidae (named in the text referring to Fig. 362).",
+        "Family assignment: Comstock's text cites 'the Psychodidae (Fig. 362)'; the genus is not given.",
+        "Veins are drawn as double outlines in the print; the tracing follows one side or the middle, and some basal veins are incomplete.",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Comstock 1918, scan leaf n394); orientation set during tracing; the figure carries no scale bar."
+    },
+    "rhagionidae-leptis": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/wingsofinsectsex00coms/page/n395/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Leptis. Family in the source: not stated in the caption.",
+        "Family assignment: Leptis is an older name used for Rhagio (Rhagionidae).",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Comstock 1918, scan leaf n395); orientation set during tracing; the figure carries no scale bar."
+    },
+    "therevidae-thereva": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/wingsofinsectsex00coms/page/n396/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Thereva. Family in the source: not stated in the caption.",
+        "Family assignment: Thereva is the type genus of Therevidae.",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Comstock 1918, scan leaf n396); orientation set during tracing; the figure carries no scale bar."
+    },
+    "scenopinidae-scenopinus": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/wingsofinsectsex00coms/page/n397/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Scenopinus. Family in the source: not stated in the caption.",
+        "Family assignment: Scenopinus is the type genus of Scenopinidae.",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Comstock 1918, scan leaf n397); orientation set during tracing; the figure carries no scale bar."
+    },
+    "empididae-rhamphomyia": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/wingsofinsectsex00coms/page/n398/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Rhamphomyia. Family in the source: not stated in the caption.",
+        "Family assignment: Rhamphomyia is a genus of Empididae.",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Comstock 1918, scan leaf n398); orientation set during tracing; the figure carries no scale bar."
+    },
+    "dolichopodidae-psilopodius": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/wingsofinsectsex00coms/page/n399/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Psilopodius sipho. Family in the source: not stated in the caption.",
+        "Family assignment: Comstock (1918, section 'Wings of dolichopodids': 'the first belongs to the genus Psilopodius') places the genus in Dolichopodidae.",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Comstock 1918, scan leaf n399); orientation set during tracing; the figure carries no scale bar."
+    },
+    "tipulidae-tipula": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/wingsofinsectsex00coms/page/n400/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Tipula. Family in the source: not stated in the caption.",
+        "Family assignment: Tipula is the type genus of Tipulidae.",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Comstock 1918, scan leaf n400); orientation set during tracing; the figure carries no scale bar."
+    },
+    "stratiomyidae-stratiomyia": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/wingsofinsectsex00coms/page/n401/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Stratiomyia. Family in the source: not stated in the caption.",
+        "Family assignment: Stratiomyia is an older spelling of Stratiomys, the type genus of Stratiomyidae.",
+        "Tracing quality: good. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Comstock 1918, scan leaf n401); orientation set during tracing; the figure carries no scale bar."
+    },
+    "tabanidae-tabanus": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/wingsofinsectsex00coms/page/n402/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Tabanus. Family in the source: not stated in the caption.",
+        "Family assignment: Tabanus is the type genus of Tabanidae.",
+        "Comstock's caption: 'Wing of Tabanus (After Williston)'. The print names cells and veins in Williston's older numbering (e.g. '1st posterior', '3rd vein'); these words are not transcribed.",
+        "Large cursive lettering crosses several cells; short ticks along the veins can be remnants of it.",
+        "Mirrored from the print (base on the right in Comstock 1918).",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Comstock 1918, scan leaf n402); orientation set during tracing; the figure carries no scale bar."
+    },
+    "scathophagidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/insectabritannic02walkuoft/page/n318/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Scatophaga stercoraria. Family in the source: Muscidae: Helomyzides.",
+        "Family assignment: Scatophaga is an older spelling of Scathophaga, the type genus of Scathophagidae; S. stercoraria is the yellow dung fly.",
+        "Plate caption: 'Fig. 3 a, head of Scatophaga stercoraria; 3 b, antenna; 3 c, wing.'",
+        "The engraving is small (about 360 px wide in the 300 dpi scan); the plate shows the wing tilted with its base on the right, so the crop was mirrored and rotated 24.5° to put the base on the left and the costa on top.",
+        "A tuft of hairs near the base and the doubled engraving lines at the base appear as short extra pieces.",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Walker 1853, scan leaf n318); orientation set during tracing; the figure carries no scale bar."
+    },
+    "chamaemyiidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/insectabritannic02walkuoft/page/n326/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Ochthiphila aridella. Family in the source: Muscidae: Lauxanides.",
+        "Family assignment: Ochthiphila is a genus of Chamaemyiidae.",
+        "Plate caption: 'Fig. 2 a, head of Ochthiphila aridella seen sideways; 2 b, antenna; 2 c, wing.'",
+        "The plate shows the wing diagonally (base lower left); the crop was rotated 56° clockwise so the base is on the left and the costa on top (no mirroring).",
+        "Tracing quality: fair. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Walker 1853, scan leaf n326); orientation set during tracing; the figure carries no scale bar."
+    },
+    "calliphoridae-walker-mortuorum": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/insectabritannic02walkuoft/page/n314/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Sarcophaga mortuorum. Family in the source: Muscidae: Sarcophagides.",
+        "Family assignment: Walker's Sarcophaga mortuorum is Linnaeus' Musca mortuorum (he cites 'mortuorum, L. 1761'), now Cynomya mortuorum, a blow fly (Calliphoridae) — not a flesh fly, despite the genus name used in 1853.",
+        "Plate caption: 'Fig. 4. Sarcophaga mortuorum, male. 4 a, extremity of abdomen, sideways'.",
+        "Whole-fly drawing: the wing base is hidden by the thorax and was cut off at about 20% of the wing length; nothing was traced there.",
+        "Legs, antennae or bristles cross the wing in the engraving; short pieces near them may belong to them, not to veins.",
+        "The plate shows the wing with its base on the right; the crop was mirrored.",
+        "Tracing quality: rough. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Walker 1853, scan leaf n314); orientation set during tracing; the figure carries no scale bar."
+    },
+    "coelopidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/insectabritannic02walkuoft/page/n318/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Coelopa frigida. Family in the source: Muscidae: Helomyzides.",
+        "Family assignment: Coelopa is the type genus of Coelopidae (kelp flies); Walker placed it among his Helomyzides.",
+        "Plate caption: 'Fig. 4. Coelopa frigida. 4 a, head, sideways; 4 b, antenna'.",
+        "Whole-fly drawing: the wing base is hidden by the thorax and was cut off at about 16% of the wing length; nothing was traced there.",
+        "Legs, antennae or bristles cross the wing in the engraving; short pieces near them may belong to them, not to veins.",
+        "The plate shows the wing with its base on the left (not mirrored).",
+        "Tracing quality: rough. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Walker 1853, scan leaf n318); orientation set during tracing; the figure carries no scale bar."
+    },
+    "sciomyzidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/insectabritannic02walkuoft/page/n322/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Tetanocera ferruginea. Family in the source: Muscidae: Helomyzides.",
+        "Family assignment: Tetanocera is a genus of Sciomyzidae (marsh flies); Walker placed it among his Helomyzides.",
+        "Plate caption: 'Fig. 2. Tetanocera ferruginea. 2 a, head, sideways; 2 b, antenna'.",
+        "Whole-fly drawing: the wing base is hidden by the thorax and was cut off at about 17% of the wing length; nothing was traced there.",
+        "Legs, antennae or bristles cross the wing in the engraving; short pieces near them may belong to them, not to veins.",
+        "The plate shows the wing with its base on the right; the crop was mirrored.",
+        "Tracing quality: rough. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Walker 1853, scan leaf n322); orientation set during tracing; the figure carries no scale bar."
+    },
+    "dryomyzidae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/insectabritannic02walkuoft/page/n322/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Dryomyza flaveola. Family in the source: Muscidae: Helomyzides.",
+        "Family assignment: Dryomyza is the type genus of Dryomyzidae; Walker placed it among his Helomyzides.",
+        "Plate caption: 'Fig. 1. Dryomyza flaveola. 1 a, head, sideways; 1 b, antenna'.",
+        "Whole-fly drawing: the wing base is hidden by the thorax and was cut off at about 20% of the wing length; nothing was traced there.",
+        "Legs, antennae or bristles cross the wing in the engraving; short pieces near them may belong to them, not to veins.",
+        "The plate shows the wing with its base on the right; the crop was mirrored.",
+        "Tracing quality: rough. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Walker 1853, scan leaf n322); orientation set during tracing; the figure carries no scale bar."
+    },
+    "pallopteridae": {
+      "referenceStatus": "derived-tracing",
+      "imageType": "tracing",
+      "orientation": {
+        "baseSide": "left",
+        "anteriorEdge": "top"
+      },
+      "scaleKnown": false,
+      "publication": {
+        "url": "https://archive.org/details/insectabritannic02walkuoft/page/n326/mode/1up"
+      },
+      "notes": [
+        "Name as printed: Palloptera decem-punctata. Family in the source: Muscidae: Lauxanides.",
+        "Family assignment: Palloptera is the type genus of Pallopteridae (flutter flies); Walker placed it among his Lauxanides. The species name is given as printed and was not checked against current nomenclature.",
+        "Plate caption: 'Fig. 1. Palloptera decem-punctata. 1 a, head, sideways'.",
+        "Whole-fly drawing: the wing base is hidden by the thorax and was cut off at about 17% of the wing length; nothing was traced there.",
+        "Legs, antennae or bristles cross the wing in the engraving; short pieces near them may belong to them, not to veins.",
+        "The plate shows the wing with its base on the left (not mirrored).",
+        "Tracing quality: rough. Automatic centre-line tracing; compare with the scan in Vein review before using details."
+      ],
+      "basis": "Figure number, name and family heading transcribed from the printed caption (Walker 1853, scan leaf n326); orientation set during tracing; the figure carries no scale bar."
     }
   }
 }

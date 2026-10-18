@@ -546,7 +546,7 @@ export default function WingCompare({ initialPair, onOpenInMapper, onOpenInAtlas
     <section className="compare-page" aria-labelledby="compare-title">
       <header className="compare-hero">
         <div>
-          <p className="eyebrow">COMPARATIVE MORPHOLOGY · REFERENCE PLATES · v0.48 WORKBENCH</p>
+          <p className="eyebrow">COMPARATIVE MORPHOLOGY · REFERENCE PLATES · WORKBENCH</p>
           <h1 id="compare-title">Two wings.<br /><em>One visual field.</em></h1>
         </div>
         <div className="compare-hero-copy">
