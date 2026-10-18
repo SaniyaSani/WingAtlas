@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 481 235" width="481" height="235" role="img" aria-label="Hippoboscidae: Ornithomyia wing (Williston 1908, fig. 160.2) — tracing">
+  <title>Hippoboscidae: Ornithomyia wing (Williston 1908, fig. 160.2) — EntoWing tracing</title>
+  <desc>EntoWing centre-line tracing of Samuel Wendell Williston, Manual of North American Diptera, 3rd edition (1908), fig. 160.2: 'Ornithomyia' as printed in the source. Source scan: https://archive.org/details/manualofnorthame00willuoft/page/n402/mode/1up. Public domain source (NOT_IN_COPYRIGHT (published 1908, USA)). Geometry only — no vein names are assigned. Dashed lines reproduce the dotted wing margin of the print. Quality: good.</desc>
+  <g fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" data-layer="traced-lines">
+    <path data-segment="s01" d="M140.3 43.7C138.9 42.7 137.7 38.9 132.0 38.0C126.3 37.1 112.8 38.5 106.0 38.0C99.2 37.5 95.7 35.5 91.0 35.0C86.3 34.5 81.4 33.8 78.0 35.0C74.6 36.2 71.9 41.1 70.7 42.3"/>
+    <path data-segment="s02" d="M352.3 65.7C351.6 66.4 359.6 69.8 348.0 70.0C336.4 70.2 293.8 67.2 283.0 66.7"/>
+    <path data-segment="s03" d="M153.7 95.7C173.4 108.2 250.3 156.6 272.0 171.0C293.7 185.4 281.5 179.0 284.0 182.0C286.5 185.0 286.5 187.8 287.0 189.0"/>
+    <path data-segment="s04" d="M70.7 42.3L72.3 49.7"/>
+    <path data-segment="s05" d="M166.0 67.0C167.5 65.7 155.3 60.3 175.0 59.0C194.7 57.7 265.8 59.0 284.0 59.0"/>
+    <path data-segment="s06" d="M166.0 67.0L158.0 67.0"/>
+    <path data-segment="s07" d="M166.0 67.0C167.0 67.8 169.5 71.2 172.0 72.0C174.5 72.8 179.5 72.0 181.0 72.0"/>
+    <path data-segment="s08" d="M283.0 66.7L284.0 59.0"/>
+    <path data-segment="s09" d="M72.3 49.7C71.1 50.9 69.2 56.1 65.0 57.0C60.8 57.9 51.2 54.8 47.0 55.0C42.8 55.2 40.9 57.8 39.7 58.3"/>
+    <path data-segment="s10" d="M402.0 166.0C400.0 163.3 404.2 158.2 390.0 150.0C375.8 141.8 336.7 125.5 317.0 117.0C297.3 108.5 286.7 104.0 272.0 99.0C257.3 94.0 237.5 89.0 229.0 87.0C220.5 85.0 223.8 87.8 221.0 87.0C218.2 86.2 218.0 83.8 212.0 82.0C206.0 80.2 190.2 77.7 185.0 76.0C179.8 74.3 181.7 72.7 181.0 72.0"/>
+    <path data-segment="s11" d="M70.7 42.3C68.7 41.4 64.3 38.1 59.0 37.0C53.7 35.9 42.3 36.2 39.0 36.0"/>
+    <path data-segment="s12" d="M140.3 43.7C139.8 44.2 139.6 46.4 137.0 47.0C134.4 47.6 128.7 45.4 125.0 47.0C121.3 48.6 116.4 54.8 114.7 56.3"/>
+    <path data-segment="s13" d="M288.3 54.7C292.1 54.7 301.4 54.1 311.0 55.0C320.6 55.9 339.1 58.2 346.0 60.0C352.9 61.8 351.3 64.7 352.3 65.7"/>
+    <path data-segment="s14" d="M153.7 95.7L85.0 78.0"/>
+    <path data-segment="s15" d="M70.1 93.7C72.3 91.9 80.5 85.6 83.0 83.0C85.5 80.4 84.7 78.8 85.0 78.0"/>
+    <path data-segment="s16" d="M153.7 95.7L158.0 67.0"/>
+    <path data-segment="s17" d="M114.7 56.3C115.6 57.3 114.3 60.7 120.0 62.0C125.7 63.3 142.7 63.2 149.0 64.0C155.3 64.8 156.5 66.5 158.0 67.0"/>
+    <path data-segment="s18" d="M284.0 59.0L288.3 54.7"/>
+    <path data-segment="s19" d="M70.1 93.7C70.6 95.6 62.0 92.3 73.0 105.0C84.0 117.7 121.3 153.7 136.0 170.0C150.7 186.3 156.8 197.5 161.0 203.0"/>
+    <path data-segment="s20" d="M352.3 65.7L382.0 68.0"/>
+    <path data-segment="s21" d="M70.1 93.7C68.9 93.8 67.4 95.8 63.0 94.0C58.6 92.2 48.8 86.3 44.0 83.0C39.2 79.7 35.8 77.5 34.0 74.0C32.2 70.5 32.1 64.6 33.0 62.0C33.9 59.4 38.6 58.9 39.7 58.3"/>
+    <path data-segment="s22" d="M283.0 66.7C277.2 66.9 261.8 67.5 248.0 67.8C234.2 68.0 210.7 67.8 200.0 68.0C189.3 68.2 187.2 68.3 184.0 69.0C180.8 69.7 181.5 71.5 181.0 72.0"/>
+    <path data-segment="s23" d="M85.0 78.0C82.4 77.0 76.0 74.5 69.5 72.0C63.0 69.5 51.0 65.3 46.0 63.0C41.0 60.7 40.7 59.1 39.7 58.3"/>
+    <path data-segment="s24" d="M140.3 43.7C145.4 43.7 151.6 43.0 171.0 43.8C190.4 44.5 238.0 46.8 257.0 48.0C276.0 49.2 279.8 49.9 285.0 51.0C290.2 52.1 287.8 54.1 288.3 54.7"/>
+    <path data-segment="s25" d="M114.7 56.3C109.6 55.6 91.6 53.1 84.5 52.0C77.4 50.9 74.4 50.1 72.3 49.7"/>
+  </g>
+  <g fill="none" stroke="#111111" stroke-width="1.10" stroke-linecap="round" stroke-dasharray="3.1 3.5" data-layer="dotted-margin">
+    <path data-segment="m01" data-kind="dotted-margin" d="M158.0 209.0C156.2 208.2 156.8 205.8 147.0 204.0C137.2 202.2 110.2 200.2 99.0 198.0C87.8 195.8 83.2 192.2 80.0 191.0"/>
+    <path data-segment="m02" data-kind="dotted-margin" d="M50.0 170.0L50.0 169.0"/>
+    <path data-segment="m03" data-kind="dotted-margin" d="M50.0 170.0L51.0 170.0"/>
+    <path data-segment="m04" data-kind="dotted-margin" d="M299.0 190.0C305.2 189.3 320.5 189.2 336.0 186.0C351.5 182.8 382.7 173.5 392.0 171.0"/>
+    <path data-segment="m05" data-kind="dotted-margin" d="M50.0 169.0C47.5 163.3 37.0 147.5 35.0 135.0C33.0 122.5 37.5 100.8 38.0 94.0"/>
+    <path data-segment="m06" data-kind="dotted-margin" d="M50.0 169.0L51.0 170.0"/>
+    <path data-segment="m07" data-kind="dotted-margin" d="M50.0 170.0L51.0 170.0"/>
+    <path data-segment="m08" data-kind="dotted-margin" d="M38.0 94.0L38.0 94.0"/>
+    <path data-segment="m09" data-kind="dotted-margin" d="M299.0 190.0L299.0 190.0"/>
+  </g>
+</svg>

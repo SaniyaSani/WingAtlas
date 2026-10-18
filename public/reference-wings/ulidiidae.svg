@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 557 265" width="557" height="265" role="img" aria-label="Ulidiidae: Euxesta wing (Williston 1908, fig. 109.15) — tracing">
+  <title>Ulidiidae: Euxesta wing (Williston 1908, fig. 109.15) — EntoWing tracing</title>
+  <desc>EntoWing centre-line tracing of Samuel Wendell Williston, Manual of North American Diptera, 3rd edition (1908), fig. 109.15: 'Euxesta' as printed in the source. Source scan: https://archive.org/details/manualofnorthame00willuoft/page/n288/mode/1up. Public domain source (NOT_IN_COPYRIGHT (published 1908, USA)). Geometry only — no vein names are assigned. Dashed lines reproduce the dotted wing margin of the print. Quality: fair.</desc>
+  <g fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" data-layer="traced-lines">
+    <path data-segment="s01" d="M106.0 118.7L95.3 121.3"/>
+    <path data-segment="s02" d="M240.7 122.7L247.0 99.3"/>
+    <path data-segment="s03" d="M198.0 59.0C196.7 59.3 192.5 59.7 190.0 61.0C187.5 62.3 184.4 66.0 183.2 67.0"/>
+    <path data-segment="s04" d="M60.9 63.1C69.4 62.9 97.8 62.7 112.0 62.0C126.2 61.3 138.7 59.3 146.0 59.0C153.3 58.7 152.8 59.1 156.0 60.0C159.2 60.9 163.6 63.4 165.1 64.1"/>
+    <path data-segment="s05" d="M48.0 135.0C48.7 139.2 49.8 152.0 52.0 160.0C54.2 168.0 58.2 177.0 61.0 183.0C63.8 189.0 65.2 191.2 69.0 196.0C72.8 200.8 78.7 207.7 84.0 212.0C89.3 216.3 98.2 220.3 101.0 222.0"/>
+    <path data-segment="s06" d="M95.3 121.3C94.4 124.8 89.9 136.1 90.0 142.0C90.1 147.9 94.7 154.2 95.7 156.7"/>
+    <path data-segment="s07" d="M128.7 77.7C118.4 77.2 78.4 76.1 67.0 75.0C55.6 73.9 61.0 73.0 60.0 71.0C59.0 69.0 60.8 64.4 60.9 63.1"/>
+    <path data-segment="s08" d="M205.0 235.0L267.0 232.0"/>
+    <path data-segment="s09" d="M57.7 98.3C59.2 97.6 58.9 92.5 67.0 94.0C75.1 95.5 99.8 105.1 106.3 107.3"/>
+    <path data-segment="s10" d="M128.7 77.7C130.7 76.9 136.8 73.8 141.0 73.0C145.2 72.2 150.0 74.5 154.0 73.0C158.0 71.5 163.3 65.6 165.1 64.1"/>
+    <path data-segment="s11" d="M106.0 118.7L106.3 107.3"/>
+    <path data-segment="s12" d="M132.0 191.0L95.7 156.7"/>
+    <path data-segment="s13" d="M198.0 59.0L198.7 44.3"/>
+    <path data-segment="s14" d="M519.0 113.7C519.3 112.6 522.0 110.9 521.0 107.0C520.0 103.1 515.7 94.2 513.0 90.0C510.3 85.8 507.8 83.7 505.0 82.0C502.2 80.3 497.5 80.1 496.0 79.7"/>
+    <path data-segment="s15" d="M198.0 59.0C201.3 58.8 212.8 56.3 217.7 57.6C222.6 58.9 225.8 65.4 227.4 67.0"/>
+    <path data-segment="s16" d="M165.1 64.1C166.1 63.0 169.7 60.4 171.0 57.5C172.3 54.6 172.8 48.6 173.2 46.8"/>
+    <path data-segment="s17" d="M95.7 156.7C90.1 153.1 68.6 139.6 62.0 135.0C55.4 130.4 57.4 131.3 56.0 129.0C54.6 126.7 55.4 123.6 53.7 121.4C52.0 119.2 47.5 118.2 46.0 116.0C44.5 113.8 44.5 111.0 45.0 108.0C45.5 105.0 46.9 99.6 49.0 98.0C51.1 96.4 56.2 98.3 57.7 98.3"/>
+    <path data-segment="s18" d="M128.7 77.7C130.2 78.7 133.4 82.8 138.0 84.0C142.6 85.2 148.8 83.5 156.0 85.0C163.2 86.5 173.7 91.8 181.5 93.0C189.3 94.2 197.3 91.5 203.0 92.0C208.7 92.5 208.2 94.8 215.5 96.0C222.8 97.2 241.8 98.8 247.0 99.3"/>
+    <path data-segment="s19" d="M183.2 67.0C181.5 67.0 176.0 67.7 173.0 67.2C170.0 66.8 166.4 64.6 165.1 64.1"/>
+    <path data-segment="s20" d="M367.0 216.0C362.5 216.5 347.3 218.7 340.0 219.0C332.7 219.3 327.5 221.0 323.4 217.7C319.3 214.4 316.7 202.4 315.4 199.4"/>
+    <path data-segment="s21" d="M95.3 121.3C89.8 118.9 68.7 110.5 62.4 106.7C56.1 102.9 58.5 99.7 57.7 98.3"/>
+    <path data-segment="s22" d="M248.0 39.3C247.8 40.3 248.0 43.2 247.0 45.0C246.0 46.8 244.3 48.6 242.0 50.0C239.7 51.4 235.5 51.9 233.4 53.3C231.3 54.7 230.5 56.2 229.5 58.5C228.5 60.8 227.8 65.6 227.4 67.0"/>
+    <path data-segment="s23" d="M173.2 46.8C174.8 46.5 179.2 45.6 182.5 45.0C185.8 44.4 190.3 43.4 193.0 43.2C195.7 43.1 197.7 44.1 198.7 44.3"/>
+    <path data-segment="s24" d="M227.4 67.0C226.0 67.5 220.7 68.8 219.0 70.0C217.3 71.2 220.4 73.9 217.5 74.5C214.6 75.1 205.6 73.6 201.5 73.5C197.4 73.4 196.0 75.1 193.0 74.0C190.0 72.9 184.9 68.2 183.2 67.0"/>
+    <path data-segment="s25" d="M240.7 122.7C256.0 127.2 315.6 145.3 332.5 150.0C349.4 154.7 340.4 150.6 342.0 150.7"/>
+    <path data-segment="s26" d="M198.7 44.3C200.0 43.8 203.5 41.6 206.5 41.0C209.5 40.4 213.7 40.9 216.5 41.0C219.3 41.1 218.3 42.0 223.6 41.7C228.8 41.4 243.9 39.7 248.0 39.3"/>
+    <path data-segment="s27" d="M519.0 113.7C517.8 114.2 514.8 117.0 511.5 117.0C508.2 117.0 507.9 114.5 499.0 113.8C490.1 113.0 474.2 112.8 458.0 112.2C441.8 111.7 414.0 110.8 401.5 110.5C389.0 110.2 388.1 110.5 383.0 110.2C377.9 110.0 377.1 110.0 371.0 109.2C364.9 108.5 361.7 107.5 346.2 105.8C330.7 104.1 294.5 100.1 278.0 99.0C261.5 97.9 252.2 99.3 247.0 99.3"/>
+    <path data-segment="s28" d="M315.4 199.4C316.8 198.6 321.5 197.5 323.7 194.6C325.9 191.7 326.2 185.7 328.5 182.0C330.8 178.3 335.0 177.7 337.2 172.5C339.5 167.3 341.2 154.4 342.0 150.7"/>
+    <path data-segment="s29" d="M173.2 46.8C172.1 45.9 173.0 42.7 166.5 41.5C160.0 40.3 142.7 40.2 134.0 39.8C125.3 39.3 122.6 39.1 114.5 39.0C106.4 38.9 94.9 38.7 85.5 39.0C76.1 39.3 64.3 39.9 58.0 41.0C51.7 42.1 49.9 42.2 47.5 45.5C45.1 48.8 41.6 58.1 43.8 61.1C46.0 64.0 58.1 62.7 60.9 63.1"/>
+    <path data-segment="s30" d="M315.4 199.4C313.7 199.0 319.1 202.8 305.0 197.0C290.9 191.2 245.8 170.8 230.9 164.6C216.0 158.4 220.7 161.9 215.5 160.0C210.3 158.1 204.7 155.6 199.5 153.5C194.3 151.4 189.9 149.2 184.6 147.3C179.3 145.4 180.6 147.0 167.5 142.2C154.4 137.5 116.2 122.6 106.0 118.7"/>
+    <path data-segment="s31" d="M240.7 122.7C239.3 122.9 234.7 123.9 232.5 124.0C230.3 124.1 232.7 123.8 227.5 123.0C222.3 122.2 208.6 120.5 201.5 119.0C194.4 117.5 189.0 115.1 185.0 114.2C181.0 113.4 180.8 114.4 177.5 114.0C174.2 113.6 169.0 112.3 165.5 112.0C162.0 111.7 159.1 112.7 156.5 112.0C153.9 111.3 154.4 109.2 150.0 108.0C145.6 106.8 136.7 105.5 130.0 105.0C123.3 104.5 113.9 104.6 110.0 105.0C106.1 105.4 106.9 106.9 106.3 107.3"/>
+    <path data-segment="s32" d="M519.0 113.7C520.2 115.1 525.2 117.4 526.0 122.0C526.8 126.6 527.1 137.3 523.8 141.0C520.4 144.7 510.0 143.0 506.0 144.0C502.0 145.0 509.5 145.2 500.0 147.0C490.5 148.8 458.7 153.1 449.0 154.8C439.3 156.4 451.4 157.0 442.0 157.0C432.6 157.0 401.3 155.7 392.5 155.0C383.7 154.3 391.5 153.2 389.0 153.0C386.5 152.8 380.2 154.0 377.5 154.0C374.8 154.0 375.4 153.7 372.5 153.0C369.6 152.3 365.1 150.4 360.0 150.0C354.9 149.6 345.0 150.6 342.0 150.7"/>
+    <path data-segment="s33" d="M227.4 67.0C236.0 66.3 261.2 63.2 279.0 63.0C296.8 62.8 323.4 65.2 334.0 65.8C344.6 66.3 336.7 66.1 342.5 66.5C348.3 66.9 362.2 67.6 369.0 68.4C375.8 69.1 378.7 70.5 383.5 71.0C388.3 71.5 387.8 70.6 398.0 71.2C408.2 71.9 433.5 73.4 444.5 75.0C455.5 76.6 456.4 79.8 464.0 81.0C471.6 82.2 484.7 82.2 490.0 82.0C495.3 81.8 495.0 80.1 496.0 79.7"/>
+    <path data-segment="s34" d="M248.0 39.3C251.1 38.8 261.8 36.6 266.5 36.0C271.2 35.4 272.8 35.9 276.0 35.8C279.2 35.6 278.5 35.2 285.5 35.0C292.5 34.8 309.7 34.8 317.8 34.6C325.8 34.4 328.7 33.5 334.0 33.8C339.3 34.0 344.7 35.8 349.5 36.0C354.3 36.2 360.1 34.8 363.0 35.0C365.9 35.2 365.3 37.2 367.0 37.2C368.7 37.2 370.4 34.9 373.0 35.0C375.6 35.1 379.2 37.3 382.5 38.0C385.8 38.7 390.1 38.3 392.5 39.0C394.9 39.7 394.8 41.8 397.0 42.0C399.2 42.2 403.8 39.8 406.0 40.0C408.2 40.2 406.9 42.3 410.0 43.0C413.1 43.7 420.6 43.3 424.5 44.0C428.4 44.7 430.5 46.1 433.5 47.0C436.5 47.9 439.2 48.7 442.2 49.5C445.3 50.3 449.1 50.8 452.0 52.0C454.9 53.2 456.1 55.6 459.5 57.0C462.9 58.4 469.6 58.9 472.6 60.3C475.6 61.7 475.5 64.1 477.5 65.5C479.5 66.9 481.8 67.6 484.4 68.7C487.0 69.8 491.1 70.2 493.0 72.0C494.9 73.8 495.5 78.4 496.0 79.7"/>
+  </g>
+  <g fill="none" stroke="#111111" stroke-width="1.10" stroke-linecap="round" stroke-dasharray="3.1 3.5" data-layer="dotted-margin">
+    <path data-segment="m01" data-kind="dotted-margin" d="M518.0 154.0L519.0 154.0"/>
+    <path data-segment="m02" data-kind="dotted-margin" d="M518.0 154.0L518.0 155.0"/>
+    <path data-segment="m03" data-kind="dotted-margin" d="M385.0 54.0L386.0 54.0"/>
+    <path data-segment="m04" data-kind="dotted-margin" d="M385.0 54.0L386.0 55.0"/>
+    <path data-segment="m05" data-kind="dotted-margin" d="M377.0 55.0L376.0 55.0"/>
+    <path data-segment="m06" data-kind="dotted-margin" d="M377.0 55.0L378.0 55.0"/>
+    <path data-segment="m07" data-kind="dotted-margin" d="M377.0 55.0L377.0 56.0"/>
+    <path data-segment="m08" data-kind="dotted-margin" d="M386.0 55.0L386.0 54.0"/>
+    <path data-segment="m09" data-kind="dotted-margin" d="M386.0 55.0L386.0 56.0"/>
+    <path data-segment="m10" data-kind="dotted-margin" d="M386.0 55.0L387.0 56.0"/>
+    <path data-segment="m11" data-kind="dotted-margin" d="M387.0 56.0L386.0 56.0"/>
+    <path data-segment="m12" data-kind="dotted-margin" d="M193.0 103.0L173.0 102.0"/>
+    <path data-segment="m13" data-kind="dotted-margin" d="M193.0 103.0L194.0 103.0"/>
+    <path data-segment="m14" data-kind="dotted-margin" d="M340.0 51.0L341.0 51.0"/>
+    <path data-segment="m15" data-kind="dotted-margin" d="M427.0 204.0C436.8 199.7 474.3 184.2 486.0 178.0C497.7 171.8 495.2 168.8 497.0 167.0"/>
+    <path data-segment="m16" data-kind="dotted-margin" d="M450.0 64.0C447.5 63.2 440.0 59.8 435.0 59.0C430.0 58.2 422.5 59.0 420.0 59.0"/>
+    <path data-segment="m17" data-kind="dotted-margin" d="M450.0 64.0L451.0 65.0"/>
+    <path data-segment="m18" data-kind="dotted-margin" d="M220.0 109.0C217.7 107.7 210.3 102.0 206.0 101.0C201.7 100.0 196.0 102.7 194.0 103.0"/>
+    <path data-segment="m19" data-kind="dotted-margin" d="M220.0 109.0L221.0 109.0"/>
+    <path data-segment="m20" data-kind="dotted-margin" d="M323.0 52.0L322.0 52.0"/>
+    <path data-segment="m21" data-kind="dotted-margin" d="M451.0 65.0L468.0 71.0"/>
+    <path data-segment="m22" data-kind="dotted-margin" d="M420.0 59.0L419.0 59.0"/>
+    <path data-segment="m23" data-kind="dotted-margin" d="M376.0 55.0L341.0 51.0"/>
+    <path data-segment="m24" data-kind="dotted-margin" d="M376.0 55.0L377.0 56.0"/>
+    <path data-segment="m25" data-kind="dotted-margin" d="M378.0 55.0L377.0 56.0"/>
+    <path data-segment="m26" data-kind="dotted-margin" d="M469.0 71.0L468.0 71.0"/>
+    <path data-segment="m27" data-kind="dotted-margin" d="M497.0 167.0L498.0 167.0"/>
+    <path data-segment="m28" data-kind="dotted-margin" d="M234.0 110.0L233.0 110.0"/>
+    <path data-segment="m29" data-kind="dotted-margin" d="M320.0 52.0L322.0 52.0"/>
+    <path data-segment="m30" data-kind="dotted-margin" d="M181.0 233.0C174.7 232.8 154.7 233.2 143.0 232.0C131.3 230.8 116.3 227.0 111.0 226.0"/>
+    <path data-segment="m31" data-kind="dotted-margin" d="M518.0 155.0L519.0 154.0"/>
+    <path data-segment="m32" data-kind="dotted-margin" d="M518.0 155.0C516.5 156.5 512.3 162.0 509.0 164.0C505.7 166.0 499.8 166.5 498.0 167.0"/>
+    <path data-segment="m33" data-kind="dotted-margin" d="M233.0 110.0L221.0 109.0"/>
+    <path data-segment="m34" data-kind="dotted-margin" d="M518.0 154.0L519.0 154.0"/>
+    <path data-segment="m35" data-kind="dotted-margin" d="M385.0 54.0L386.0 54.0"/>
+    <path data-segment="m36" data-kind="dotted-margin" d="M385.0 54.0L378.0 55.0"/>
+    <path data-segment="m37" data-kind="dotted-margin" d="M386.0 56.0L387.0 56.0"/>
+    <path data-segment="m38" data-kind="dotted-margin" d="M233.0 110.0L234.0 110.0"/>
+    <path data-segment="m39" data-kind="dotted-margin" d="M193.0 103.0L194.0 103.0"/>
+    <path data-segment="m40" data-kind="dotted-margin" d="M340.0 51.0C338.8 50.7 335.8 48.8 333.0 49.0C330.2 49.2 324.7 51.5 323.0 52.0"/>
+    <path data-segment="m41" data-kind="dotted-margin" d="M340.0 51.0L341.0 51.0"/>
+    <path data-segment="m42" data-kind="dotted-margin" d="M450.0 64.0L451.0 65.0"/>
+    <path data-segment="m43" data-kind="dotted-margin" d="M220.0 109.0L221.0 109.0"/>
+    <path data-segment="m44" data-kind="dotted-margin" d="M323.0 52.0L322.0 52.0"/>
+    <path data-segment="m45" data-kind="dotted-margin" d="M420.0 59.0L419.0 59.0"/>
+    <path data-segment="m46" data-kind="dotted-margin" d="M173.0 102.0L173.0 102.0"/>
+    <path data-segment="m47" data-kind="dotted-margin" d="M469.0 71.0L468.0 71.0"/>
+    <path data-segment="m48" data-kind="dotted-margin" d="M469.0 71.0L468.0 71.0"/>
+    <path data-segment="m49" data-kind="dotted-margin" d="M419.0 59.0C417.0 58.2 412.3 54.5 407.0 54.0C401.7 53.5 390.3 55.7 387.0 56.0"/>
+    <path data-segment="m50" data-kind="dotted-margin" d="M497.0 167.0L498.0 167.0"/>
+    <path data-segment="m51" data-kind="dotted-margin" d="M234.0 110.0L233.0 110.0"/>
+    <path data-segment="m52" data-kind="dotted-margin" d="M320.0 52.0L320.0 52.0"/>
+  </g>
+</svg>

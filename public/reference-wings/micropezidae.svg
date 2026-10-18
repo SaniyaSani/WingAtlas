@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 548 200" width="548" height="200" role="img" aria-label="Micropezidae: Micropeza wing (Williston 1908, fig. 103.5) — tracing">
+  <title>Micropezidae: Micropeza wing (Williston 1908, fig. 103.5) — EntoWing tracing</title>
+  <desc>EntoWing centre-line tracing of Samuel Wendell Williston, Manual of North American Diptera, 3rd edition (1908), fig. 103.5: 'Micropeza' as printed in the source. Source scan: https://archive.org/details/manualofnorthame00willuoft/page/n281/mode/1up. Public domain source (NOT_IN_COPYRIGHT (published 1908, USA)). Geometry only — no vein names are assigned. Dashed lines reproduce the dotted wing margin of the print. Quality: good.</desc>
+  <g fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" data-layer="traced-lines">
+    <path data-segment="s01" d="M105.0 115.0C103.2 112.8 97.2 105.0 94.0 102.0C90.8 99.0 88.3 99.8 86.0 97.0C83.7 94.2 81.0 87.3 80.0 85.3"/>
+    <path data-segment="s02" d="M202.0 74.3C189.2 73.4 139.5 71.5 125.0 69.0C110.5 66.5 116.9 60.9 115.2 59.2"/>
+    <path data-segment="s03" d="M334.3 116.3C346.6 116.1 391.6 115.7 408.0 115.0C424.4 114.3 421.7 114.2 433.0 112.0C444.3 109.8 464.8 105.0 476.0 102.0C487.2 99.0 495.6 96.3 500.0 94.0C504.4 91.7 502.2 89.0 502.7 88.0"/>
+    <path data-segment="s04" d="M62.1 60.1C63.3 61.5 45.7 63.4 69.0 68.0C92.3 72.6 179.6 84.4 201.7 87.7"/>
+    <path data-segment="s05" d="M202.0 74.3L201.7 87.7"/>
+    <path data-segment="s06" d="M181.7 52.0L115.2 59.2"/>
+    <path data-segment="s07" d="M331.7 143.7C335.6 146.1 349.6 154.1 355.0 158.0C360.4 161.9 362.5 165.5 364.0 167.0"/>
+    <path data-segment="s08" d="M181.7 52.0C182.6 51.2 177.8 49.0 187.0 47.0C196.2 45.0 226.8 41.2 237.0 40.0C247.2 38.8 245.5 39.3 248.0 40.0C250.5 40.7 251.3 43.3 252.0 44.0"/>
+    <path data-segment="s09" d="M181.7 52.0C182.2 52.7 183.3 55.3 185.0 56.0C186.7 56.7 183.3 56.8 192.0 56.0C200.7 55.2 228.3 52.0 237.0 51.0C245.7 50.0 241.5 51.2 244.0 50.0C246.5 48.8 250.7 45.0 252.0 44.0"/>
+    <path data-segment="s10" d="M461.0 143.0C465.0 141.0 479.3 134.7 485.0 131.0C490.7 127.3 493.3 122.7 495.0 121.0"/>
+    <path data-segment="s11" d="M80.0 85.3C82.3 84.8 82.5 80.6 94.0 82.0C105.5 83.4 126.7 88.5 149.0 94.0C171.3 99.5 201.8 107.3 228.0 115.0C254.2 122.7 289.8 135.0 306.0 140.0C322.2 145.0 320.7 144.4 325.0 145.0C329.3 145.6 330.6 143.9 331.7 143.7"/>
+    <path data-segment="s12" d="M115.2 59.2C113.5 57.2 114.5 49.2 105.0 47.0C95.5 44.8 67.0 45.4 58.0 46.0C49.0 46.6 50.6 48.0 51.3 50.4C52.0 52.8 60.3 58.5 62.1 60.1"/>
+    <path data-segment="s13" d="M80.0 85.3C78.2 85.0 75.2 85.7 69.5 83.5C63.8 81.3 49.2 74.9 46.0 72.0C42.8 69.1 48.3 67.0 50.0 66.0C51.7 65.0 54.0 67.0 56.0 66.0C58.0 65.0 61.1 61.1 62.1 60.1"/>
+    <path data-segment="s14" d="M115.2 59.2C109.0 59.0 85.9 58.4 77.5 58.0C69.1 57.6 67.6 56.6 65.0 57.0C62.4 57.4 62.6 59.6 62.1 60.1"/>
+    <path data-segment="s15" d="M334.3 116.3C334.1 117.9 333.2 121.4 332.8 126.0C332.3 130.6 331.9 140.7 331.7 143.7"/>
+    <path data-segment="s16" d="M201.7 87.7C202.2 88.2 201.9 89.9 205.0 91.0C208.1 92.1 199.8 90.5 220.0 94.0C240.2 97.5 306.9 108.0 326.0 111.8C345.1 115.5 332.9 115.6 334.3 116.3"/>
+    <path data-segment="s17" d="M502.7 88.0C487.4 86.0 438.3 78.5 411.0 76.0C383.7 73.5 356.3 73.0 339.0 72.8C321.7 72.5 316.2 74.2 307.0 74.2C297.8 74.2 289.3 72.8 284.0 72.8C278.7 72.8 278.9 74.0 275.0 74.2C271.1 74.5 265.0 74.6 260.5 74.5C256.0 74.4 257.8 73.8 248.0 73.8C238.2 73.7 209.7 74.2 202.0 74.3"/>
+    <path data-segment="s18" d="M252.0 44.0C253.4 44.0 251.8 44.6 260.5 44.0C269.2 43.4 293.8 41.1 304.0 40.2C314.2 39.4 316.7 39.3 321.5 39.0C326.3 38.7 327.2 38.8 333.0 38.2C338.8 37.8 351.0 36.8 356.5 36.0C362.0 35.2 359.2 34.6 366.0 33.8C372.8 32.9 387.7 31.0 397.0 31.0C406.3 31.0 413.7 32.2 422.0 33.8C430.3 35.2 438.5 37.0 447.0 40.0C455.5 43.0 464.5 46.3 473.0 52.0C481.5 57.7 493.1 68.0 498.0 74.0C502.9 80.0 501.9 85.7 502.7 88.0"/>
+  </g>
+  <g fill="none" stroke="#111111" stroke-width="1.10" stroke-linecap="round" stroke-dasharray="3.1 3.5" data-layer="dotted-margin">
+    <path data-segment="m01" data-kind="dotted-margin" d="M373.0 165.0L451.0 148.0"/>
+    <path data-segment="m02" data-kind="dotted-margin" d="M109.0 125.0L108.0 125.0"/>
+    <path data-segment="m03" data-kind="dotted-margin" d="M109.0 125.0L109.0 126.0"/>
+    <path data-segment="m04" data-kind="dotted-margin" d="M71.0 96.0C75.8 100.3 93.8 117.2 100.0 122.0C106.2 126.8 106.7 124.5 108.0 125.0"/>
+    <path data-segment="m05" data-kind="dotted-margin" d="M108.0 125.0L109.0 126.0"/>
+    <path data-segment="m06" data-kind="dotted-margin" d="M109.0 126.0C116.0 129.5 132.8 140.8 151.0 147.0C169.2 153.2 196.2 159.3 218.0 163.0C239.8 166.7 260.0 168.2 282.0 169.0C304.0 169.8 336.7 167.3 350.0 168.0C363.3 168.7 360.0 172.2 362.0 173.0"/>
+    <path data-segment="m07" data-kind="dotted-margin" d="M451.0 148.0L451.0 148.0"/>
+    <path data-segment="m08" data-kind="dotted-margin" d="M109.0 125.0L108.0 125.0"/>
+  </g>
+</svg>
