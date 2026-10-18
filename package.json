@@ -1,6 +1,6 @@
 {
   "name": "entowing-atlas",
-  "version": "0.48.0",
+  "version": "0.52.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -14,7 +14,7 @@
     "validate:artifact": "bash scripts/validate-artifact.sh",
     "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate",
-    "test:logic": "node --test tests/v048-logic.test.mjs"
+    "test:logic": "node --test tests/logic.test.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
