@@ -1,0 +1,4 @@
+[
+ {"slug": "scathophagidae-walker-scatophaga", "file": "scat-rot.png", "box": [30, 110, 392, 270], "scale": 1.6, "glyph": 34, "spur": 22, "dotted": false},
+ {"slug": "chamaemyiidae-walker-ochthiphila", "file": "ochth-rot.png", "box": [36, 188, 380, 336], "scale": 1.6, "glyph": 34, "spur": 22, "dotted": false}
+]

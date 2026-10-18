@@ -1,0 +1,5 @@
+{
+ "schema": "entowing-plate-review-index/1.0",
+ "note": "Reviews published with EntoWing. Add one with scripts/plate-vectors/publish-review.mjs.",
+ "reviews": []
+}

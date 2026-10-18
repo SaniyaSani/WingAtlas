@@ -1,0 +1,48 @@
+{
+ "Bibiocephala": {
+  "pad": 10
+ },
+ "Lauxania": {
+  "spur": 30,
+  "hi": 0.3,
+  "dot_max": 90,
+  "lo": 0.1
+ },
+ "Chyliza": {
+  "spur": 30,
+  "dot_max": 90,
+  "lo": 0.1,
+  "hi": 0.26
+ },
+ "Euxesta": {
+  "spur": 28,
+  "dot_max": 90,
+  "lo": 0.1,
+  "hi": 0.26
+ },
+ "Pyrgota": {
+  "spur": 26,
+  "dot_max": 70
+ },
+ "Rivellia": {
+  "spur": 28,
+  "dot_max": 90,
+  "lo": 0.1,
+  "hi": 0.26
+ },
+ "Richardia": {
+  "spur": 28,
+  "dot_max": 90,
+  "lo": 0.1,
+  "hi": 0.26
+ },
+ "Tanypeza": {
+  "pad": 6
+ },
+ "Sapromyza": {
+  "spur": 30,
+  "dot_max": 90,
+  "lo": 0.1,
+  "hi": 0.26
+ }
+}

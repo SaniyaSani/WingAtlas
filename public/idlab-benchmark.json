@@ -1,0 +1,293 @@
+{
+ "schema": "entowing-idlab-benchmark/1.0",
+ "date": "2026-10-18",
+ "classifier": "v0.52 (thinned-line chamfer matching + v0.47 hybrid features)",
+ "previous": "v0.51 (v0.47 hybrid features only)",
+ "sets": [
+  {
+   "id": "same-figure",
+   "title": "Same printed figure",
+   "what": "Scan of a book figure, with EntoWing's tracing of that figure in the library (40 wings).",
+   "n": 40,
+   "now": {
+    "top1": 36,
+    "top3": 38
+   },
+   "before": {
+    "top1": 23,
+    "top3": 26
+   }
+  },
+  {
+   "id": "other-specimens",
+   "title": "Other species, same family",
+   "what": "Open-licence wing photographs and drawings from recent papers (Zenodo / Plazi) of 30 families that are in the library, but showing other species than the library plates.",
+   "n": 34,
+   "now": {
+    "top1": 3,
+    "top3": 4,
+    "keptUnidentified": 24,
+    "confidentlyWrong": 8
+   },
+   "before": {
+    "top1": 1,
+    "top3": 1,
+    "keptUnidentified": 3,
+    "confidentlyWrong": 30
+   }
+  },
+  {
+   "id": "absent-families",
+   "title": "Families not in the library",
+   "what": "Wing photographs of 5 families that EntoWing has no plate for; the right answer is “no reliable match”.",
+   "n": 5,
+   "now": {
+    "keptUnidentified": 4
+   },
+   "before": {
+    "keptUnidentified": 3
+   }
+  }
+ ],
+ "reading": "The lab reliably finds a drawing that is already in its library. It does not yet identify the family of a new specimen: with one drawing per family, other species of the same family usually look too different. It now says so (no reliable match) much more often instead of naming a wrong family.",
+ "otherSpecimenSources": [
+  {
+   "family": "Anisopodidae",
+   "zenodo": "https://zenodo.org/records/912220",
+   "doi": "10.3897/BDJ.4.e7861.figure5a",
+   "licence": "cc-by-4.0",
+   "title": "Figure 5a from: Kolcsár L, Dvořák L, Beuk P (2016) New records of Sylvicola (Diptera: Anisopodidae) from Romania. Biodiversity Data Journal 4: e7861. https://do"
+  },
+  {
+   "family": "Anthomyiidae",
+   "zenodo": "https://zenodo.org/records/8342918",
+   "doi": "10.5281/zenodo.8342918",
+   "licence": "cc-by-4.0",
+   "title": "Figs 5, 6 in Proposal of Karliella gen. n. for the Afrotropical 'Pegomya' sexpunctata Karl, 1935 (Diptera: Anthomyiidae), a possible kleptoparasite of dung-bree"
+  },
+  {
+   "family": "Anthomyzidae",
+   "zenodo": "https://zenodo.org/records/4272839",
+   "doi": "10.5281/zenodo.4272839",
+   "licence": "cc-by-4.0",
+   "title": "Fig. 11 in Nearctic Anthomyzidae: a monograph of Anthomyza and allied genera (Diptera)"
+  },
+  {
+   "family": "Blephariceridae",
+   "zenodo": "https://zenodo.org/records/6051339",
+   "doi": "10.3897/zookeys.1085.75885.figure2",
+   "licence": "cc-by-4.0",
+   "title": "Figure 2 from: Zhang X, Kang Z (2022) The genus Blepharicera Macquart, 1843 newly recorded from Sichuan, China with descriptions of three new species (Diptera, "
+  },
+  {
+   "family": "Bolitophilidae",
+   "zenodo": "https://zenodo.org/records/12586924",
+   "doi": "10.5281/zenodo.12586924",
+   "licence": "cc-by-4.0",
+   "title": "Figs 5–6 in Bolitophilidae (Diptera) From Taiwan: A Family New To The Oriental Region"
+  },
+  {
+   "family": "Chironomidae",
+   "zenodo": "https://zenodo.org/records/935633",
+   "doi": "10.3897/zookeys.208.3378.figures2-4",
+   "licence": "cc-by-4.0",
+   "title": "Figures 2-4 from: Lin X, Qi X, Wang X (2012) Two new species of Bryophaenocladius Thienemann, 1934 (Diptera, Chironomidae) from China. ZooKeys 208: 51-60. https"
+  },
+  {
+   "family": "Chironomidae",
+   "zenodo": "https://zenodo.org/records/986130",
+   "doi": "10.3897/zookeys.634.10323.figures8",
+   "licence": "cc-by-4.0",
+   "title": "Figures 8 from: Yan C-C, Guo Q, Liu T, Guo W, Wang X-H, Pan B-P (2016) Review of the genus Harnischia Kieffer from China (Diptera, Chironomidae), with descripti"
+  },
+  {
+   "family": "Clusiidae",
+   "zenodo": "https://zenodo.org/records/7665990",
+   "doi": "10.5281/zenodo.7665990",
+   "licence": "cc-by-4.0",
+   "title": "Fig. 2 in A new species of Tetrameringia McAlpine (Diptera: Schizophora: Clusiidae) from Malawi, the third species from theAfrotropical Region"
+  },
+  {
+   "family": "Chloropidae",
+   "zenodo": "https://zenodo.org/records/932652",
+   "doi": "10.3897/zookeys.129.1144.figures3-7",
+   "licence": "cc-by-4.0",
+   "title": "Figures 3-7 from: Liu X, Yang D (2011) Species of the genus Thressa Walker, 1860 from China (Diptera, Chloropidae). ZooKeys 129: 29-48. https://doi.org/10.3897/"
+  },
+  {
+   "family": "Cryptochetidae",
+   "zenodo": "https://zenodo.org/records/3668828",
+   "doi": "10.5281/zenodo.3668828",
+   "licence": "cc-by-4.0",
+   "title": "Figs 8–10 in Three new Cryptochetum Rondani, 1875 (Diptera: Cryptochetidae) from Yunnan Province, China and an identification key to Chinese species"
+  },
+  {
+   "family": "Culicidae",
+   "zenodo": "https://zenodo.org/records/13184603",
+   "doi": "10.5281/zenodo.13184603",
+   "licence": "cc-by-4.0",
+   "title": "Figure 3 in Culex (Culex) gaugleri, a new species (Diptera: Culicidae) from India"
+  },
+  {
+   "family": "Dixidae",
+   "zenodo": "https://zenodo.org/records/13343155",
+   "doi": "10.5281/zenodo.13343155",
+   "licence": "cc-by-4.0",
+   "title": "FIGURE 3 in The first fossil New World Dixidae with a critical discussion of generic definitions"
+  },
+  {
+   "family": "Empididae",
+   "zenodo": "https://zenodo.org/records/4676698",
+   "doi": "10.5281/zenodo.4676698",
+   "licence": "cc-by-4.0",
+   "title": "Figure 7. Sororsenexa macalpinei n in Sororsenexa-New Genus (Diptera: Empididae: Hemerodromiinae) from Australia"
+  },
+  {
+   "family": "Empididae",
+   "zenodo": "https://zenodo.org/records/5342411",
+   "doi": "10.5281/zenodo.5342411",
+   "licence": "cc-by-4.0",
+   "title": "Figs. 5–8 in Anaclastoctedon (Diptera: Empididae: Hemerodromiinae), A New Genus From Asia And Australia"
+  },
+  {
+   "family": "Fanniidae",
+   "zenodo": "https://zenodo.org/records/6784135",
+   "doi": "10.5281/zenodo.6784135",
+   "licence": "cc-by-4.0",
+   "title": "Fig. 3. Australofannia spiniclunis Pont, 1977 in Costal vein chaetotaxy, a neglected character source in Fanniidae and Muscidae (Diptera: Calyptratae)"
+  },
+  {
+   "family": "Heleomyzidae",
+   "zenodo": "https://zenodo.org/records/3699281",
+   "doi": "10.5281/zenodo.3699281",
+   "licence": "cc-by-4.0",
+   "title": "Figs 2–5 in Two new species of Heleomyzidae (Diptera) from Czech Republic and Crimea"
+  },
+  {
+   "family": "Hippoboscidae",
+   "zenodo": "https://zenodo.org/records/20385269",
+   "doi": "10.5281/zenodo.20385269",
+   "licence": "cc-by-4.0",
+   "title": "Fig. 3 in Description of a new species of Icosta Speiser, 1905 (Diptera: Hippoboscidae) from Southern Vietnam with the updated key to the subgenus Icosta"
+  },
+  {
+   "family": "Lauxaniidae",
+   "zenodo": "https://zenodo.org/records/18600947",
+   "doi": "10.5281/zenodo.18600947",
+   "licence": "cc-by-4.0",
+   "title": "Figs 16–18 in The Holotype Of Homoneura Grandis (Kertész, 1915) With Description Of A New Species From Taiwan (Diptera, Lauxaniidae)"
+  },
+  {
+   "family": "Platystomatidae",
+   "zenodo": "https://zenodo.org/records/4684897",
+   "doi": "10.5281/zenodo.4684897",
+   "licence": "cc-by-4.0",
+   "title": "Figures 27–29. Bama bickeli n in Signal Flies of the Genus Bama (Diptera: Platystomatidae) in Papua New Guinea"
+  },
+  {
+   "family": "Psychodidae",
+   "zenodo": "https://zenodo.org/records/13194722",
+   "doi": "10.5281/zenodo.13194722",
+   "licence": "cc-by-4.0",
+   "title": "Figs. 18–19 in Description of a new species of Psathyromyia Barreto (Diptera, Psychodidae, Phlebotominae) from Amazonas state, Brazil"
+  },
+  {
+   "family": "Pyrgotidae",
+   "zenodo": "https://zenodo.org/records/6453716",
+   "doi": "10.5281/zenodo.6453716",
+   "licence": "cc-by-4.0",
+   "title": "Fig. 10 in New Taxa And Synonymy In The Family Pyrgotidae (Diptera Tephritoidea) Ii Subtribe Adapsiliina And Afrotropical Campylocera"
+  },
+  {
+   "family": "Scenopinidae",
+   "zenodo": "https://zenodo.org/records/934155",
+   "doi": "10.3897/zookeys.138.1821.figure1",
+   "licence": "cc-by-4.0",
+   "title": "Figure 1 from: Winterton S (2011) Iranotrichia gen. n., a new genus of Scenopinidae (Diptera) from Iran, with a key to window fly genera of the world. ZooKeys 1"
+  },
+  {
+   "family": "Nemestrinidae",
+   "zenodo": "https://zenodo.org/records/10664705",
+   "doi": "10.5281/zenodo.10664705",
+   "licence": "cc-by-4.0",
+   "title": "Figs. 5–8 in Redescription of the adult male and description of the puparium of Hirmoneuropsis luctuosa (Philippi) (Diptera, Nemestrinidae) from central Chile"
+  },
+  {
+   "family": "Stratiomyidae",
+   "zenodo": "https://zenodo.org/records/5174537",
+   "doi": "10.5281/zenodo.5174537",
+   "licence": "cc-by-4.0",
+   "title": "Figures 1–3 in new species of Culcua Walker (Diptera: Stratiomyidae) from Vietnam"
+  },
+  {
+   "family": "Stratiomyidae",
+   "zenodo": "https://zenodo.org/records/5380961",
+   "doi": "10.5281/zenodo.5380961",
+   "licence": "cc-by-4.0",
+   "title": "FIG. 9 in Diverse Orthorrhaphan Flies (Insecta: Diptera: Brachycera) In Amber From The Cretaceous Of Myanmar: Brachycera In Cretaceous Amber, Part Vii David A. "
+  },
+  {
+   "family": "Syrphidae",
+   "zenodo": "https://zenodo.org/records/14006230",
+   "doi": "10.5281/zenodo.14006230",
+   "licence": "cc-by-4.0",
+   "title": "Figs 11–12 in A revision of the Afrotropical hover fly genus Afroxanthandrus Kassebeer, 2000 (Diptera, Syrphidae), with the description of two new species and o"
+  },
+  {
+   "family": "Tabanidae",
+   "zenodo": "https://zenodo.org/records/936371",
+   "doi": "10.3897/zookeys.148.1809.figure4",
+   "licence": "cc-by-4.0",
+   "title": "Figure 4 from: Grimaldi D, Arillo A, Cumming J (2011) Brachyceran Diptera (Insecta) in Cretaceous ambers, part IV: Significant New Orthorrhaphous Taxa. ZooKeys "
+  },
+  {
+   "family": "Tanyderidae",
+   "zenodo": "https://zenodo.org/records/13343184",
+   "doi": "10.5281/zenodo.13343184",
+   "licence": "cc-by-4.0",
+   "title": "FIGURE 4 in Nannotanyderinae: a new subfamily of Tanyderidae (Diptera)"
+  },
+  {
+   "family": "Therevidae",
+   "zenodo": "https://zenodo.org/records/941699",
+   "doi": "10.3897/zookeys.235.3854.figures15-18",
+   "licence": "cc-by-4.0",
+   "title": "Figures 15-18 from: Liu S, Yang D (2012) Revision of the Chinese species of Dialineura Rondani, 1856 (Diptera, Therevidae, Therevinae). ZooKeys 235: 1-22. https"
+  },
+  {
+   "family": "Therevidae",
+   "zenodo": "https://zenodo.org/records/941711",
+   "doi": "10.3897/zookeys.235.3854.figures43-47",
+   "licence": "cc-by-4.0",
+   "title": "Figures 43-47 from: Liu S, Yang D (2012) Revision of the Chinese species of Dialineura Rondani, 1856 (Diptera, Therevidae, Therevinae). ZooKeys 235: 1-22. https"
+  },
+  {
+   "family": "Ulidiidae",
+   "zenodo": "https://zenodo.org/records/982759",
+   "doi": "10.3897/zookeys.615.9311.figure7",
+   "licence": "cc-by-4.0",
+   "title": "Figure 7 from: Galinskaya TV (2016) Two new species of the genus Timia and a redescription of Timia mongolica (Diptera, Ulidiidae). ZooKeys 615: 119-141. https:"
+  },
+  {
+   "family": "Conopidae",
+   "zenodo": "https://zenodo.org/records/7915404",
+   "doi": "10.5281/zenodo.7915404",
+   "licence": "cc-by-4.0",
+   "title": "Figs 115–118 in A revision of Afrotropical species of Stylogaster Macquart (Diptera: Conopidae), with descriptions of twenty-one new species and an identificati"
+  },
+  {
+   "family": "Agromyzidae",
+   "zenodo": "https://zenodo.org/records/5165963",
+   "doi": "10.3897/zookeys.1051.64603.figures689-692",
+   "licence": "cc-by-4.0",
+   "title": "Figures 689-692 from: Lonsdale O (2021) Manual of North American Agromyzidae (Diptera, Schizophora), with revision of the fauna of the \"Delmarva\" states. ZooKey"
+  },
+  {
+   "family": "Ceratopogonidae",
+   "zenodo": "https://zenodo.org/records/5182575",
+   "doi": "10.5281/zenodo.5182575",
+   "licence": "cc-by-4.0",
+   "title": "Figures 22–26 in A revision of the biting midges in the Culicoides (Monoculicoides) nubeculosus-stigma complex in North America with the description of a new sp"
+  }
+ ]
+}

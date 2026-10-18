@@ -1,0 +1,107 @@
+[
+ {
+  "slug": "calliphoridae-walker-sarcophaga-mortuorum",
+  "file": "sarco.png",
+  "box": [
+   0,
+   0,
+   190,
+   98
+  ],
+  "scale": 2.4,
+  "glyph": 30,
+  "spur": 26,
+  "dotted": false,
+  "clip_left": 0.2
+ },
+ {
+  "slug": "coelopidae-walker-coelopa",
+  "file": "coelopa.png",
+  "box": [
+   0,
+   0,
+   236,
+   110
+  ],
+  "scale": 2.2,
+  "glyph": 30,
+  "spur": 26,
+  "dotted": false,
+  "clip_left": 0.16,
+  "erase": [
+   [
+    80,
+    0,
+    135,
+    45
+   ]
+  ]
+ },
+ {
+  "slug": "sciomyzidae-walker-tetanocera",
+  "file": "tetanocera.png",
+  "box": [
+   0,
+   0,
+   240,
+   118
+  ],
+  "scale": 2.2,
+  "glyph": 30,
+  "spur": 26,
+  "dotted": false,
+  "clip_left": 0.17
+ },
+ {
+  "slug": "dryomyzidae-walker-dryomyza",
+  "file": "dryomyza.png",
+  "box": [
+   0,
+   0,
+   280,
+   152
+  ],
+  "scale": 1.9,
+  "glyph": 30,
+  "spur": 26,
+  "dotted": false,
+  "clip_left": 0.2,
+  "erase": [
+   [
+    395,
+    135,
+    435,
+    220
+   ],
+   [
+    90,
+    165,
+    210,
+    289
+   ]
+  ]
+ },
+ {
+  "slug": "pallopteridae-walker-palloptera",
+  "file": "palloptera.png",
+  "box": [
+   0,
+   0,
+   236,
+   128
+  ],
+  "scale": 2.2,
+  "glyph": 30,
+  "spur": 26,
+  "dotted": false,
+  "clip_left": 0.17,
+  "erase": [
+   [
+    40,
+    0,
+    150,
+    40
+   ]
+  ]
+ }
+]
