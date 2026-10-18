@@ -7,7 +7,7 @@ export default defineConfig({
   base: "./",
   plugins: [react()],
   build: {
-    outDir: "../docs",
+    outDir: "../site",
     emptyOutDir: true,
   },
 });
